@@ -107,15 +107,11 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 }
 
 /* ══════════════════════════════════════════
-   PAGE 3 — TULIP IN VASE  (themed)
+   PAGE 3 — TULIP IN VASE (themed)
 ══════════════════════════════════════════ */
 #pg-bouquet { gap:1rem; }
-
-/* ── THEMED BACKGROUND LAYER ── */
-/* sits behind everything in the bouquet page */
 #theme-bg {
   position:absolute; inset:0; z-index:0;
-  /* default = sky-blue light */
   background:
     radial-gradient(ellipse 80% 60% at 15% 10%, rgba(150,210,245,.40) 0%, transparent 65%),
     radial-gradient(ellipse 65% 55% at 85% 18%, rgba(120,190,245,.28) 0%, transparent 60%),
@@ -130,24 +126,17 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
     radial-gradient(ellipse 75% 45% at 50% 88%, rgba(90,30,180,.38) 0%, transparent 60%),
     linear-gradient(160deg,#18062c 0%,#270d44 38%,#1c0836 65%,#100524 100%);
 }
-
-/* blossom canvas sits above theme-bg */
 #blossom-canvas { position:absolute; inset:0; pointer-events:none; z-index:1; }
-
-/* tulip scene sits above canvas */
 #tulip-scene {
   position:relative; z-index:2;
   opacity:0; transform:translateY(30px);
   transition:opacity 1s ease, transform 1.1s cubic-bezier(.22,1,.36,1);
 }
 #tulip-scene.show { opacity:1; transform:translateY(0); }
-
 #tulip-float { animation:none; transform-origin:center bottom; }
 #tulip-float.floating { animation:tulipFloat 3.6s ease-in-out infinite; }
 @keyframes tulipFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-14px);} }
 
-/* ── PETAL GLOW ANIMATIONS ── */
-/* sky-blue mode (default) */
 @keyframes petalGlowBlue {
   0%,100% { opacity:.75; filter:drop-shadow(0 0 5px rgba(100,200,255,.5)); }
   50%      { opacity:1;   filter:drop-shadow(0 0 16px rgba(100,200,255,.95)); }
@@ -156,7 +145,6 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   0%,100% { opacity:.70; filter:drop-shadow(0 0 4px rgba(100,200,255,.4)); }
   50%      { opacity:.95; filter:drop-shadow(0 0 14px rgba(100,200,255,.85)); }
 }
-/* purple mode */
 @keyframes petalGlowPurple {
   0%,100% { opacity:.75; filter:drop-shadow(0 0 6px rgba(180,80,255,.55)); }
   50%      { opacity:1;   filter:drop-shadow(0 0 20px rgba(180,80,255,1.0)); }
@@ -165,16 +153,11 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   0%,100% { opacity:.70; filter:drop-shadow(0 0 5px rgba(180,80,255,.45)); }
   50%      { opacity:.95; filter:drop-shadow(0 0 18px rgba(180,80,255,.90)); }
 }
-
-/* Applied via class on the tulip-float group */
 .petal-anim-blue      .glow-petal      { animation:petalGlowBlue     2.4s ease-in-out infinite; }
 .petal-anim-blue      .glow-petal-slow { animation:petalGlowBlueSlow  3.4s ease-in-out infinite; }
 .petal-anim-purple    .glow-petal      { animation:petalGlowPurple    2.4s ease-in-out infinite; }
 .petal-anim-purple    .glow-petal-slow { animation:petalGlowPurpleSlow 3.4s ease-in-out infinite; }
 
-/* Tulip petal fills — swapped via JS on the SVG gradient stops */
-
-/* bq-text */
 .bq-text {
   font-family:'Playfair Display',serif;
   font-size:clamp(1.05rem,3.2vw,1.65rem); color:#5a7a90;
@@ -185,7 +168,6 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 .bq-text.show   { opacity:1; transform:translateY(0); }
 .bq-text.purple { color:#c8a0f0; }
 
-/* next button */
 #btn-next {
   position:fixed; bottom:1.8rem; right:1.8rem;
   background:linear-gradient(135deg,#a87fc8,#7ec4e8); color:white; border:none;
@@ -199,9 +181,6 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 #btn-next.show { opacity:1; transform:translateY(0); pointer-events:all; }
 #btn-next:hover { box-shadow:0 6px 24px rgba(150,100,200,.45); }
 
-/* ══════════════════════════════════════════
-   SWITCH BUTTON
-══════════════════════════════════════════ */
 #switch-btn {
   position:fixed; top:18px; right:18px; z-index:50;
   display:none; align-items:center; gap:7px;
@@ -228,12 +207,191 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 #switch-dot {
   width:9px; height:9px; border-radius:50%;
   background:linear-gradient(135deg,#6ab8e8,#90d0ff);
-  flex-shrink:0;
-  transition:background .8s ease, box-shadow .8s ease;
+  flex-shrink:0; transition:background .8s ease, box-shadow .8s ease;
 }
 #switch-dot.purple {
   background:linear-gradient(135deg,#9040e0,#c060ff);
   box-shadow:0 0 8px rgba(180,70,255,.85);
+}
+
+/* ══════════════════════════════════════════
+   PAGE 4 — PADLOCK (overlays pg-bouquet)
+══════════════════════════════════════════ */
+#pg-lock {
+  position:fixed; inset:0; z-index:200;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:0;
+  /* starts invisible */
+  opacity:0; pointer-events:none;
+  transition:opacity 0.7s ease;
+}
+#pg-lock.in { opacity:1; pointer-events:all; }
+
+/* Blur overlay — sits ON TOP of the bouquet page content */
+#lock-blur-overlay {
+  position:absolute; inset:0;
+  backdrop-filter:blur(18px) saturate(1.2);
+  -webkit-backdrop-filter:blur(18px) saturate(1.2);
+  background:rgba(10,5,30,0.45);
+  z-index:0;
+}
+
+/* Lock card */
+#lock-card {
+  position:relative; z-index:1;
+  display:flex; flex-direction:column;
+  align-items:center; gap:0.6rem;
+  opacity:0; transform:scale(0.82) translateY(28px);
+  transition:opacity 0.7s cubic-bezier(.22,1,.36,1), transform 0.7s cubic-bezier(.22,1,.36,1);
+  transition-delay:0.2s;
+}
+#pg-lock.in #lock-card { opacity:1; transform:scale(1) translateY(0); }
+
+/* Text above lock */
+.lock-eyebrow {
+  font-family:'Nunito',sans-serif;
+  font-size:0.64rem; letter-spacing:0.22em; text-transform:uppercase;
+  color:rgba(255,220,255,0.55); margin-bottom:0.2rem;
+}
+.lock-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.2rem,4vw,1.9rem);
+  color:#f5e0ff;
+  text-align:center; letter-spacing:0.06em;
+  line-height:1.35;
+  text-shadow:0 0 30px rgba(200,120,255,0.5);
+}
+.lock-title em { color:#b8e8ff; font-style:italic; }
+
+/* Hint text */
+#lock-hint {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(0.82rem,2.2vw,1rem);
+  color:#f0c8ff;
+  font-style:italic;
+  text-align:center;
+  min-height:1.5em;
+  letter-spacing:0.04em;
+  opacity:0;
+  transform:translateY(6px);
+  transition:opacity 0.5s ease, transform 0.5s ease;
+  text-shadow:0 0 14px rgba(200,100,255,0.6);
+}
+#lock-hint.show { opacity:1; transform:translateY(0); }
+
+/* ── HEART PADLOCK SVG WRAPPER ── */
+#heart-lock {
+  position:relative;
+  width:min(300px,82vw);
+  filter:drop-shadow(0 8px 40px rgba(220,100,180,0.5))
+         drop-shadow(0 0 80px rgba(180,80,220,0.25));
+  animation:lockFloat 3.8s ease-in-out infinite;
+}
+@keyframes lockFloat {
+  0%,100%{transform:translateY(0px) rotate(-0.5deg);}
+  50%{transform:translateY(-10px) rotate(0.5deg);}
+}
+
+/* ── DIAL CONTAINER ── */
+/* Positioned absolutely over the SVG heart body */
+#dials-wrap {
+  position:absolute;
+  display:flex; gap:clamp(5px,2vw,9px);
+  align-items:center; justify-content:center;
+  /* centered horizontally in the heart */
+  left:50%; transform:translateX(-50%);
+  /* vertically: roughly middle of heart body */
+  top:52%;
+}
+
+.dial {
+  display:flex; flex-direction:column;
+  align-items:center; gap:2px;
+}
+
+.dial-btn {
+  width:clamp(36px,10vw,46px); height:clamp(22px,5vw,26px);
+  background:rgba(255,255,255,0.12);
+  border:1.5px solid rgba(255,255,255,0.3);
+  border-radius:8px;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.75rem; color:rgba(255,255,255,0.7);
+  transition:background 0.15s, transform 0.12s;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.dial-btn:hover { background:rgba(255,255,255,0.22); }
+.dial-btn:active { transform:scale(0.9); background:rgba(255,255,255,0.3); }
+
+.dial-display {
+  width:clamp(36px,10vw,46px); height:clamp(40px,10vw,50px);
+  background:rgba(15,8,35,0.7);
+  border:2px solid rgba(255,255,255,0.35);
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.3rem,4vw,1.8rem);
+  color:#fff;
+  letter-spacing:0;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,0.4), 0 0 14px rgba(220,150,255,0.2);
+  text-shadow:0 0 10px rgba(200,180,255,0.8);
+  position:relative; overflow:hidden;
+  transition:color 0.1s;
+}
+
+/* Digit flip animation */
+@keyframes digitUp {
+  0%   { transform:translateY(0);   opacity:1; }
+  40%  { transform:translateY(-60%); opacity:0; }
+  50%  { transform:translateY(60%);  opacity:0; }
+  100% { transform:translateY(0);   opacity:1; }
+}
+@keyframes digitDown {
+  0%   { transform:translateY(0);   opacity:1; }
+  40%  { transform:translateY(60%);  opacity:0; }
+  50%  { transform:translateY(-60%); opacity:0; }
+  100% { transform:translateY(0);   opacity:1; }
+}
+.flip-up   { animation:digitUp   0.22s ease; }
+.flip-down { animation:digitDown 0.22s ease; }
+
+/* Enter button */
+#lock-enter {
+  margin-top:2px;
+  padding:0.5rem 2.2rem;
+  background:linear-gradient(135deg,#c060e8,#8040d0);
+  border:none; border-radius:40px; cursor:pointer;
+  font-family:'Playfair Display',serif; font-size:0.92rem;
+  color:#fff; letter-spacing:0.1em;
+  box-shadow:0 4px 20px rgba(180,60,240,0.55);
+  transition:transform 0.18s, box-shadow 0.18s;
+}
+#lock-enter:hover  { transform:scale(1.06); box-shadow:0 6px 28px rgba(180,60,240,0.75); }
+#lock-enter:active { transform:scale(0.95); }
+
+/* Wrong shake */
+@keyframes wrongShake {
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-10px);}
+  40%{transform:translateX(10px);}
+  60%{transform:translateX(-8px);}
+  80%{transform:translateX(8px);}
+}
+#heart-lock.shake { animation:wrongShake 0.45s ease, lockFloat 3.8s ease-in-out infinite 0.45s; }
+
+/* ══════════════════════════════════════════
+   PAGE 5 — BLANK (next content TBD)
+══════════════════════════════════════════ */
+#pg-secret {
+  background:#09071a;
+  z-index:300;
+}
+#pg-secret .secret-inner {
+  color:rgba(255,255,255,0.18);
+  font-family:'Playfair Display',serif;
+  font-size:1rem; letter-spacing:0.12em;
+  font-style:italic;
 }
 
 </style>
@@ -268,9 +426,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 
 <!-- ══ PAGE 3: TULIP IN VASE (themed) ══ -->
 <div class="page out" id="pg-bouquet">
-  <!-- Themed background — behind everything -->
   <div id="theme-bg"></div>
-  <!-- Falling blossoms canvas -->
   <canvas id="blossom-canvas"></canvas>
 
   <div id="tulip-scene">
@@ -293,7 +449,6 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
           <stop offset="0%"   stop-color="rgba(140,200,230,0.35)"/>
           <stop offset="100%" stop-color="rgba(100,170,210,0.55)"/>
         </linearGradient>
-        <!-- Tulip petal gradients — stops updated by JS on theme switch -->
         <radialGradient id="petalCore" cx="50%" cy="60%" r="55%">
           <stop id="pCore0" offset="0%"   stop-color="#d0f0ff"/>
           <stop id="pCore1" offset="60%"  stop-color="#90ccf0"/>
@@ -309,7 +464,6 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
           <stop id="pSide1" offset="70%"  stop-color="#68a8d0"/>
           <stop id="pSide2" offset="100%" stop-color="#4888b8"/>
         </radialGradient>
-        <!-- Glow halo — color updated by JS -->
         <filter id="glowFilter" x="-40%" y="-40%" width="180%" height="180%">
           <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
           <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -320,7 +474,6 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
         </filter>
       </defs>
 
-      <!-- VASE (static) -->
       <g id="vase-group">
         <path d="M88 318 Q88 355 90 368 Q130 375 170 368 Q172 355 172 318 Z" fill="url(#waterGrad)"/>
         <path d="M88 290 L88 370 Q130 382 172 370 L172 290 Q130 278 88 290Z"
@@ -339,8 +492,6 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
                  fill="rgba(180,230,250,0.3)" stroke="rgba(160,215,240,0.4)" stroke-width="1"/>
       </g>
 
-      <!-- TULIP (floats + theme-coloured) -->
-      <!-- petal-anim-blue class is default; JS swaps to petal-anim-purple -->
       <g id="tulip-float" class="petal-anim-blue">
         <line x1="130" y1="295" x2="130" y2="180"
               stroke="#4a9838" stroke-width="3.5" stroke-linecap="round"/>
@@ -352,45 +503,31 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
         <path d="M132 238 Q155 225 162 205 Q148 212 132 238Z" fill="#62b448" opacity="0.9"/>
         <path d="M132 238 Q154 227 160 208"
               stroke="#52a038" stroke-width="1" fill="none" opacity="0.6"/>
-
-        <!-- Outer glow halo — ellipse fill updated by JS -->
         <g filter="url(#glowFilter)" opacity="0.5">
           <ellipse id="glowHalo" cx="130" cy="135" rx="44" ry="55" fill="#88ccf0"/>
         </g>
-
-        <!-- Back petals -->
         <ellipse class="glow-petal-slow" cx="104" cy="128" rx="18" ry="34"
                  fill="url(#petalSide)" transform="rotate(-28 104 128)"
                  stroke="rgba(140,200,240,0.4)" stroke-width="1"/>
         <ellipse class="glow-petal-slow" cx="156" cy="128" rx="18" ry="34"
                  fill="url(#petalSide)" transform="rotate(28 156 128)"
                  stroke="rgba(140,200,240,0.4)" stroke-width="1"/>
-
-        <!-- Mid petals -->
         <ellipse class="glow-petal" cx="110" cy="120" rx="20" ry="38"
                  fill="url(#petalOuter)" transform="rotate(-14 110 120)"
                  stroke="rgba(160,215,245,0.45)" stroke-width="1.2"/>
         <ellipse class="glow-petal" cx="150" cy="120" rx="20" ry="38"
                  fill="url(#petalOuter)" transform="rotate(14 150 120)"
                  stroke="rgba(160,215,245,0.45)" stroke-width="1.2"/>
-
-        <!-- Front centre petal -->
         <ellipse class="glow-petal" cx="130" cy="112" rx="22" ry="42"
                  fill="url(#petalCore)"
                  stroke="rgba(180,230,255,0.5)" stroke-width="1.2"/>
-
-        <!-- Highlights -->
         <ellipse cx="122" cy="100" rx="5" ry="12"
                  fill="rgba(255,255,255,0.28)" transform="rotate(-8 122 100)"/>
         <ellipse cx="138" cy="98"  rx="4" ry="10"
                  fill="rgba(255,255,255,0.20)" transform="rotate(6 138 98)"/>
-
-        <!-- Inner soft glow -->
         <g filter="url(#softGlow)" opacity="0.6">
           <ellipse id="innerGlow" cx="130" cy="115" rx="16" ry="26" fill="#c8eeff"/>
         </g>
-
-        <!-- Stamen -->
         <line x1="126" y1="142" x2="124" y2="128"
               stroke="#a0d8f0" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
         <line x1="130" y1="144" x2="130" y2="126"
@@ -408,19 +545,139 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   <button id="btn-next" onclick="goNext()">Continue →</button>
 </div>
 
-<!-- ══ SWITCH BUTTON (fixed, shown only on bouquet page) ══ -->
+<!-- ══ SWITCH BUTTON ══ -->
 <button id="switch-btn" onclick="switchTheme()">
   <span id="switch-dot"></span>
   <span id="switch-label">Switch 🌙</span>
 </button>
 
+<!-- ══ PAGE 4: PADLOCK OVERLAY ══ -->
+<!-- This overlays on top of pg-bouquet (backdrop-filter blurs everything behind) -->
+<div id="pg-lock">
+  <div id="lock-blur-overlay"></div>
+
+  <div id="lock-card">
+    <div class="lock-eyebrow">pin-locked love letter</div>
+    <div class="lock-title">Open our code,<br><em>for your eyes only.</em></div>
+
+    <!-- HEART PADLOCK -->
+    <div id="heart-lock">
+      <!-- Heart SVG with dials embedded -->
+      <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;" overflow="visible">
+        <defs>
+          <radialGradient id="heartGrad" cx="40%" cy="35%" r="65%">
+            <stop offset="0%"   stop-color="#f080c0"/>
+            <stop offset="50%"  stop-color="#e060a8"/>
+            <stop offset="100%" stop-color="#c04090"/>
+          </radialGradient>
+          <radialGradient id="heartShine" cx="35%" cy="28%" r="40%">
+            <stop offset="0%"   stop-color="rgba(255,255,255,0.55)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+          </radialGradient>
+          <filter id="heartShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="rgba(180,30,100,0.5)"/>
+          </filter>
+          <!-- Shackle gradient -->
+          <linearGradient id="shackleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%"   stop-color="#e8d0f8"/>
+            <stop offset="50%"  stop-color="#c8b0e8"/>
+            <stop offset="100%" stop-color="#a890c8"/>
+          </linearGradient>
+        </defs>
+
+        <!-- SHACKLE (padlock top) -->
+        <rect x="116" y="28" width="68" height="8" rx="4" fill="url(#shackleGrad)"
+              stroke="rgba(200,170,240,0.6)" stroke-width="1.5"/>
+        <path d="M116 32 Q116 10 150 10 Q184 10 184 32"
+              fill="none" stroke="url(#shackleGrad)" stroke-width="12"
+              stroke-linecap="round"/>
+        <!-- Shackle inner shadow line -->
+        <path d="M122 32 Q122 14 150 14 Q178 14 178 32"
+              fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"
+              stroke-linecap="round"/>
+        <!-- Shackle hole on heart -->
+        <rect x="128" y="56" width="44" height="14" rx="7"
+              fill="rgba(160,30,90,0.55)"/>
+
+        <!-- HEART BODY -->
+        <path d="M150 270
+                 Q60 210 42 155
+                 Q20 95 65 72
+                 Q95 58 116 78
+                 Q130 92 150 108
+                 Q170 92 184 78
+                 Q205 58 235 72
+                 Q280 95 258 155
+                 Q240 210 150 270 Z"
+              fill="url(#heartGrad)" filter="url(#heartShadow)"/>
+        <!-- Heart shine overlay -->
+        <path d="M150 270
+                 Q60 210 42 155
+                 Q20 95 65 72
+                 Q95 58 116 78
+                 Q130 92 150 108
+                 Q170 92 184 78
+                 Q205 58 235 72
+                 Q280 95 258 155
+                 Q240 210 150 270 Z"
+              fill="url(#heartShine)"/>
+        <!-- Subtle rim highlight -->
+        <path d="M90 90 Q75 110 68 140"
+              stroke="rgba(255,255,255,0.3)" stroke-width="6"
+              fill="none" stroke-linecap="round"/>
+        <path d="M100 78 Q88 86 80 98"
+              stroke="rgba(255,255,255,0.25)" stroke-width="4"
+              fill="none" stroke-linecap="round"/>
+
+        <!-- Decorative dot on shackle -->
+        <circle cx="150" cy="38" r="4" fill="rgba(255,220,255,0.55)"/>
+      </svg>
+
+      <!-- DIAL OVERLAY (positioned absolute over the heart svg) -->
+      <div id="dials-wrap">
+        <!-- 4 dials: D0..D3 -->
+        <div class="dial">
+          <button class="dial-btn" data-dial="0" data-dir="up" onclick="nudgeDial(0,1)">▲</button>
+          <div class="dial-display" id="d0">0</div>
+          <button class="dial-btn" data-dial="0" data-dir="down" onclick="nudgeDial(0,-1)">▼</button>
+        </div>
+        <div class="dial">
+          <button class="dial-btn" data-dial="1" data-dir="up" onclick="nudgeDial(1,1)">▲</button>
+          <div class="dial-display" id="d1">0</div>
+          <button class="dial-btn" data-dial="1" data-dir="down" onclick="nudgeDial(1,-1)">▼</button>
+        </div>
+        <div class="dial">
+          <button class="dial-btn" data-dial="2" data-dir="up" onclick="nudgeDial(2,1)">▲</button>
+          <div class="dial-display" id="d2">0</div>
+          <button class="dial-btn" data-dial="2" data-dir="down" onclick="nudgeDial(2,-1)">▼</button>
+        </div>
+        <div class="dial">
+          <button class="dial-btn" data-dial="3" data-dir="up" onclick="nudgeDial(3,1)">▲</button>
+          <div class="dial-display" id="d3">0</div>
+          <button class="dial-btn" data-dial="3" data-dir="down" onclick="nudgeDial(3,-1)">▼</button>
+        </div>
+      </div>
+    </div>
+    <!-- /heart-lock -->
+
+    <!-- Hint text (appears after wrong attempts) -->
+    <p id="lock-hint"></p>
+
+    <!-- Enter button -->
+    <button id="lock-enter" onclick="tryUnlock()">Enter ✦</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 5: SECRET (blank for now) ══ -->
+<div class="page out" id="pg-secret">
+  <div class="secret-inner">— to be continued —</div>
+</div>
+
 
 <!-- ══ JAVASCRIPT ══ -->
 <script>
 
-/* ════════════════════════════════════════
-   STARS (loading page)
-════════════════════════════════════════ */
+/* ════════════ STARS ════════════ */
 const starsEl = document.getElementById('load-stars');
 for (let i = 0; i < 100; i++) {
   const s = document.createElement('div'); s.className = 'lstar';
@@ -429,9 +686,7 @@ for (let i = 0; i < 100; i++) {
   starsEl.appendChild(s);
 }
 
-/* ════════════════════════════════════════
-   LOADING PETALS
-════════════════════════════════════════ */
+/* ════════════ LOADING PETALS ════════════ */
 const lCanvas = document.getElementById('petal-canvas-load');
 const lCtx    = lCanvas.getContext('2d');
 let   lPetals = [], lRaf;
@@ -478,9 +733,7 @@ function animLP(ts) {
 }
 requestAnimationFrame(animLP);
 
-/* ════════════════════════════════════════
-   LOADING BAR
-════════════════════════════════════════ */
+/* ════════════ LOADING BAR ════════════ */
 const barEl = document.getElementById('load-bar');
 let prog = 0;
 const loadInt = setInterval(() => {
@@ -488,7 +741,6 @@ const loadInt = setInterval(() => {
   barEl.style.width = prog + '%';
   if (prog >= 100) { clearInterval(loadInt); setTimeout(finishLoad, 550); }
 }, 80);
-
 function finishLoad() {
   cancelAnimationFrame(lRaf);
   document.getElementById('pg-load').classList.replace('in','out');
@@ -498,12 +750,9 @@ function finishLoad() {
   }, 900);
 }
 
-/* ════════════════════════════════════════
-   NO BUTTON
-════════════════════════════════════════ */
+/* ════════════ NO BUTTON ════════════ */
 let noClicks = 0, noScale = 1.0;
 const btnNo = document.getElementById('btn-no');
-
 function clickNo() {
   noClicks++;
   if (noClicks > 5) {
@@ -524,9 +773,7 @@ function clickNo() {
   btnNo.style.top  = (m + Math.random()*(window.innerHeight - m*2)) + 'px';
 }
 
-/* ════════════════════════════════════════
-   YES BUTTON
-════════════════════════════════════════ */
+/* ════════════ YES BUTTON ════════════ */
 function clickYes() {
   document.getElementById('pg-stitch').classList.replace('in','out');
   setTimeout(() => {
@@ -534,26 +781,21 @@ function clickYes() {
     document.getElementById('pg-bouquet').classList.replace('out','in');
     startBlossoms();
     setTimeout(showTulip, 400);
-    // Show switch button after tulip is revealed
     setTimeout(() => {
       document.getElementById('switch-btn').style.display = 'flex';
     }, 2900);
   }, 900);
 }
 
-/* ════════════════════════════════════════
-   CHERRY BLOSSOMS — bouquet page canvas
-   Colour-aware: lerps between blue and purple palettes
-════════════════════════════════════════ */
+/* ════════════ CHERRY BLOSSOMS ════════════ */
 const bCanvas  = document.getElementById('blossom-canvas');
 const bCtx     = bCanvas.getContext('2d');
 let   blossoms = [], bRaf, bRunning = false;
-let   blossomTheme = 'blue'; // 'blue' | 'purple'
+let   blossomTheme = 'blue';
 
 function resizeBC() { bCanvas.width = window.innerWidth; bCanvas.height = window.innerHeight; }
 resizeBC();
 
-/* Palette pools */
 const BLOSSOM_BLUE = [
   {r:255,g:182,b:193},{r:255,g:192,b:203},{r:255,g:160,b:180},
   {r:255,g:218,b:224},{r:240,g:160,b:185},{r:255,g:200,b:215},
@@ -566,31 +808,25 @@ const BLOSSOM_PURPLE = [
   {r:220,g:140,b:255},{r:170,g: 90,b:235},{r:150,g: 70,b:220},
   {r:200,g:150,b:255},{r:230,g:160,b:255},
 ];
-
-/* Colour lerp speed for existing blossoms on theme switch */
 const LERP = 0.020;
 
 function spawnBlossom() {
   const pool = blossomTheme === 'blue' ? BLOSSOM_BLUE : BLOSSOM_PURPLE;
   const base = pool[Math.floor(Math.random()*pool.length)];
   const type = Math.random() > .38 ? 'flower' : 'petal';
-  const glow = Math.random() < 0.28; // ~28% get glow
+  const glow = Math.random() < 0.28;
   blossoms.push({
     x:Math.random()*bCanvas.width, y:-22,
     vx:(Math.random()-.5)*.8, vy:Math.random()*.8+0.35,
     rot:Math.random()*Math.PI*2, vr:(Math.random()-.5)*.028,
     size:type==='flower' ? Math.random()*10+8 : Math.random()*13+6,
-    // current colour (lerps)
     cr:base.r, cg:base.g, cb:base.b,
-    // target colour
     tr:base.r, tg:base.g, tb:base.b,
     alpha: type==='flower' ? .72 : .65,
     type, glow,
     sway:Math.random()*.012+.005, phase:Math.random()*Math.PI*2, age:0,
   });
 }
-
-/* Retarget existing blossoms when theme switches */
 function retargetBlossoms() {
   const pool = blossomTheme === 'blue' ? BLOSSOM_BLUE : BLOSSOM_PURPLE;
   blossoms.forEach(p => {
@@ -598,25 +834,15 @@ function retargetBlossoms() {
     p.tr = base.r; p.tg = base.g; p.tb = base.b;
   });
 }
-
 function drawBlossom(p) {
-  /* lerp colour */
   p.cr += (p.tr - p.cr) * LERP;
   p.cg += (p.tg - p.cg) * LERP;
   p.cb += (p.tb - p.cb) * LERP;
-
   const rc = Math.round(p.cr), gc = Math.round(p.cg), bc = Math.round(p.cb);
   const fade = p.alpha * Math.min(1,(bCanvas.height-p.y)/70);
-
   bCtx.save(); bCtx.translate(p.x,p.y); bCtx.rotate(p.rot);
   bCtx.globalAlpha = fade;
-
-  /* glow for selected petals */
-  if (p.glow) {
-    bCtx.shadowBlur  = 16;
-    bCtx.shadowColor = `rgba(${rc},${gc},${bc},0.9)`;
-  }
-
+  if (p.glow) { bCtx.shadowBlur = 16; bCtx.shadowColor = `rgba(${rc},${gc},${bc},0.9)`; }
   if (p.type === 'flower') {
     for (let i = 0; i < 5; i++) {
       bCtx.save(); bCtx.rotate((i/5)*Math.PI*2);
@@ -636,30 +862,20 @@ function drawBlossom(p) {
   }
   bCtx.restore();
 }
-
 let lastBS = 0;
 function animBlossoms(ts) {
   bRaf = requestAnimationFrame(animBlossoms);
   bCtx.clearRect(0,0,bCanvas.width,bCanvas.height);
   if (ts-lastBS > 90) { spawnBlossom(); lastBS = ts; }
   blossoms = blossoms.filter(p => p.y < bCanvas.height+30);
-  blossoms.forEach(p => {
-    p.age++;
-    p.x += p.vx + Math.sin(p.age*p.sway+p.phase)*.55;
-    p.y += p.vy;
-    p.rot += p.vr;
-    drawBlossom(p);
-  });
+  blossoms.forEach(p => { p.age++; p.x += p.vx + Math.sin(p.age*p.sway+p.phase)*.55; p.y += p.vy; p.rot += p.vr; drawBlossom(p); });
 }
-
 function startBlossoms() {
   if (bRunning) return; bRunning = true;
   requestAnimationFrame(animBlossoms);
 }
 
-/* ════════════════════════════════════════
-   TULIP REVEAL
-════════════════════════════════════════ */
+/* ════════════ TULIP REVEAL ════════════ */
 function showTulip() {
   setTimeout(() => { document.getElementById('tulip-scene').classList.add('show'); }, 200);
   setTimeout(() => { document.getElementById('tulip-float').classList.add('floating'); }, 1300);
@@ -667,85 +883,157 @@ function showTulip() {
   setTimeout(() => { document.getElementById('btn-next').classList.add('show'); }, 2800);
 }
 
-/* ════════════════════════════════════════
-   THEME SWITCH
-   Sky-blue ↔ Purple
-   Syncs: background, petal glow anims, SVG gradient stops, blossom colours
-════════════════════════════════════════ */
+/* ════════════ THEME SWITCH ════════════ */
 let isPurple = false;
-
-/* Colour tables for SVG gradient stops */
 const TULIP_BLUE = {
   core:  ['#d0f0ff','#90ccf0','#60a8d8'],
   outer: ['#b8e4f8','#78b8e0','#5898c8'],
   side:  ['#a8d8f0','#68a8d0','#4888b8'],
-  halo:  '#88ccf0',
-  inner: '#c8eeff',
+  halo:  '#88ccf0', inner: '#c8eeff',
 };
 const TULIP_PURPLE = {
   core:  ['#f0d8ff','#c070f0','#9040d0'],
   outer: ['#e8c8ff','#b060e0','#8030c0'],
   side:  ['#d8b8f8','#a050d0','#7020b0'],
-  halo:  '#c060f0',
-  inner: '#e0b8ff',
+  halo:  '#c060f0', inner: '#e0b8ff',
 };
-
 function applyTulipColors(palette) {
-  // core stops
   document.getElementById('pCore0').setAttribute('stop-color', palette.core[0]);
   document.getElementById('pCore1').setAttribute('stop-color', palette.core[1]);
   document.getElementById('pCore2').setAttribute('stop-color', palette.core[2]);
-  // outer stops
   document.getElementById('pOut0').setAttribute('stop-color', palette.outer[0]);
   document.getElementById('pOut1').setAttribute('stop-color', palette.outer[1]);
   document.getElementById('pOut2').setAttribute('stop-color', palette.outer[2]);
-  // side stops
   document.getElementById('pSide0').setAttribute('stop-color', palette.side[0]);
   document.getElementById('pSide1').setAttribute('stop-color', palette.side[1]);
   document.getElementById('pSide2').setAttribute('stop-color', palette.side[2]);
-  // halo + inner glow ellipses
   document.getElementById('glowHalo').setAttribute('fill', palette.halo);
   document.getElementById('innerGlow').setAttribute('fill', palette.inner);
 }
-
 function switchTheme() {
   isPurple = !isPurple;
-
-  const themeBg   = document.getElementById('theme-bg');
-  const switchBtn = document.getElementById('switch-btn');
-  const dot       = document.getElementById('switch-dot');
-  const label     = document.getElementById('switch-label');
-  const bqText    = document.getElementById('bq-text');
+  const themeBg    = document.getElementById('theme-bg');
+  const switchBtn  = document.getElementById('switch-btn');
+  const dot        = document.getElementById('switch-dot');
+  const label      = document.getElementById('switch-label');
+  const bqText     = document.getElementById('bq-text');
   const tulipFloat = document.getElementById('tulip-float');
-
   if (isPurple) {
-    /* ── → PURPLE ── */
     themeBg.classList.add('purple');
     switchBtn.classList.add('purple-mode');
     dot.classList.add('purple');
     label.textContent = 'Switch ☀️';
     bqText.classList.add('purple');
-    blossomTheme = 'purple';
-    retargetBlossoms();
+    blossomTheme = 'purple'; retargetBlossoms();
     applyTulipColors(TULIP_PURPLE);
-    tulipFloat.classList.remove('petal-anim-blue');
-    tulipFloat.classList.add('petal-anim-purple');
+    tulipFloat.classList.replace('petal-anim-blue','petal-anim-purple');
   } else {
-    /* ── → SKY BLUE ── */
     themeBg.classList.remove('purple');
     switchBtn.classList.remove('purple-mode');
     dot.classList.remove('purple');
     label.textContent = 'Switch 🌙';
     bqText.classList.remove('purple');
-    blossomTheme = 'blue';
-    retargetBlossoms();
+    blossomTheme = 'blue'; retargetBlossoms();
     applyTulipColors(TULIP_BLUE);
-    tulipFloat.classList.remove('petal-anim-purple');
-    tulipFloat.classList.add('petal-anim-blue');
+    tulipFloat.classList.replace('petal-anim-purple','petal-anim-blue');
   }
 }
 
-function goNext() { alert('Next page coming soon! 🌷'); }
+/* ════════════ CONTINUE → PADLOCK ════════════ */
+function goNext() {
+  // Hide switch btn
+  document.getElementById('switch-btn').style.display = 'none';
+  // Show padlock overlay (blossoms keep running behind it)
+  const pgLock = document.getElementById('pg-lock');
+  pgLock.style.display = 'flex';
+  // Force reflow then fade in
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      pgLock.classList.add('in');
+    });
+  });
+}
+
+/* ════════════ PADLOCK / DIALS ════════════ */
+const CODE    = [0, 7, 2, 1]; // correct: 0721
+const vals    = [0, 0, 0, 0]; // current dial values
+let wrongCount = 0;
+
+const HINTS = [
+  'you know our code, mahal. 🤍',
+  "it's our birthdate. 💕",
+  'try to remember, mahal. 🌷',
+  'you can do it, think harder! ✨',
+  '...hint: zero, seven, two, one. 🫶',
+];
+
+function nudgeDial(idx, dir) {
+  vals[idx] = (vals[idx] + dir + 10) % 10;
+  const el = document.getElementById('d' + idx);
+  // Flip animation
+  el.classList.remove('flip-up','flip-down');
+  void el.offsetWidth; // reflow
+  el.classList.add(dir > 0 ? 'flip-up' : 'flip-down');
+  el.textContent = vals[idx];
+  // Remove class after animation
+  setTimeout(() => el.classList.remove('flip-up','flip-down'), 250);
+}
+
+function tryUnlock() {
+  const correct = vals[0] === CODE[0] && vals[1] === CODE[1] &&
+                  vals[2] === CODE[2] && vals[3] === CODE[3];
+  if (correct) {
+    unlockSuccess();
+  } else {
+    wrongCount++;
+    shakeHeart();
+    showHint(HINTS[Math.min(wrongCount - 1, HINTS.length - 1)]);
+  }
+}
+
+function shakeHeart() {
+  const hl = document.getElementById('heart-lock');
+  hl.classList.remove('shake');
+  void hl.offsetWidth;
+  hl.classList.add('shake');
+}
+
+function showHint(text) {
+  const hintEl = document.getElementById('lock-hint');
+  hintEl.classList.remove('show');
+  void hintEl.offsetWidth;
+  hintEl.textContent = text;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => { hintEl.classList.add('show'); });
+  });
+}
+
+function unlockSuccess() {
+  // Flash the lock card, then transition to secret page
+  const pgLock   = document.getElementById('pg-lock');
+  const pgSecret = document.getElementById('pg-secret');
+  const pgBouquet = document.getElementById('pg-bouquet');
+
+  // Quick success flash effect
+  const hintEl = document.getElementById('lock-hint');
+  hintEl.style.color = '#a0ffcc';
+  hintEl.style.textShadow = '0 0 20px rgba(100,255,180,0.8)';
+  hintEl.textContent = '✦ you remembered. ✦';
+  hintEl.classList.add('show');
+
+  setTimeout(() => {
+    // Fade out the lock overlay
+    pgLock.classList.remove('in');
+    // Fade out bouquet
+    pgBouquet.classList.replace('in','out');
+    setTimeout(() => {
+      pgLock.style.display = 'none';
+      pgBouquet.style.display = 'none';
+      pgSecret.classList.replace('out','in');
+    }, 900);
+  }, 1100);
+}
+
 </script>
 </body>
 </html>
