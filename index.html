@@ -9,7 +9,6 @@
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans-serif; }
 
-/* ── Mobile-first base ── */
 :root {
   --tulip-size: min(220px, 58vw);
   --btn-pad-v: .75rem;
@@ -37,7 +36,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 }
 .wc-blob { position:absolute; border-radius:50%; filter:blur(70px); pointer-events:none; }
 
-/* ══ PAGE 1 LOADING ══ */
+/* PAGE 1 LOADING */
 #pg-load { background:#09071a; z-index:100; gap:1.4rem; }
 .load-stars { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
 .lstar { position:absolute; background:white; border-radius:50%; animation:starTwinkle var(--d,3s) ease-in-out infinite; }
@@ -50,7 +49,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 .load-bar { height:100%; width:0%; background:linear-gradient(90deg,#9b7fd4,#7ec8f0); border-radius:4px; transition:width .1s linear; }
 .load-sub { font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.28); z-index:2; }
 
-/* ══ PAGE 2 STITCH ══ */
+/* PAGE 2 STITCH */
 #pg-stitch { gap:0; padding: 1rem; }
 .stitch-poem { font-family:'Playfair Display',serif; font-size:clamp(.9rem,3.5vw,1.35rem); color:#6a4a7a; text-align:center; letter-spacing:.04em; line-height:1.7; z-index:2; margin-bottom:.9rem; animation:poemFloat 4s ease-in-out infinite; }
 .stitch-poem em { color:#5a90c0; font-style:italic; }
@@ -84,7 +83,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   transition:font-size .3s,padding .3s,opacity .3s,left .3s cubic-bezier(.34,1.5,.64,1),top .3s cubic-bezier(.34,1.5,.64,1);
 }
 
-/* ══ PAGE 3 TULIP ══ */
+/* PAGE 3 TULIP */
 #pg-bouquet { gap:.7rem; padding:.5rem; }
 #theme-bg { position:absolute; inset:0; z-index:0; background: radial-gradient(ellipse 80% 60% at 15% 10%, rgba(150,210,245,.40) 0%, transparent 65%), radial-gradient(ellipse 65% 55% at 85% 18%, rgba(120,190,245,.28) 0%, transparent 60%), radial-gradient(ellipse 75% 45% at 50% 88%, rgba(155,215,248,.25) 0%, transparent 60%), linear-gradient(160deg,#e4f6ff 0%,#f0faff 40%,#d8eefb 70%,#c5e5f8 100%); transition:background 1.2s ease; }
 #theme-bg.purple { background: radial-gradient(ellipse 80% 60% at 15% 10%, rgba(150,60,230,.42) 0%, transparent 65%), radial-gradient(ellipse 65% 55% at 85% 18%, rgba(110,40,210,.30) 0%, transparent 60%), radial-gradient(ellipse 75% 45% at 50% 88%, rgba(90,30,180,.38) 0%, transparent 60%), linear-gradient(160deg,#18062c 0%,#270d44 38%,#1c0836 65%,#100524 100%); }
@@ -102,7 +101,6 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 .petal-anim-blue .glow-petal-slow { animation:petalGlowBlueSlow 3.4s ease-in-out infinite; }
 .petal-anim-purple .glow-petal { animation:petalGlowPurple 2.4s ease-in-out infinite; }
 .petal-anim-purple .glow-petal-slow { animation:petalGlowPurpleSlow 3.4s ease-in-out infinite; }
-/* Tulip SVG scales to viewport */
 #tulip-svg {
   width: var(--tulip-size);
   height: auto;
@@ -139,7 +137,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 #switch-dot { width:8px; height:8px; border-radius:50%; background:linear-gradient(135deg,#6ab8e8,#90d0ff); flex-shrink:0; transition:background .8s ease,box-shadow .8s ease; }
 #switch-dot.purple { background:linear-gradient(135deg,#9040e0,#c060ff); box-shadow:0 0 8px rgba(180,70,255,.85); }
 
-/* ══ PAGE 4 PADLOCK ══ */
+/* PAGE 4 PADLOCK */
 #pg-lock { position:fixed; inset:0; z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0; opacity:0; pointer-events:none; transition:opacity 0.7s ease; }
 #pg-lock.in { opacity:1; pointer-events:all; }
 #lock-blur-overlay { position:absolute; inset:0; backdrop-filter:blur(18px) saturate(1.2); -webkit-backdrop-filter:blur(18px) saturate(1.2); background:rgba(10,5,30,0.45); z-index:0; }
@@ -150,7 +148,6 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 .lock-title em { color:#b8e8ff; font-style:italic; }
 #lock-hint { font-family:'Playfair Display',serif; font-size:clamp(.78rem,3vw,1rem); color:#f0c8ff; font-style:italic; text-align:center; min-height:1.4em; letter-spacing:0.04em; opacity:0; transform:translateY(6px); transition:opacity 0.5s ease,transform 0.5s ease; text-shadow:0 0 14px rgba(200,100,255,0.6); }
 #lock-hint.show { opacity:1; transform:translateY(0); }
-/* Heart lock scales to fit phone */
 #heart-lock {
   position:relative;
   width: min(260px, 78vw);
@@ -173,7 +170,6 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   font-size:0.72rem; color:rgba(255,255,255,0.7);
   transition:background 0.15s,transform 0.12s;
   user-select:none; -webkit-tap-highlight-color:transparent;
-  /* larger touch target */
   touch-action:manipulation;
 }
 .dial-btn:hover { background:rgba(255,255,255,0.22); }
@@ -204,7 +200,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 @keyframes wrongShake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-10px);} 40%{transform:translateX(10px);} 60%{transform:translateX(-8px);} 80%{transform:translateX(8px);} }
 #heart-lock.shake { animation:wrongShake 0.45s ease, lockFloat 3.8s ease-in-out infinite 0.45s; }
 
-/* ══ PAGE 5 FINAL ══ */
+/* PAGE 5 FINAL */
 #pg-final { background:#f0e8df; z-index:300; overflow:hidden; }
 #pg-final::before {
   content:''; position:absolute; inset:0; z-index:0;
@@ -226,14 +222,12 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 .click-label { font-family:'Playfair Display',serif; font-size:clamp(.82rem,3.5vw,.88rem); letter-spacing:.06em; color:#7a3038; font-style:italic; opacity:.78; white-space:nowrap; border-bottom:1px solid rgba(120,48,56,.25); padding-bottom:1px; user-select:none; }
 #phase2-canvas { position:absolute; inset:0; pointer-events:none; z-index:4; opacity:0; transition:opacity 0.5s ease; }
 #phase2-canvas.show { opacity:1; }
-
-/* ── Prevent horizontal scroll on final page during tree animation ── */
 #pg-final, #phase2-canvas { overflow:hidden; }
 </style>
 </head>
 <body>
 
-<!-- ══ PAGE 1: LOADING ══ -->
+<!-- PAGE 1: LOADING -->
 <div class="page in" id="pg-load">
   <div class="load-stars" id="load-stars"></div>
   <canvas id="petal-canvas-load"></canvas>
@@ -242,7 +236,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   <div class="load-sub">preparing something special…</div>
 </div>
 
-<!-- ══ PAGE 2: STITCH + YES/NO ══ -->
+<!-- PAGE 2: STITCH + YES/NO -->
 <div class="page out" id="pg-stitch">
   <div class="wc-bg">
     <div class="wc-blob" style="width:500px;height:400px;background:#c8a8e8;top:-120px;left:-120px;opacity:.18;"></div>
@@ -259,7 +253,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   </div>
 </div>
 
-<!-- ══ PAGE 3: TULIP IN VASE ══ -->
+<!-- PAGE 3: TULIP IN VASE -->
 <div class="page out" id="pg-bouquet">
   <div id="theme-bg"></div>
   <canvas id="blossom-canvas"></canvas>
@@ -345,13 +339,13 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   <button id="btn-next" onclick="goNext()">Continue →</button>
 </div>
 
-<!-- ══ SWITCH BUTTON ══ -->
+<!-- SWITCH BUTTON -->
 <button id="switch-btn" onclick="switchTheme()">
   <span id="switch-dot"></span>
   <span id="switch-label">Switch 🌙</span>
 </button>
 
-<!-- ══ PAGE 4: PADLOCK OVERLAY ══ -->
+<!-- PAGE 4: PADLOCK OVERLAY -->
 <div id="pg-lock">
   <div id="lock-blur-overlay"></div>
   <div id="lock-card">
@@ -416,7 +410,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   </div>
 </div>
 
-<!-- ══ PAGE 5: FINAL ══ -->
+<!-- PAGE 5: FINAL -->
 <div class="page out" id="pg-final">
   <canvas id="final-canvas"></canvas>
   <canvas id="phase2-canvas"></canvas>
@@ -447,19 +441,15 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 
 <script>
 
-/* ════════════════════════════════════════
-   MOBILE SCALE HELPER
-   Returns a factor < 1 on small phones so
-   the tree / branches stay within the screen.
-════════════════════════════════════════ */
+/* ── MOBILE SCALE HELPER ──
+   FIX: lowered divisor to 560 so the tree scales down more on phones.
+   A 390px-wide phone now gets mf ≈ 0.696 instead of 0.929.
+*/
 function mobileFactor() {
-  // Reference design width ~420px. Scale linearly below that.
-  return Math.min(1, window.innerWidth / 420);
+  return Math.min(1, window.innerWidth / 560);
 }
 
-/* ════════════════════════════════════════
-   STARS
-════════════════════════════════════════ */
+/* ── STARS ── */
 const starsEl = document.getElementById('load-stars');
 for (let i=0;i<100;i++){
   const s=document.createElement('div'); s.className='lstar';
@@ -468,9 +458,7 @@ for (let i=0;i<100;i++){
   starsEl.appendChild(s);
 }
 
-/* ════════════════════════════════════════
-   LOADING PETALS
-════════════════════════════════════════ */
+/* ── LOADING PETALS ── */
 const lCanvas=document.getElementById('petal-canvas-load'),lCtx=lCanvas.getContext('2d');
 let lPetals=[],lRaf;
 function resizeLC(){lCanvas.width=window.innerWidth;lCanvas.height=window.innerHeight;}
@@ -483,29 +471,21 @@ let lastLS=0;
 function animLP(ts){lRaf=requestAnimationFrame(animLP);lCtx.clearRect(0,0,lCanvas.width,lCanvas.height);if(ts-lastLS>55){spawnLP();lastLS=ts;}lPetals=lPetals.filter(p=>p.y<lCanvas.height+36);lPetals.forEach(p=>{p.age++;p.x+=p.vx+Math.sin(p.age*p.sway+p.phase)*.75;p.y+=p.vy;p.rot+=p.vr;drawLP(p);});}
 requestAnimationFrame(animLP);
 
-/* ════════════════════════════════════════
-   LOADING BAR
-════════════════════════════════════════ */
+/* ── LOADING BAR ── */
 const barEl=document.getElementById('load-bar');
 let prog=0;
 const loadInt=setInterval(()=>{prog=Math.min(100,prog+(prog<72?Math.random()*3+1:Math.random()*1.4+.3));barEl.style.width=prog+'%';if(prog>=100){clearInterval(loadInt);setTimeout(finishLoad,550);}},80);
 function finishLoad(){cancelAnimationFrame(lRaf);document.getElementById('pg-load').classList.replace('in','out');setTimeout(()=>{document.getElementById('pg-load').style.display='none';document.getElementById('pg-stitch').classList.replace('out','in');},900);}
 
-/* ════════════════════════════════════════
-   NO BUTTON
-════════════════════════════════════════ */
+/* ── NO BUTTON ── */
 let noClicks=0,noScale=1.0;
 const btnNo=document.getElementById('btn-no');
 function clickNo(){noClicks++;if(noClicks>5){noScale=Math.max(0.28,noScale-.09);btnNo.style.fontSize=noScale+'rem';btnNo.style.padding=`${.6*noScale}rem ${1.4*noScale}rem`;btnNo.style.opacity=Math.max(0.3,noScale).toString();}if(noClicks===1){const r=btnNo.getBoundingClientRect();btnNo.style.position='fixed';btnNo.style.left=r.left+'px';btnNo.style.top=r.top+'px';btnNo.style.margin='0';}const m=60;btnNo.style.left=(m+Math.random()*(window.innerWidth-m*2))+'px';btnNo.style.top=(m+Math.random()*(window.innerHeight-m*2))+'px';}
 
-/* ════════════════════════════════════════
-   YES BUTTON
-════════════════════════════════════════ */
+/* ── YES BUTTON ── */
 function clickYes(){document.getElementById('pg-stitch').classList.replace('in','out');setTimeout(()=>{document.getElementById('pg-stitch').style.display='none';document.getElementById('pg-bouquet').classList.replace('out','in');startBlossoms();setTimeout(showTulip,400);setTimeout(()=>{document.getElementById('switch-btn').style.display='flex';},2900);},900);}
 
-/* ════════════════════════════════════════
-   BLOSSOMS
-════════════════════════════════════════ */
+/* ── BLOSSOMS ── */
 const bCanvas=document.getElementById('blossom-canvas'),bCtx=bCanvas.getContext('2d');
 let blossoms=[],bRaf,bRunning=false,blossomTheme='blue';
 function resizeBC(){bCanvas.width=window.innerWidth;bCanvas.height=window.innerHeight;}
@@ -520,23 +500,17 @@ let lastBS=0;
 function animBlossoms(ts){bRaf=requestAnimationFrame(animBlossoms);bCtx.clearRect(0,0,bCanvas.width,bCanvas.height);if(ts-lastBS>90){spawnBlossom();lastBS=ts;}blossoms=blossoms.filter(p=>p.y<bCanvas.height+30);blossoms.forEach(p=>{p.age++;p.x+=p.vx+Math.sin(p.age*p.sway+p.phase)*.55;p.y+=p.vy;p.rot+=p.vr;drawBlossom(p);});}
 function startBlossoms(){if(bRunning)return;bRunning=true;requestAnimationFrame(animBlossoms);}
 
-/* ════════════════════════════════════════
-   TULIP REVEAL
-════════════════════════════════════════ */
+/* ── TULIP REVEAL ── */
 function showTulip(){setTimeout(()=>{document.getElementById('tulip-scene').classList.add('show');},200);setTimeout(()=>{document.getElementById('tulip-float').classList.add('floating');},1300);setTimeout(()=>{document.getElementById('bq-text').classList.add('show');},1800);setTimeout(()=>{document.getElementById('btn-next').classList.add('show');},2800);}
 
-/* ════════════════════════════════════════
-   THEME SWITCH
-════════════════════════════════════════ */
+/* ── THEME SWITCH ── */
 let isPurple=false;
 const TULIP_BLUE={core:['#d0f0ff','#90ccf0','#60a8d8'],outer:['#b8e4f8','#78b8e0','#5898c8'],side:['#a8d8f0','#68a8d0','#4888b8'],halo:'#88ccf0',inner:'#c8eeff'};
 const TULIP_PURPLE={core:['#f0d8ff','#c070f0','#9040d0'],outer:['#e8c8ff','#b060e0','#8030c0'],side:['#d8b8f8','#a050d0','#7020b0'],halo:'#c060f0',inner:'#e0b8ff'};
 function applyTulipColors(p){document.getElementById('pCore0').setAttribute('stop-color',p.core[0]);document.getElementById('pCore1').setAttribute('stop-color',p.core[1]);document.getElementById('pCore2').setAttribute('stop-color',p.core[2]);document.getElementById('pOut0').setAttribute('stop-color',p.outer[0]);document.getElementById('pOut1').setAttribute('stop-color',p.outer[1]);document.getElementById('pOut2').setAttribute('stop-color',p.outer[2]);document.getElementById('pSide0').setAttribute('stop-color',p.side[0]);document.getElementById('pSide1').setAttribute('stop-color',p.side[1]);document.getElementById('pSide2').setAttribute('stop-color',p.side[2]);document.getElementById('glowHalo').setAttribute('fill',p.halo);document.getElementById('innerGlow').setAttribute('fill',p.inner);}
 function switchTheme(){isPurple=!isPurple;const themeBg=document.getElementById('theme-bg'),switchBtn=document.getElementById('switch-btn'),dot=document.getElementById('switch-dot'),label=document.getElementById('switch-label'),bqText=document.getElementById('bq-text'),tulipFloat=document.getElementById('tulip-float');if(isPurple){themeBg.classList.add('purple');switchBtn.classList.add('purple-mode');dot.classList.add('purple');label.textContent='Switch ☀️';bqText.classList.add('purple');blossomTheme='purple';retargetBlossoms();applyTulipColors(TULIP_PURPLE);tulipFloat.classList.replace('petal-anim-blue','petal-anim-purple');}else{themeBg.classList.remove('purple');switchBtn.classList.remove('purple-mode');dot.classList.remove('purple');label.textContent='Switch 🌙';bqText.classList.remove('purple');blossomTheme='blue';retargetBlossoms();applyTulipColors(TULIP_BLUE);tulipFloat.classList.replace('petal-anim-purple','petal-anim-blue');}}
 
-/* ════════════════════════════════════════
-   PADLOCK
-════════════════════════════════════════ */
+/* ── PADLOCK ── */
 function goNext(){document.getElementById('switch-btn').style.display='none';const pgLock=document.getElementById('pg-lock');pgLock.style.display='flex';requestAnimationFrame(()=>requestAnimationFrame(()=>pgLock.classList.add('in')));}
 const CODE=[0,7,2,1],vals=[0,0,0,0];
 let wrongCount=0;
@@ -567,9 +541,7 @@ function unlockSuccess(){
   },1100);
 }
 
-/* ════════════════════════════════════════
-   FINAL PAGE — DUST PARTICLES
-════════════════════════════════════════ */
+/* ── FINAL PAGE — DUST PARTICLES ── */
 const fCanvas=document.getElementById('final-canvas');
 const fCtx=fCanvas.getContext('2d');
 let fDust=[];
@@ -579,9 +551,7 @@ const DUST_COLS=[[180,150,140],[160,140,170],[140,160,180],[190,160,150],[170,15
 function spawnDust(){const c=DUST_COLS[Math.floor(Math.random()*DUST_COLS.length)];fDust.push({x:Math.random()*fCanvas.width,y:Math.random()*fCanvas.height,vx:(Math.random()-0.5)*0.18,vy:-Math.random()*0.14-0.04,r:Math.random()*1.6+0.5,alpha:Math.random()*0.18+0.04,c,life:0,maxLife:280+Math.random()*220,sway:Math.random()*0.012+0.004,phase:Math.random()*Math.PI*2});}
 function animDust(){requestAnimationFrame(animDust);fCtx.clearRect(0,0,fCanvas.width,fCanvas.height);while(fDust.length<50)spawnDust();fDust=fDust.filter(d=>d.life<d.maxLife);fDust.forEach(d=>{d.life++;d.x+=d.vx+Math.sin(d.life*d.sway+d.phase)*0.22;d.y+=d.vy;const a=d.alpha*Math.sin((d.life/d.maxLife)*Math.PI);fCtx.save();fCtx.globalAlpha=a;fCtx.fillStyle=`rgb(${d.c[0]},${d.c[1]},${d.c[2]})`;fCtx.beginPath();fCtx.arc(d.x,d.y,d.r,0,Math.PI*2);fCtx.fill();fCtx.restore();});}
 
-/* ════════════════════════════════════════
-   PHASE 2 — SEED FALL + GROUND LINE
-════════════════════════════════════════ */
+/* ── PHASE 2 — SEED FALL + GROUND LINE ── */
 const p2Canvas=document.getElementById('phase2-canvas');
 const p2Ctx=p2Canvas.getContext('2d');
 function resizeP2(){p2Canvas.width=window.innerWidth;p2Canvas.height=window.innerHeight;}
@@ -595,9 +565,6 @@ function heartClicked(){
   const heartBtn=document.getElementById('heart-btn');
   const wrap=document.getElementById('heart-btn-wrap');
   const label=document.querySelector('.click-label');
-  const rect=heartBtn.getBoundingClientRect();
-  const heartCX=rect.left+rect.width/2;
-  const heartCY=rect.top+rect.height/2;
   group.style.animation='none';
   heartBtn.style.transformOrigin='center center';
   heartBtn.style.transition='transform 0.52s cubic-bezier(0.4,0,0.2,1), opacity 0.52s ease';
@@ -609,17 +576,19 @@ function heartClicked(){
     wrap.style.display='none';
     resizeP2();
     p2Canvas.classList.add('show');
-    runSeedAnimation(heartCX,heartCY);
+    /* FIX: always use canvas center so seed, line, and tree root are perfectly aligned */
+    const cx = p2Canvas.width / 2;
+    const startY = p2Canvas.height * 0.42;
+    runSeedAnimation(cx, startY);
   },560);
 }
 
-function runSeedAnimation(heartCX,heartCY){
+function runSeedAnimation(cx, startY){
   const W=p2Canvas.width;
   const H=p2Canvas.height;
-  const cx=heartCX;
-  const startY=heartCY;
   const seedR=5;
-  const lineY=H*0.915;
+  /* FIX: ground line position locked here and passed through to tree — never recalculated */
+  const lineY=H*0.82;
   const landY=lineY-seedR;
   const lineX1=W*0.12;
   const lineX2=W*0.88;
@@ -687,24 +656,25 @@ function runSeedAnimation(heartCX,heartCY){
   requestAnimationFrame(draw);
 }
 
-/* ════════════════════════════════════════
-   INIT FINAL PAGE
-════════════════════════════════════════ */
+/* ── INIT FINAL PAGE ── */
 function initFinalPage(){resizeFinal();requestAnimationFrame(animDust);}
 
-/* ============================================
+/* ══════════════════════════════════════════
    PHASE 3 – TREE GROWTH  (mobile-aware)
-   All absolute pixel offsets are multiplied
-   by `mf` (mobileFactor) so the tree fits
-   within narrow viewports.
-============================================ */
+   FIX: mobileFactor divisor lowered to 560,
+   tree height capped at 55% of screen,
+   branch offsets trimmed so nothing clips.
+══════════════════════════════════════════ */
 function startTreeGrowth(rootX, groundY) {
   const W  = p2Canvas.width;
   const H  = p2Canvas.height;
-  const mf = mobileFactor();   // ← scale factor; 1 on desktop, <1 on phones
+  const mf = mobileFactor();
 
-  /* ── Tree measurements ── */
-  const TREE_H        = H * 0.68;
+  /* FIX: cap tree height so it never goes above the visible screen area.
+     On a 844px-tall phone (iPhone 14) groundY ≈ 692px, so
+     max tree top = groundY - TREE_H must be > ~60px (status bar clearance).
+     Using 0.52 * H gives ~438px tree on that device, top at ~254px. */
+  const TREE_H        = Math.min(H * 0.52, groundY - H * 0.12);
   const TRUNK_DUR     = 2800;
   const BRANCH_UNLOCK = 0.62;
 
@@ -712,119 +682,118 @@ function startTreeGrowth(rootX, groundY) {
   const TEAL_DARK = '#267a5a';
   const TEAL_LITE = '#38b884';
 
-  /* ── Trunk silhouette — x offsets scaled by mf ── */
+  const s = mf;
+
   const TL = [
-    [-34*mf,    0              ],
-    [-36*mf,   -TREE_H * 0.06 ],
-    [-33*mf,   -TREE_H * 0.13 ],
-    [-28*mf,   -TREE_H * 0.22 ],
-    [-22*mf,   -TREE_H * 0.33 ],
-    [-16*mf,   -TREE_H * 0.44 ],
-    [-10*mf,   -TREE_H * 0.55 ],
-    [ -6*mf,   -TREE_H * 0.65 ],
-    [ -4*mf,   -TREE_H * 0.75 ],
-    [ -2*mf,   -TREE_H * 0.86 ],
-    [ -1*mf,   -TREE_H * 0.93 ],
-    [  0,      -TREE_H * 1.00 ],
+    [-28*s,    0              ],
+    [-30*s,   -TREE_H * 0.06 ],
+    [-27*s,   -TREE_H * 0.13 ],
+    [-22*s,   -TREE_H * 0.22 ],
+    [-17*s,   -TREE_H * 0.33 ],
+    [-12*s,   -TREE_H * 0.44 ],
+    [ -8*s,   -TREE_H * 0.55 ],
+    [ -5*s,   -TREE_H * 0.65 ],
+    [ -3*s,   -TREE_H * 0.75 ],
+    [ -2*s,   -TREE_H * 0.86 ],
+    [ -1*s,   -TREE_H * 0.93 ],
+    [  0,     -TREE_H * 1.00 ],
   ];
   const TR = [
-    [ 34*mf,    0              ],
-    [ 36*mf,   -TREE_H * 0.06 ],
-    [ 31*mf,   -TREE_H * 0.13 ],
-    [ 26*mf,   -TREE_H * 0.22 ],
-    [ 19*mf,   -TREE_H * 0.33 ],
-    [ 14*mf,   -TREE_H * 0.44 ],
-    [  9*mf,   -TREE_H * 0.55 ],
-    [  6*mf,   -TREE_H * 0.65 ],
-    [  4*mf,   -TREE_H * 0.75 ],
-    [  2*mf,   -TREE_H * 0.86 ],
-    [  1*mf,   -TREE_H * 0.93 ],
-    [  0,      -TREE_H * 1.00 ],
+    [ 28*s,    0              ],
+    [ 30*s,   -TREE_H * 0.06 ],
+    [ 25*s,   -TREE_H * 0.13 ],
+    [ 20*s,   -TREE_H * 0.22 ],
+    [ 15*s,   -TREE_H * 0.33 ],
+    [ 11*s,   -TREE_H * 0.44 ],
+    [  7*s,   -TREE_H * 0.55 ],
+    [  5*s,   -TREE_H * 0.65 ],
+    [  3*s,   -TREE_H * 0.75 ],
+    [  2*s,   -TREE_H * 0.86 ],
+    [  1*s,   -TREE_H * 0.93 ],
+    [  0,     -TREE_H * 1.00 ],
   ];
 
   const forkY = groundY - TREE_H * 0.65;
 
-  /* ── Branches — all x/y pixel offsets scaled by mf ── */
-  const s = mf; // shorthand
+  /* FIX: branch x extents trimmed so widest branch ≤ ~42% of canvas width from center */
   const BRANCHES = [
     {
-      x0:rootX-8*s,     y0:forkY+TREE_H*0.02,
-      cp1x:rootX-70*s,  cp1y:forkY+TREE_H*0.06,
-      cp2x:rootX-145*s, cp2y:forkY+TREE_H*0.10,
-      x1:rootX-188*s,   y1:forkY+TREE_H*0.11,
-      w0:12*s, w1:1.5*s, delay:0, dur:1100,
+      x0:rootX-6*s,     y0:forkY+TREE_H*0.02,
+      cp1x:rootX-55*s,  cp1y:forkY+TREE_H*0.06,
+      cp2x:rootX-110*s, cp2y:forkY+TREE_H*0.10,
+      x1:rootX-138*s,   y1:forkY+TREE_H*0.11,
+      w0:10*s, w1:1.5*s, delay:0, dur:1100,
       twigs:[
-        {t:0.35,ex:-60*s,ey:-TREE_H*0.06,cx:-28*s,cy:-TREE_H*0.10,w0:4.5*s,w1:0.7*s,delay:300,dur:480},
-        {t:0.55,ex:-45*s,ey:-TREE_H*0.09,cx:-20*s,cy:-TREE_H*0.15,w0:3.5*s,w1:0.6*s,delay:450,dur:420},
-        {t:0.74,ex:-30*s,ey:-TREE_H*0.07,cx:-12*s,cy:-TREE_H*0.13,w0:2.8*s,w1:0.5*s,delay:580,dur:370},
-        {t:0.90,ex:-18*s,ey:-TREE_H*0.05,cx:-7*s, cy:-TREE_H*0.09,w0:2*s,  w1:0.4*s,delay:700,dur:320},
+        {t:0.35,ex:-48*s,ey:-TREE_H*0.06,cx:-22*s,cy:-TREE_H*0.10,w0:4*s,w1:0.7*s,delay:300,dur:480},
+        {t:0.55,ex:-36*s,ey:-TREE_H*0.09,cx:-16*s,cy:-TREE_H*0.15,w0:3*s,w1:0.6*s,delay:450,dur:420},
+        {t:0.74,ex:-24*s,ey:-TREE_H*0.07,cx:-10*s,cy:-TREE_H*0.13,w0:2.5*s,w1:0.5*s,delay:580,dur:370},
+        {t:0.90,ex:-14*s,ey:-TREE_H*0.05,cx:-5*s, cy:-TREE_H*0.09,w0:1.8*s,w1:0.4*s,delay:700,dur:320},
       ]
     },
     {
-      x0:rootX+7*s,     y0:forkY+TREE_H*0.01,
-      cp1x:rootX+65*s,  cp1y:forkY-TREE_H*0.02,
-      cp2x:rootX+125*s, cp2y:forkY+TREE_H*0.00,
-      x1:rootX+158*s,   y1:forkY-TREE_H*0.02,
-      w0:12*s, w1:1.5*s, delay:80, dur:1050,
+      x0:rootX+5*s,     y0:forkY+TREE_H*0.01,
+      cp1x:rootX+50*s,  cp1y:forkY-TREE_H*0.02,
+      cp2x:rootX+95*s,  cp2y:forkY+TREE_H*0.00,
+      x1:rootX+118*s,   y1:forkY-TREE_H*0.02,
+      w0:10*s, w1:1.5*s, delay:80, dur:1050,
       twigs:[
-        {t:0.38,ex:48*s, ey:-TREE_H*0.07,cx:22*s,cy:-TREE_H*0.12,w0:4.5*s,w1:0.7*s,delay:320,dur:460},
-        {t:0.58,ex:36*s, ey:-TREE_H*0.09,cx:16*s,cy:-TREE_H*0.16,w0:3.5*s,w1:0.6*s,delay:470,dur:410},
-        {t:0.78,ex:22*s, ey:-TREE_H*0.07,cx:9*s, cy:-TREE_H*0.12,w0:2.5*s,w1:0.5*s,delay:600,dur:360},
+        {t:0.38,ex:38*s, ey:-TREE_H*0.07,cx:18*s,cy:-TREE_H*0.12,w0:4*s,w1:0.7*s,delay:320,dur:460},
+        {t:0.58,ex:28*s, ey:-TREE_H*0.09,cx:12*s,cy:-TREE_H*0.16,w0:3*s,w1:0.6*s,delay:470,dur:410},
+        {t:0.78,ex:18*s, ey:-TREE_H*0.07,cx:7*s, cy:-TREE_H*0.12,w0:2*s,w1:0.5*s,delay:600,dur:360},
       ]
     },
     {
-      x0:rootX-5*s,    y0:forkY-TREE_H*0.04,
-      cp1x:rootX-50*s, cp1y:forkY-TREE_H*0.17,
-      cp2x:rootX-90*s, cp2y:forkY-TREE_H*0.28,
-      x1:rootX-115*s,  y1:forkY-TREE_H*0.36,
-      w0:9*s, w1:1.2*s, delay:160, dur:950,
+      x0:rootX-4*s,    y0:forkY-TREE_H*0.04,
+      cp1x:rootX-38*s, cp1y:forkY-TREE_H*0.17,
+      cp2x:rootX-68*s, cp2y:forkY-TREE_H*0.28,
+      x1:rootX-88*s,   y1:forkY-TREE_H*0.36,
+      w0:8*s, w1:1.2*s, delay:160, dur:950,
       twigs:[
-        {t:0.45,ex:-36*s,ey:-TREE_H*0.11,cx:-16*s,cy:-TREE_H*0.19,w0:3.5*s,w1:0.6*s,delay:360,dur:430},
-        {t:0.70,ex:-26*s,ey:-TREE_H*0.14,cx:-10*s,cy:-TREE_H*0.23,w0:2.8*s,w1:0.5*s,delay:510,dur:380},
-        {t:0.88,ex:-16*s,ey:-TREE_H*0.10,cx:-6*s, cy:-TREE_H*0.18,w0:2*s,  w1:0.4*s,delay:640,dur:330},
+        {t:0.45,ex:-28*s,ey:-TREE_H*0.11,cx:-12*s,cy:-TREE_H*0.19,w0:3*s,w1:0.6*s,delay:360,dur:430},
+        {t:0.70,ex:-20*s,ey:-TREE_H*0.14,cx:-8*s, cy:-TREE_H*0.23,w0:2.5*s,w1:0.5*s,delay:510,dur:380},
+        {t:0.88,ex:-12*s,ey:-TREE_H*0.10,cx:-5*s, cy:-TREE_H*0.18,w0:1.8*s,w1:0.4*s,delay:640,dur:330},
       ]
     },
     {
-      x0:rootX+5*s,    y0:forkY-TREE_H*0.04,
-      cp1x:rootX+46*s, cp1y:forkY-TREE_H*0.18,
-      cp2x:rootX+82*s, cp2y:forkY-TREE_H*0.29,
-      x1:rootX+102*s,  y1:forkY-TREE_H*0.37,
-      w0:9*s, w1:1.2*s, delay:220, dur:920,
+      x0:rootX+4*s,    y0:forkY-TREE_H*0.04,
+      cp1x:rootX+36*s, cp1y:forkY-TREE_H*0.18,
+      cp2x:rootX+64*s, cp2y:forkY-TREE_H*0.29,
+      x1:rootX+80*s,   y1:forkY-TREE_H*0.37,
+      w0:8*s, w1:1.2*s, delay:220, dur:920,
       twigs:[
-        {t:0.44,ex:32*s, ey:-TREE_H*0.11,cx:14*s,cy:-TREE_H*0.19,w0:3.5*s,w1:0.6*s,delay:350,dur:420},
-        {t:0.68,ex:22*s, ey:-TREE_H*0.14,cx:8*s, cy:-TREE_H*0.23,w0:2.8*s,w1:0.5*s,delay:500,dur:370},
-        {t:0.86,ex:14*s, ey:-TREE_H*0.10,cx:5*s, cy:-TREE_H*0.17,w0:2*s,  w1:0.4*s,delay:630,dur:320},
+        {t:0.44,ex:26*s, ey:-TREE_H*0.11,cx:11*s,cy:-TREE_H*0.19,w0:3*s,w1:0.6*s,delay:350,dur:420},
+        {t:0.68,ex:18*s, ey:-TREE_H*0.14,cx:6*s, cy:-TREE_H*0.23,w0:2.5*s,w1:0.5*s,delay:500,dur:370},
+        {t:0.86,ex:11*s, ey:-TREE_H*0.10,cx:4*s, cy:-TREE_H*0.17,w0:1.8*s,w1:0.4*s,delay:630,dur:320},
       ]
     },
     {
-      x0:rootX,      y0:forkY,
-      cp1x:rootX+5*s,  cp1y:forkY-TREE_H*0.14,
-      cp2x:rootX+8*s,  cp2y:forkY-TREE_H*0.26,
-      x1:rootX+6*s,    y1:forkY-TREE_H*0.40,
-      w0:8*s, w1:0.8*s, delay:0, dur:1300,
+      x0:rootX,        y0:forkY,
+      cp1x:rootX+4*s,  cp1y:forkY-TREE_H*0.14,
+      cp2x:rootX+6*s,  cp2y:forkY-TREE_H*0.26,
+      x1:rootX+5*s,    y1:forkY-TREE_H*0.40,
+      w0:7*s, w1:0.8*s, delay:0, dur:1300,
       twigs:[
-        {t:0.60,ex:-22*s,ey:-TREE_H*0.10,cx:-10*s,cy:-TREE_H*0.17,w0:3*s,  w1:0.5*s,delay:520,dur:380},
-        {t:0.78,ex:-14*s,ey:-TREE_H*0.08,cx:-5*s, cy:-TREE_H*0.14,w0:2*s,  w1:0.4*s,delay:660,dur:320},
-        {t:0.90,ex:10*s, ey:-TREE_H*0.07,cx:4*s,  cy:-TREE_H*0.12,w0:2*s,  w1:0.4*s,delay:740,dur:300},
+        {t:0.60,ex:-18*s,ey:-TREE_H*0.10,cx:-8*s, cy:-TREE_H*0.17,w0:2.5*s,w1:0.5*s,delay:520,dur:380},
+        {t:0.78,ex:-11*s,ey:-TREE_H*0.08,cx:-4*s, cy:-TREE_H*0.14,w0:1.8*s,w1:0.4*s,delay:660,dur:320},
+        {t:0.90,ex:8*s,  ey:-TREE_H*0.07,cx:3*s,  cy:-TREE_H*0.12,w0:1.8*s,w1:0.4*s,delay:740,dur:300},
       ]
     },
     {
-      x0:rootX-18*s,   y0:groundY-TREE_H*0.45,
-      cp1x:rootX-46*s, cp1y:groundY-TREE_H*0.48,
-      cp2x:rootX-62*s, cp2y:groundY-TREE_H*0.47,
-      x1:rootX-68*s,   y1:groundY-TREE_H*0.46,
-      w0:6*s, w1:1*s, delay:280, dur:580, twigs:[]
+      x0:rootX-14*s,   y0:groundY-TREE_H*0.45,
+      cp1x:rootX-36*s, cp1y:groundY-TREE_H*0.48,
+      cp2x:rootX-50*s, cp2y:groundY-TREE_H*0.47,
+      x1:rootX-55*s,   y1:groundY-TREE_H*0.46,
+      w0:5*s, w1:1*s, delay:280, dur:580, twigs:[]
     },
     {
-      x0:rootX+18*s,   y0:groundY-TREE_H*0.43,
-      cp1x:rootX+42*s, cp1y:groundY-TREE_H*0.46,
-      cp2x:rootX+56*s, cp2y:groundY-TREE_H*0.45,
-      x1:rootX+62*s,   y1:groundY-TREE_H*0.44,
-      w0:5*s, w1:0.9*s, delay:360, dur:540, twigs:[]
+      x0:rootX+14*s,   y0:groundY-TREE_H*0.43,
+      cp1x:rootX+34*s, cp1y:groundY-TREE_H*0.46,
+      cp2x:rootX+46*s, cp2y:groundY-TREE_H*0.45,
+      x1:rootX+50*s,   y1:groundY-TREE_H*0.44,
+      w0:4*s, w1:0.9*s, delay:360, dur:540, twigs:[]
     },
   ];
 
-  /* ── Helpers ── */
   function easeOutExpo(t){ return t===1?1:1-Math.pow(2,-10*t); }
   function easeOut3(t)   { return 1-(1-t)*(1-t)*(1-t); }
 
@@ -836,7 +805,6 @@ function startTreeGrowth(rootX, groundY) {
     };
   }
 
-  /* Fixed N=64 for smooth rendering at all prog values */
   function drawBranch(ctx,x0,y0,cp1x,cp1y,cp2x,cp2y,x1,y1,w0,w1,prog,col){
     const N=64, end=Math.floor(N*prog);
     if(end<1)return;
@@ -873,11 +841,11 @@ function startTreeGrowth(rootX, groundY) {
       else ctx.lineTo(rights[i][0],rights[i][1]);
     }
     ctx.closePath();
-    const grd=ctx.createLinearGradient(rootX-36*s,0,rootX+36*s,0);
+    const grd=ctx.createLinearGradient(rootX-28*s,0,rootX+28*s,0);
     grd.addColorStop(0,TEAL_DARK);grd.addColorStop(0.20,TEAL);grd.addColorStop(0.50,TEAL_LITE);grd.addColorStop(0.80,TEAL);grd.addColorStop(1,TEAL_DARK);
     ctx.fillStyle=grd;ctx.fill();
     ctx.strokeStyle='rgba(100,230,170,0.15)';ctx.lineWidth=1.8;
-    ctx.beginPath();lefts.forEach(([x,y],i)=>{if(i===0)ctx.moveTo(x+6*s,y);else ctx.lineTo(x+5*s,y);});ctx.stroke();
+    ctx.beginPath();lefts.forEach(([x,y],i)=>{if(i===0)ctx.moveTo(x+5*s,y);else ctx.lineTo(x+4*s,y);});ctx.stroke();
     ctx.restore();
   }
 
@@ -897,10 +865,8 @@ function startTreeGrowth(rootX, groundY) {
     drawBranch(ctx,sp.x,sp.y,sp.x+twig.cx*0.5,sp.y+twig.cy*0.5,sp.x+twig.cx,sp.y+twig.cy,sp.x+twig.ex,sp.y+twig.ey,twig.w0,twig.w1,prog,TEAL);
   }
 
-  /* ── State ── */
   const brState=BRANCHES.map(b=>({prog:0,startTs:null,twigState:(b.twigs||[]).map(()=>({prog:0,startTs:null}))}));
 
-  /* ── Main loop (with allDone fix) ── */
   let tStart=null;
   function loop(ts){
     if(!tStart)tStart=ts;
@@ -910,7 +876,6 @@ function startTreeGrowth(rootX, groundY) {
     const tp=easeOutExpo(Math.min(1,elapsed/TRUNK_DUR));
     drawTrunk(p2Ctx,tp);
     const unlockMs=TRUNK_DUR*BRANCH_UNLOCK;
-    /* FIX: require both trunk done AND unlock window passed */
     let allDone=tp>=1&&elapsed>=unlockMs;
     BRANCHES.forEach((b,bi)=>{
       const bs=brState[bi];
@@ -942,9 +907,7 @@ function startTreeGrowth(rootX, groundY) {
   requestAnimationFrame(loop);
 }
 
-/* ============================================
-   PHASE 4 – placeholder
-============================================ */
+/* ── PHASE 4 – placeholder ── */
 function startPetalBloom(rootX,groundY,treeH,forkY,branches,ctx,canvas,drawLine,drawTrunk,drawBranch,drawTwig){
   console.log('🌸 Tree fully grown – petal bloom coming next!');
 }
