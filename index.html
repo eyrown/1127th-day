@@ -2,12 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Hi, Eley 🌷</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans-serif; }
+
+/* ── Mobile-first base ── */
+:root {
+  --tulip-size: min(220px, 58vw);
+  --btn-pad-v: .75rem;
+  --btn-pad-h: 1.8rem;
+  --dial-w: clamp(40px, 11vw, 46px);
+  --dial-h: clamp(44px, 11vw, 50px);
+}
 
 .page {
   position:fixed; inset:0;
@@ -34,30 +43,49 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 .lstar { position:absolute; background:white; border-radius:50%; animation:starTwinkle var(--d,3s) ease-in-out infinite; }
 @keyframes starTwinkle { 0%,100%{opacity:.1;} 50%{opacity:.85;} }
 #petal-canvas-load { position:absolute; inset:0; pointer-events:none; z-index:1; }
-.load-title { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,4vw,2.2rem); color:#ecddf8; text-align:center; letter-spacing:.08em; line-height:1.5; z-index:2; animation:softPulse 2.6s ease-in-out infinite; }
+.load-title { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,5vw,2.2rem); color:#ecddf8; text-align:center; letter-spacing:.08em; line-height:1.5; z-index:2; animation:softPulse 2.6s ease-in-out infinite; }
 .load-title em { color:#9dd8f8; font-style:italic; }
 @keyframes softPulse { 0%,100%{opacity:.55;} 50%{opacity:1;} }
-.load-bar-wrap { width:200px; height:3px; background:rgba(255,255,255,.1); border-radius:4px; overflow:hidden; z-index:2; }
+.load-bar-wrap { width:min(200px,55vw); height:3px; background:rgba(255,255,255,.1); border-radius:4px; overflow:hidden; z-index:2; }
 .load-bar { height:100%; width:0%; background:linear-gradient(90deg,#9b7fd4,#7ec8f0); border-radius:4px; transition:width .1s linear; }
 .load-sub { font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.28); z-index:2; }
 
 /* ══ PAGE 2 STITCH ══ */
-#pg-stitch { gap:0; }
-.stitch-poem { font-family:'Playfair Display',serif; font-size:clamp(.95rem,2.6vw,1.35rem); color:#6a4a7a; text-align:center; letter-spacing:.04em; line-height:1.7; z-index:2; margin-bottom:1.1rem; animation:poemFloat 4s ease-in-out infinite; }
+#pg-stitch { gap:0; padding: 1rem; }
+.stitch-poem { font-family:'Playfair Display',serif; font-size:clamp(.9rem,3.5vw,1.35rem); color:#6a4a7a; text-align:center; letter-spacing:.04em; line-height:1.7; z-index:2; margin-bottom:.9rem; animation:poemFloat 4s ease-in-out infinite; }
 .stitch-poem em { color:#5a90c0; font-style:italic; }
 @keyframes poemFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);} }
-.window-frame { position:relative; z-index:2; background:rgba(255,252,250,.82); border:2.5px solid #c8b0d8; border-radius:18px; padding:1.2rem 1.4rem 1rem; box-shadow:0 0 0 6px rgba(200,176,216,.13),0 10px 40px rgba(120,80,160,.13),inset 0 1px 0 rgba(255,255,255,.8); display:flex; flex-direction:column; align-items:center; gap:.6rem; width:min(300px,88vw); }
+.window-frame {
+  position:relative; z-index:2;
+  background:rgba(255,252,250,.82); border:2.5px solid #c8b0d8; border-radius:18px;
+  padding:1rem 1.2rem .9rem;
+  box-shadow:0 0 0 6px rgba(200,176,216,.13),0 10px 40px rgba(120,80,160,.13),inset 0 1px 0 rgba(255,255,255,.8);
+  display:flex; flex-direction:column; align-items:center; gap:.5rem;
+  width:min(280px,86vw);
+}
 .window-frame::before { content:''; position:absolute; top:14px; bottom:14px; left:50%; width:2px; background:rgba(200,176,216,.4); transform:translateX(-50%); pointer-events:none; border-radius:2px; }
-.window-frame::after { content:''; position:absolute; left:14px; right:14px; top:50%; height:2px; background:rgba(200,176,216,.4); transform:translateY(-50%); pointer-events:none; border-radius:2px; }
-.stitch-gif { width:180px; height:180px; object-fit:cover; border-radius:12px; display:block; position:relative; z-index:3; }
-.btn-row { display:flex; align-items:center; justify-content:center; gap:1rem; z-index:2; margin-top:.7rem; width:min(300px,88vw); position:relative; height:52px; }
-#btn-yes { background:linear-gradient(135deg,#a87fc8,#7ec4e8); color:white; border:none; border-radius:40px; padding:.6rem 1.8rem; font-family:'Playfair Display',serif; font-size:1rem; cursor:pointer; letter-spacing:.06em; box-shadow:0 4px 18px rgba(150,100,200,.3); transition:transform .2s,box-shadow .2s; flex-shrink:0; white-space:nowrap; }
+.window-frame::after  { content:''; position:absolute; left:14px; right:14px; top:50%; height:2px; background:rgba(200,176,216,.4); transform:translateY(-50%); pointer-events:none; border-radius:2px; }
+.stitch-gif { width:min(160px,42vw); height:min(160px,42vw); object-fit:cover; border-radius:12px; display:block; position:relative; z-index:3; }
+.btn-row { display:flex; align-items:center; justify-content:center; gap:1rem; z-index:2; margin-top:.7rem; width:min(280px,86vw); position:relative; height:52px; }
+#btn-yes {
+  background:linear-gradient(135deg,#a87fc8,#7ec4e8); color:white; border:none; border-radius:40px;
+  padding:var(--btn-pad-v) var(--btn-pad-h); font-family:'Playfair Display',serif;
+  font-size:clamp(.9rem,3.5vw,1rem); cursor:pointer; letter-spacing:.06em;
+  box-shadow:0 4px 18px rgba(150,100,200,.3); transition:transform .2s,box-shadow .2s;
+  flex-shrink:0; white-space:nowrap; min-height:44px;
+}
 #btn-yes:hover { transform:scale(1.06); box-shadow:0 6px 24px rgba(150,100,200,.45); }
 #btn-yes:active { transform:scale(0.97); }
-#btn-no { background:rgba(255,255,255,.7); color:#9a7aaa; border:1.5px solid #c8a8e0; border-radius:40px; padding:.6rem 1.4rem; font-family:'Playfair Display',serif; font-size:1rem; cursor:pointer; letter-spacing:.06em; flex-shrink:0; white-space:nowrap; transition:font-size .3s,padding .3s,opacity .3s,left .3s cubic-bezier(.34,1.5,.64,1),top .3s cubic-bezier(.34,1.5,.64,1); }
+#btn-no {
+  background:rgba(255,255,255,.7); color:#9a7aaa; border:1.5px solid #c8a8e0; border-radius:40px;
+  padding:var(--btn-pad-v) 1.4rem; font-family:'Playfair Display',serif;
+  font-size:clamp(.9rem,3.5vw,1rem); cursor:pointer; letter-spacing:.06em;
+  flex-shrink:0; white-space:nowrap; min-height:44px;
+  transition:font-size .3s,padding .3s,opacity .3s,left .3s cubic-bezier(.34,1.5,.64,1),top .3s cubic-bezier(.34,1.5,.64,1);
+}
 
 /* ══ PAGE 3 TULIP ══ */
-#pg-bouquet { gap:1rem; }
+#pg-bouquet { gap:.7rem; padding:.5rem; }
 #theme-bg { position:absolute; inset:0; z-index:0; background: radial-gradient(ellipse 80% 60% at 15% 10%, rgba(150,210,245,.40) 0%, transparent 65%), radial-gradient(ellipse 65% 55% at 85% 18%, rgba(120,190,245,.28) 0%, transparent 60%), radial-gradient(ellipse 75% 45% at 50% 88%, rgba(155,215,248,.25) 0%, transparent 60%), linear-gradient(160deg,#e4f6ff 0%,#f0faff 40%,#d8eefb 70%,#c5e5f8 100%); transition:background 1.2s ease; }
 #theme-bg.purple { background: radial-gradient(ellipse 80% 60% at 15% 10%, rgba(150,60,230,.42) 0%, transparent 65%), radial-gradient(ellipse 65% 55% at 85% 18%, rgba(110,40,210,.30) 0%, transparent 60%), radial-gradient(ellipse 75% 45% at 50% 88%, rgba(90,30,180,.38) 0%, transparent 60%), linear-gradient(160deg,#18062c 0%,#270d44 38%,#1c0836 65%,#100524 100%); }
 #blossom-canvas { position:absolute; inset:0; pointer-events:none; z-index:1; }
@@ -65,7 +93,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 #tulip-scene.show { opacity:1; transform:translateY(0); }
 #tulip-float { animation:none; transform-origin:center bottom; }
 #tulip-float.floating { animation:tulipFloat 3.6s ease-in-out infinite; }
-@keyframes tulipFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-14px);} }
+@keyframes tulipFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
 @keyframes petalGlowBlue { 0%,100%{opacity:.75;filter:drop-shadow(0 0 5px rgba(100,200,255,.5));} 50%{opacity:1;filter:drop-shadow(0 0 16px rgba(100,200,255,.95));} }
 @keyframes petalGlowBlueSlow { 0%,100%{opacity:.70;filter:drop-shadow(0 0 4px rgba(100,200,255,.4));} 50%{opacity:.95;filter:drop-shadow(0 0 14px rgba(100,200,255,.85));} }
 @keyframes petalGlowPurple { 0%,100%{opacity:.75;filter:drop-shadow(0 0 6px rgba(180,80,255,.55));} 50%{opacity:1;filter:drop-shadow(0 0 20px rgba(180,80,255,1.0));} }
@@ -74,128 +102,133 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 .petal-anim-blue .glow-petal-slow { animation:petalGlowBlueSlow 3.4s ease-in-out infinite; }
 .petal-anim-purple .glow-petal { animation:petalGlowPurple 2.4s ease-in-out infinite; }
 .petal-anim-purple .glow-petal-slow { animation:petalGlowPurpleSlow 3.4s ease-in-out infinite; }
-.bq-text { font-family:'Playfair Display',serif; font-size:clamp(1.05rem,3.2vw,1.65rem); color:#5a7a90; text-align:center; letter-spacing:.06em; z-index:2; opacity:0; transform:translateY(14px); transition:opacity 1.1s ease,transform 1.1s ease,color .9s ease; }
+/* Tulip SVG scales to viewport */
+#tulip-svg {
+  width: var(--tulip-size);
+  height: auto;
+  display: block;
+}
+.bq-text { font-family:'Playfair Display',serif; font-size:clamp(.95rem,3.8vw,1.5rem); color:#5a7a90; text-align:center; letter-spacing:.06em; z-index:2; opacity:0; transform:translateY(14px); transition:opacity 1.1s ease,transform 1.1s ease,color .9s ease; padding:0 1rem; }
 .bq-text.show { opacity:1; transform:translateY(0); }
 .bq-text.purple { color:#c8a0f0; }
-#btn-next { position:fixed; bottom:1.8rem; right:1.8rem; background:linear-gradient(135deg,#a87fc8,#7ec4e8); color:white; border:none; border-radius:40px; padding:.6rem 1.7rem; font-family:'Playfair Display',serif; font-size:.95rem; cursor:pointer; letter-spacing:.06em; box-shadow:0 4px 18px rgba(150,100,200,.3); opacity:0; transform:translateY(10px); transition:opacity .9s ease,transform .9s ease,box-shadow .2s; z-index:10; pointer-events:none; }
+#btn-next {
+  position:fixed; bottom:1.4rem; right:1.4rem;
+  background:linear-gradient(135deg,#a87fc8,#7ec4e8); color:white; border:none; border-radius:40px;
+  padding:.65rem 1.6rem; font-family:'Playfair Display',serif; font-size:clamp(.85rem,3.5vw,.95rem);
+  cursor:pointer; letter-spacing:.06em; box-shadow:0 4px 18px rgba(150,100,200,.3);
+  opacity:0; transform:translateY(10px); transition:opacity .9s ease,transform .9s ease,box-shadow .2s;
+  z-index:10; pointer-events:none; min-height:44px;
+}
 #btn-next.show { opacity:1; transform:translateY(0); pointer-events:all; }
 #btn-next:hover { box-shadow:0 6px 24px rgba(150,100,200,.45); }
-#switch-btn { position:fixed; top:18px; right:18px; z-index:50; display:none; align-items:center; gap:7px; padding:8px 18px; border-radius:40px; border:1.5px solid rgba(255,255,255,.55); background:rgba(255,255,255,.22); backdrop-filter:blur(12px); color:#2a4a70; font-family:'Nunito',sans-serif; font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; cursor:pointer; box-shadow:0 4px 18px rgba(80,160,255,.22); transition:background .8s ease,color .8s ease,border-color .8s ease,box-shadow .4s ease,transform .2s ease; }
+#switch-btn {
+  position:fixed; top:14px; right:14px; z-index:50;
+  display:none; align-items:center; gap:6px;
+  padding:8px 14px; border-radius:40px;
+  border:1.5px solid rgba(255,255,255,.55);
+  background:rgba(255,255,255,.22); backdrop-filter:blur(12px);
+  color:#2a4a70; font-family:'Nunito',sans-serif; font-size:10px;
+  font-weight:700; letter-spacing:.18em; text-transform:uppercase; cursor:pointer;
+  box-shadow:0 4px 18px rgba(80,160,255,.22);
+  transition:background .8s ease,color .8s ease,border-color .8s ease,box-shadow .4s ease,transform .2s ease;
+  min-height:40px;
+}
 #switch-btn:hover { transform:scale(1.06); }
 #switch-btn:active { transform:scale(0.96); }
 #switch-btn.purple-mode { color:#e0c0ff; border-color:rgba(200,130,255,.65); background:rgba(70,15,110,.50); box-shadow:0 4px 18px rgba(160,50,255,.38); }
-#switch-dot { width:9px; height:9px; border-radius:50%; background:linear-gradient(135deg,#6ab8e8,#90d0ff); flex-shrink:0; transition:background .8s ease,box-shadow .8s ease; }
+#switch-dot { width:8px; height:8px; border-radius:50%; background:linear-gradient(135deg,#6ab8e8,#90d0ff); flex-shrink:0; transition:background .8s ease,box-shadow .8s ease; }
 #switch-dot.purple { background:linear-gradient(135deg,#9040e0,#c060ff); box-shadow:0 0 8px rgba(180,70,255,.85); }
 
 /* ══ PAGE 4 PADLOCK ══ */
 #pg-lock { position:fixed; inset:0; z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0; opacity:0; pointer-events:none; transition:opacity 0.7s ease; }
 #pg-lock.in { opacity:1; pointer-events:all; }
 #lock-blur-overlay { position:absolute; inset:0; backdrop-filter:blur(18px) saturate(1.2); -webkit-backdrop-filter:blur(18px) saturate(1.2); background:rgba(10,5,30,0.45); z-index:0; }
-#lock-card { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:0.6rem; opacity:0; transform:scale(0.82) translateY(28px); transition:opacity 0.7s cubic-bezier(.22,1,.36,1),transform 0.7s cubic-bezier(.22,1,.36,1); transition-delay:0.2s; }
+#lock-card { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:0.5rem; opacity:0; transform:scale(0.82) translateY(28px); transition:opacity 0.7s cubic-bezier(.22,1,.36,1),transform 0.7s cubic-bezier(.22,1,.36,1); transition-delay:0.2s; padding:0 1rem; width:100%; max-width:360px; }
 #pg-lock.in #lock-card { opacity:1; transform:scale(1) translateY(0); }
-.lock-eyebrow { font-family:'Nunito',sans-serif; font-size:0.64rem; letter-spacing:0.22em; text-transform:uppercase; color:rgba(255,220,255,0.55); margin-bottom:0.2rem; }
-.lock-title { font-family:'Playfair Display',serif; font-size:clamp(1.2rem,4vw,1.9rem); color:#f5e0ff; text-align:center; letter-spacing:0.06em; line-height:1.35; text-shadow:0 0 30px rgba(200,120,255,0.5); }
+.lock-eyebrow { font-family:'Nunito',sans-serif; font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase; color:rgba(255,220,255,0.55); margin-bottom:0.1rem; }
+.lock-title { font-family:'Playfair Display',serif; font-size:clamp(1.05rem,4.5vw,1.9rem); color:#f5e0ff; text-align:center; letter-spacing:0.06em; line-height:1.35; text-shadow:0 0 30px rgba(200,120,255,0.5); }
 .lock-title em { color:#b8e8ff; font-style:italic; }
-#lock-hint { font-family:'Playfair Display',serif; font-size:clamp(0.82rem,2.2vw,1rem); color:#f0c8ff; font-style:italic; text-align:center; min-height:1.5em; letter-spacing:0.04em; opacity:0; transform:translateY(6px); transition:opacity 0.5s ease,transform 0.5s ease; text-shadow:0 0 14px rgba(200,100,255,0.6); }
+#lock-hint { font-family:'Playfair Display',serif; font-size:clamp(.78rem,3vw,1rem); color:#f0c8ff; font-style:italic; text-align:center; min-height:1.4em; letter-spacing:0.04em; opacity:0; transform:translateY(6px); transition:opacity 0.5s ease,transform 0.5s ease; text-shadow:0 0 14px rgba(200,100,255,0.6); }
 #lock-hint.show { opacity:1; transform:translateY(0); }
-#heart-lock { position:relative; width:min(300px,82vw); filter:drop-shadow(0 8px 40px rgba(220,100,180,0.5)) drop-shadow(0 0 80px rgba(180,80,220,0.25)); animation:lockFloat 3.8s ease-in-out infinite; }
-@keyframes lockFloat { 0%,100%{transform:translateY(0px) rotate(-0.5deg);} 50%{transform:translateY(-10px) rotate(0.5deg);} }
-#dials-wrap { position:absolute; display:flex; gap:clamp(5px,2vw,9px); align-items:center; justify-content:center; left:50%; transform:translateX(-50%); top:52%; }
+/* Heart lock scales to fit phone */
+#heart-lock {
+  position:relative;
+  width: min(260px, 78vw);
+  filter:drop-shadow(0 8px 40px rgba(220,100,180,0.5)) drop-shadow(0 0 80px rgba(180,80,220,0.25));
+  animation:lockFloat 3.8s ease-in-out infinite;
+}
+@keyframes lockFloat { 0%,100%{transform:translateY(0px) rotate(-0.5deg);} 50%{transform:translateY(-8px) rotate(0.5deg);} }
+#dials-wrap {
+  position:absolute;
+  display:flex; gap:clamp(4px,1.8vw,8px);
+  align-items:center; justify-content:center;
+  left:50%; transform:translateX(-50%);
+  top:52%;
+}
 .dial { display:flex; flex-direction:column; align-items:center; gap:2px; }
-.dial-btn { width:clamp(36px,10vw,46px); height:clamp(22px,5vw,26px); background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.3); border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:rgba(255,255,255,0.7); transition:background 0.15s,transform 0.12s; user-select:none; -webkit-tap-highlight-color:transparent; }
+.dial-btn {
+  width:var(--dial-w); height:clamp(24px,6vw,28px);
+  background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.3);
+  border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:0.72rem; color:rgba(255,255,255,0.7);
+  transition:background 0.15s,transform 0.12s;
+  user-select:none; -webkit-tap-highlight-color:transparent;
+  /* larger touch target */
+  touch-action:manipulation;
+}
 .dial-btn:hover { background:rgba(255,255,255,0.22); }
 .dial-btn:active { transform:scale(0.9); background:rgba(255,255,255,0.3); }
-.dial-display { width:clamp(36px,10vw,46px); height:clamp(40px,10vw,50px); background:rgba(15,8,35,0.7); border:2px solid rgba(255,255,255,0.35); border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:clamp(1.3rem,4vw,1.8rem); color:#fff; box-shadow:inset 0 2px 8px rgba(0,0,0,0.4),0 0 14px rgba(220,150,255,0.2); text-shadow:0 0 10px rgba(200,180,255,0.8); position:relative; overflow:hidden; transition:color 0.1s; }
-@keyframes digitUp { 0%{transform:translateY(0);opacity:1;} 40%{transform:translateY(-60%);opacity:0;} 50%{transform:translateY(60%);opacity:0;} 100%{transform:translateY(0);opacity:1;} }
+.dial-display {
+  width:var(--dial-w); height:var(--dial-h);
+  background:rgba(15,8,35,0.7); border:2px solid rgba(255,255,255,0.35); border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-size:clamp(1.2rem,5vw,1.8rem);
+  color:#fff; box-shadow:inset 0 2px 8px rgba(0,0,0,0.4),0 0 14px rgba(220,150,255,0.2);
+  text-shadow:0 0 10px rgba(200,180,255,0.8);
+  position:relative; overflow:hidden; transition:color 0.1s;
+}
+@keyframes digitUp   { 0%{transform:translateY(0);opacity:1;} 40%{transform:translateY(-60%);opacity:0;} 50%{transform:translateY(60%);opacity:0;} 100%{transform:translateY(0);opacity:1;} }
 @keyframes digitDown { 0%{transform:translateY(0);opacity:1;} 40%{transform:translateY(60%);opacity:0;} 50%{transform:translateY(-60%);opacity:0;} 100%{transform:translateY(0);opacity:1;} }
 .flip-up   { animation:digitUp   0.22s ease; }
 .flip-down { animation:digitDown 0.22s ease; }
-#lock-enter { margin-top:2px; padding:0.5rem 2.2rem; background:linear-gradient(135deg,#c060e8,#8040d0); border:none; border-radius:40px; cursor:pointer; font-family:'Playfair Display',serif; font-size:0.92rem; color:#fff; letter-spacing:0.1em; box-shadow:0 4px 20px rgba(180,60,240,0.55); transition:transform 0.18s,box-shadow 0.18s; }
+#lock-enter {
+  margin-top:4px; padding:.55rem 2rem;
+  background:linear-gradient(135deg,#c060e8,#8040d0); border:none; border-radius:40px;
+  cursor:pointer; font-family:'Playfair Display',serif; font-size:clamp(.85rem,3.5vw,.92rem);
+  color:#fff; letter-spacing:0.1em; box-shadow:0 4px 20px rgba(180,60,240,0.55);
+  transition:transform 0.18s,box-shadow 0.18s; min-height:44px;
+  touch-action:manipulation;
+}
 #lock-enter:hover { transform:scale(1.06); box-shadow:0 6px 28px rgba(180,60,240,0.75); }
 #lock-enter:active { transform:scale(0.95); }
 @keyframes wrongShake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-10px);} 40%{transform:translateX(10px);} 60%{transform:translateX(-8px);} 80%{transform:translateX(8px);} }
 #heart-lock.shake { animation:wrongShake 0.45s ease, lockFloat 3.8s ease-in-out infinite 0.45s; }
 
-/* ══════════════════════════════════════════
-   PAGE 5 — FINAL  (Phase 1: heart button)
-══════════════════════════════════════════ */
-#pg-final {
-  /* warm cream — exact reference tone */
-  background: #f0e8df;
-  z-index: 300;
-  overflow: hidden;
-}
-
-/* Subtle watercolor washes */
+/* ══ PAGE 5 FINAL ══ */
+#pg-final { background:#f0e8df; z-index:300; overflow:hidden; }
 #pg-final::before {
-  content: ''; position: absolute; inset: 0; z-index: 0;
+  content:''; position:absolute; inset:0; z-index:0;
   background:
-    radial-gradient(ellipse 70% 55% at 18% 12%,  rgba(210,190,200,.13) 0%, transparent 65%),
-    radial-gradient(ellipse 60% 45% at 82% 15%,  rgba(190,200,220,.10) 0%, transparent 60%),
-    radial-gradient(ellipse 80% 40% at 50% 92%,  rgba(210,195,185,.12) 0%, transparent 60%),
-    radial-gradient(ellipse 55% 50% at  8% 75%,  rgba(200,185,210,.09) 0%, transparent 55%);
-  pointer-events: none;
+    radial-gradient(ellipse 70% 55% at 18% 12%, rgba(210,190,200,.13) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 45% at 82% 15%, rgba(190,200,220,.10) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 40% at 50% 92%, rgba(210,195,185,.12) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 50% at  8% 75%, rgba(200,185,210,.09) 0%, transparent 55%);
+  pointer-events:none;
 }
+#final-canvas { position:absolute; inset:0; pointer-events:none; z-index:1; }
+#heart-btn-wrap { position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center; transition:opacity 0.8s ease; }
+#heart-btn-wrap.fade-out { opacity:0; pointer-events:none; }
+#heart-group { display:flex; flex-direction:row; align-items:center; gap:8px; animation:groupFloat 4s ease-in-out infinite; cursor:pointer; }
+@keyframes groupFloat { 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-6px);} }
+#heart-btn { width:40px; height:40px; border:none; background:none; padding:0; cursor:pointer; flex-shrink:0; animation:heartGlow 2.2s ease-in-out infinite; touch-action:manipulation; }
+@keyframes heartGlow { 0%,100%{filter:drop-shadow(0 0 5px rgba(140,20,40,.28)) drop-shadow(0 0 10px rgba(140,20,40,.12));} 50%{filter:drop-shadow(0 0 12px rgba(160,30,50,.55)) drop-shadow(0 0 22px rgba(160,30,50,.22));} }
+#heart-btn:hover { filter:drop-shadow(0 0 18px rgba(180,40,60,.75)) drop-shadow(0 0 32px rgba(180,40,60,.35)) !important; animation:none; }
+.click-label { font-family:'Playfair Display',serif; font-size:clamp(.82rem,3.5vw,.88rem); letter-spacing:.06em; color:#7a3038; font-style:italic; opacity:.78; white-space:nowrap; border-bottom:1px solid rgba(120,48,56,.25); padding-bottom:1px; user-select:none; }
+#phase2-canvas { position:absolute; inset:0; pointer-events:none; z-index:4; opacity:0; transition:opacity 0.5s ease; }
+#phase2-canvas.show { opacity:1; }
 
-/* Dust canvas */
-#final-canvas {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 1;
-}
-
-/* ── Heart + label group ── */
-#heart-btn-wrap {
-  position: absolute; inset: 0; z-index: 5;
-  display: flex; align-items: center; justify-content: center;
-  transition: opacity 0.8s ease;
-}
-#heart-btn-wrap.fade-out { opacity: 0; pointer-events: none; }
-
-#heart-group {
-  display: flex; flex-direction: row;
-  align-items: center; gap: 8px;
-  animation: groupFloat 4s ease-in-out infinite;
-  cursor: pointer;
-}
-@keyframes groupFloat {
-  0%,100% { transform: translateY(0px); }
-  50%      { transform: translateY(-6px); }
-}
-
-#heart-btn {
-  width: 36px; height: 36px;
-  border: none; background: none; padding: 0;
-  cursor: pointer; flex-shrink: 0;
-  animation: heartGlow 2.2s ease-in-out infinite;
-}
-@keyframes heartGlow {
-  0%,100% { filter: drop-shadow(0 0  5px rgba(140,20,40,.28)) drop-shadow(0 0 10px rgba(140,20,40,.12)); }
-  50%      { filter: drop-shadow(0 0 12px rgba(160,30,50,.55)) drop-shadow(0 0 22px rgba(160,30,50,.22)); }
-}
-#heart-btn:hover {
-  filter: drop-shadow(0 0 18px rgba(180,40,60,.75)) drop-shadow(0 0 32px rgba(180,40,60,.35)) !important;
-  animation: none;
-}
-
-.click-label {
-  font-family: 'Playfair Display', serif;
-  font-size: 0.88rem; letter-spacing: 0.06em;
-  color: #7a3038; font-style: italic;
-  opacity: 0.78; white-space: nowrap;
-  border-bottom: 1px solid rgba(120,48,56,.25);
-  padding-bottom: 1px;
-  user-select: none;
-}
-
-/* ── Phase 2: seed + ground line canvas ── */
-#phase2-canvas {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 4;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-#phase2-canvas.show { opacity: 1; }
-
+/* ── Prevent horizontal scroll on final page during tree animation ── */
+#pg-final, #phase2-canvas { overflow:hidden; }
 </style>
 </head>
 <body>
@@ -231,7 +264,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   <div id="theme-bg"></div>
   <canvas id="blossom-canvas"></canvas>
   <div id="tulip-scene">
-    <svg id="tulip-svg" viewBox="0 0 260 420" width="260" height="420" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+    <svg id="tulip-svg" viewBox="0 0 260 420" xmlns="http://www.w3.org/2000/svg" overflow="visible">
       <defs>
         <linearGradient id="vaseGrad" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%"   stop-color="rgba(160,210,240,0.18)"/>
@@ -385,19 +418,12 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 
 <!-- ══ PAGE 5: FINAL ══ -->
 <div class="page out" id="pg-final">
-
-  <!-- dust canvas -->
   <canvas id="final-canvas"></canvas>
-
-  <!-- Phase 2: seed fall + ground line -->
   <canvas id="phase2-canvas"></canvas>
-
-  <!-- Heart button + label -->
   <div id="heart-btn-wrap">
     <div id="heart-group" onclick="heartClicked()">
-
       <button id="heart-btn" aria-label="click here">
-        <svg viewBox="0 0 36 36" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 36 36" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <radialGradient id="hbg" cx="38%" cy="32%" r="62%">
               <stop offset="0%"   stop-color="#c03050"/>
@@ -414,16 +440,23 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
           <path d="M9 9 Q7 13 7 17" stroke="rgba(255,255,255,0.22)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
         </svg>
       </button>
-
       <span class="click-label">click here</span>
     </div>
   </div>
-
 </div>
 
 <script>
 
-  
+/* ════════════════════════════════════════
+   MOBILE SCALE HELPER
+   Returns a factor < 1 on small phones so
+   the tree / branches stay within the screen.
+════════════════════════════════════════ */
+function mobileFactor() {
+  // Reference design width ~420px. Scale linearly below that.
+  return Math.min(1, window.innerWidth / 420);
+}
+
 /* ════════════════════════════════════════
    STARS
 ════════════════════════════════════════ */
@@ -537,728 +570,382 @@ function unlockSuccess(){
 /* ════════════════════════════════════════
    FINAL PAGE — DUST PARTICLES
 ════════════════════════════════════════ */
-const fCanvas = document.getElementById('final-canvas');
-const fCtx    = fCanvas.getContext('2d');
-let   fDust   = [];
-
-function resizeFinal() {
-  fCanvas.width  = window.innerWidth;
-  fCanvas.height = window.innerHeight;
-}
+const fCanvas=document.getElementById('final-canvas');
+const fCtx=fCanvas.getContext('2d');
+let fDust=[];
+function resizeFinal(){fCanvas.width=window.innerWidth;fCanvas.height=window.innerHeight;}
 resizeFinal();
-
-/* Warm, barely-visible dust — matches the cream background */
-const DUST_COLS = [
-  [180,150,140], /* warm beige   */
-  [160,140,170], /* soft lavender*/
-  [140,160,180], /* muted blue   */
-  [190,160,150], /* dusty rose   */
-  [170,155,165], /* mauve        */
-];
-
-function spawnDust() {
-  const c = DUST_COLS[Math.floor(Math.random() * DUST_COLS.length)];
-  fDust.push({
-    x:       Math.random() * fCanvas.width,
-    y:       Math.random() * fCanvas.height,
-    vx:      (Math.random() - 0.5) * 0.18,
-    vy:      -Math.random() * 0.14 - 0.04,
-    r:       Math.random() * 1.6 + 0.5,
-    alpha:   Math.random() * 0.18 + 0.04,
-    c,
-    life:    0,
-    maxLife: 280 + Math.random() * 220,
-    sway:    Math.random() * 0.012 + 0.004,
-    phase:   Math.random() * Math.PI * 2,
-  });
-}
-
-function animDust() {
-  requestAnimationFrame(animDust);
-  fCtx.clearRect(0, 0, fCanvas.width, fCanvas.height);
-  while (fDust.length < 50) spawnDust();
-  fDust = fDust.filter(d => d.life < d.maxLife);
-  fDust.forEach(d => {
-    d.life++;
-    d.x += d.vx + Math.sin(d.life * d.sway + d.phase) * 0.22;
-    d.y += d.vy;
-    const a = d.alpha * Math.sin((d.life / d.maxLife) * Math.PI);
-    fCtx.save();
-    fCtx.globalAlpha = a;
-    fCtx.fillStyle   = `rgb(${d.c[0]},${d.c[1]},${d.c[2]})`;
-    fCtx.beginPath(); fCtx.arc(d.x, d.y, d.r, 0, Math.PI * 2); fCtx.fill();
-    fCtx.restore();
-  });
-}
+const DUST_COLS=[[180,150,140],[160,140,170],[140,160,180],[190,160,150],[170,155,165]];
+function spawnDust(){const c=DUST_COLS[Math.floor(Math.random()*DUST_COLS.length)];fDust.push({x:Math.random()*fCanvas.width,y:Math.random()*fCanvas.height,vx:(Math.random()-0.5)*0.18,vy:-Math.random()*0.14-0.04,r:Math.random()*1.6+0.5,alpha:Math.random()*0.18+0.04,c,life:0,maxLife:280+Math.random()*220,sway:Math.random()*0.012+0.004,phase:Math.random()*Math.PI*2});}
+function animDust(){requestAnimationFrame(animDust);fCtx.clearRect(0,0,fCanvas.width,fCanvas.height);while(fDust.length<50)spawnDust();fDust=fDust.filter(d=>d.life<d.maxLife);fDust.forEach(d=>{d.life++;d.x+=d.vx+Math.sin(d.life*d.sway+d.phase)*0.22;d.y+=d.vy;const a=d.alpha*Math.sin((d.life/d.maxLife)*Math.PI);fCtx.save();fCtx.globalAlpha=a;fCtx.fillStyle=`rgb(${d.c[0]},${d.c[1]},${d.c[2]})`;fCtx.beginPath();fCtx.arc(d.x,d.y,d.r,0,Math.PI*2);fCtx.fill();fCtx.restore();});}
 
 /* ════════════════════════════════════════
    PHASE 2 — SEED FALL + GROUND LINE
 ════════════════════════════════════════ */
-const p2Canvas = document.getElementById('phase2-canvas');
-const p2Ctx    = p2Canvas.getContext('2d');
+const p2Canvas=document.getElementById('phase2-canvas');
+const p2Ctx=p2Canvas.getContext('2d');
+function resizeP2(){p2Canvas.width=window.innerWidth;p2Canvas.height=window.innerHeight;}
 
-function resizeP2() {
-  p2Canvas.width  = window.innerWidth;
-  p2Canvas.height = window.innerHeight;
-}
+function easeInOutCubic(t){return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+function easeOutQuart(t){return 1-Math.pow(1-t,4);}
+function easeInQuart(t){return t*t*t*t;}
 
-/* Easing functions */
-function easeInOutCubic(t) { return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
-function easeOutQuart(t)   { return 1-Math.pow(1-t,4); }
-function easeInQuart(t)    { return t*t*t*t; }
-
-function heartClicked() {
-  /* ── 1. Grab exact heart position BEFORE any animation ── */
-  const group    = document.getElementById('heart-group');
-  const heartBtn = document.getElementById('heart-btn');
-  const wrap     = document.getElementById('heart-btn-wrap');
-  const label    = document.querySelector('.click-label');
-
-  /* Get centre of the heart button in viewport coords */
-  const rect   = heartBtn.getBoundingClientRect();
-  const heartCX = rect.left + rect.width  / 2;
-  const heartCY = rect.top  + rect.height / 2;
-
-  /* Stop float animation so it doesn't jump */
-  group.style.animation = 'none';
-
-  /* Morph heart → tiny circle in place */
-  heartBtn.style.transformOrigin = 'center center';
-  heartBtn.style.transition      = 'transform 0.52s cubic-bezier(0.4,0,0.2,1), opacity 0.52s ease';
-  heartBtn.style.transform       = 'scale(0.15)';
-  heartBtn.style.opacity         = '0';
-
-  /* Fade label simultaneously */
-  label.style.transition = 'opacity 0.32s ease';
-  label.style.opacity    = '0';
-
-  /* After morph, hand off to canvas — seed starts at heart's exact coords */
-  setTimeout(() => {
-    wrap.style.display = 'none';
+function heartClicked(){
+  const group=document.getElementById('heart-group');
+  const heartBtn=document.getElementById('heart-btn');
+  const wrap=document.getElementById('heart-btn-wrap');
+  const label=document.querySelector('.click-label');
+  const rect=heartBtn.getBoundingClientRect();
+  const heartCX=rect.left+rect.width/2;
+  const heartCY=rect.top+rect.height/2;
+  group.style.animation='none';
+  heartBtn.style.transformOrigin='center center';
+  heartBtn.style.transition='transform 0.52s cubic-bezier(0.4,0,0.2,1), opacity 0.52s ease';
+  heartBtn.style.transform='scale(0.15)';
+  heartBtn.style.opacity='0';
+  label.style.transition='opacity 0.32s ease';
+  label.style.opacity='0';
+  setTimeout(()=>{
+    wrap.style.display='none';
     resizeP2();
     p2Canvas.classList.add('show');
-    runSeedAnimation(heartCX, heartCY);
-  }, 560);
+    runSeedAnimation(heartCX,heartCY);
+  },560);
 }
 
-function runSeedAnimation(heartCX, heartCY) {
-  const W = p2Canvas.width;
-  const H = p2Canvas.height;
+function runSeedAnimation(heartCX,heartCY){
+  const W=p2Canvas.width;
+  const H=p2Canvas.height;
+  const cx=heartCX;
+  const startY=heartCY;
+  const seedR=5;
+  const lineY=H*0.915;
+  const landY=lineY-seedR;
+  const lineX1=W*0.12;
+  const lineX2=W*0.88;
+  const FALL_DUR=1800,LINE_DUR=1800,IMPACT_DUR=900;
+  let startTime=null,phase='falling',impactStart=null;
 
-  /* ── Layout constants ── */
-  const cx     = heartCX;               /* seed falls from exact heart X */
-  const startY = heartCY;               /* seed starts at exact heart Y */
-  const seedR  = 5;                     /* tiny dot radius */
-  const lineY  = H * 0.915;            /* ground line — close to bottom like reference */
-  const landY  = lineY - seedR;        /* seed sits ON TOP of the line, not through it */
-  const lineX1 = W * 0.12;             /* line left edge */
-  const lineX2 = W * 0.88;             /* line right edge */
-
-  /* ── Animation timing (ms) ── */
-  const FALL_DUR   = 1800;   /* seed fall duration */
-  const LINE_DUR   = 1800;   /* line draw duration — same as fall, synced */
-  const IMPACT_DUR = 900;    /* glow pulse after landing */
-
-  let startTime = null;
-  let phase     = 'falling'; /* falling → impact → done */
-  let impactStart = null;
-
-  function draw(ts) {
-    if (!startTime) startTime = ts;
-    const elapsed = ts - startTime;
-
-    p2Ctx.clearRect(0, 0, W, H);
-
-    /* ── FALLING + LINE DRAW (synced) ── */
-    if (phase === 'falling') {
-      const t      = Math.min(1, elapsed / FALL_DUR);
-      const tEased = easeInQuart(t);            /* accelerates like gravity */
-      const seedY  = startY + (landY - startY) * tEased;
-
-      /* Line draws from centre outward, synced with fall */
-      const lineT    = easeInOutCubic(Math.min(1, elapsed / LINE_DUR));
-      const halfSpan = (lineX2 - lineX1) / 2;
-      const lLeft    = cx - halfSpan * lineT;
-      const lRight   = cx + halfSpan * lineT;
-
-      /* Draw ground line — thick enough to feel like a surface */
+  function draw(ts){
+    if(!startTime)startTime=ts;
+    const elapsed=ts-startTime;
+    p2Ctx.clearRect(0,0,W,H);
+    if(phase==='falling'){
+      const t=Math.min(1,elapsed/FALL_DUR);
+      const tEased=easeInQuart(t);
+      const seedY=startY+(landY-startY)*tEased;
+      const lineT=easeInOutCubic(Math.min(1,elapsed/LINE_DUR));
+      const halfSpan=(lineX2-lineX1)/2;
+      const lLeft=cx-halfSpan*lineT;
+      const lRight=cx+halfSpan*lineT;
       p2Ctx.save();
-      p2Ctx.strokeStyle = 'rgba(60,30,30,0.55)';
-      p2Ctx.lineWidth   = 2.2;
-      p2Ctx.lineCap     = 'round';
-      p2Ctx.beginPath();
-      p2Ctx.moveTo(lLeft, lineY);
-      p2Ctx.lineTo(lRight, lineY);
-      p2Ctx.stroke();
-      /* subtle shadow line just below — gives it depth/surface feel */
-      p2Ctx.strokeStyle = 'rgba(40,15,15,0.12)';
-      p2Ctx.lineWidth   = 3.5;
-      p2Ctx.beginPath();
-      p2Ctx.moveTo(lLeft, lineY + 2.5);
-      p2Ctx.lineTo(lRight, lineY + 2.5);
-      p2Ctx.stroke();
+      p2Ctx.strokeStyle='rgba(60,30,30,0.55)';p2Ctx.lineWidth=2.2;p2Ctx.lineCap='round';
+      p2Ctx.beginPath();p2Ctx.moveTo(lLeft,lineY);p2Ctx.lineTo(lRight,lineY);p2Ctx.stroke();
+      p2Ctx.strokeStyle='rgba(40,15,15,0.12)';p2Ctx.lineWidth=3.5;
+      p2Ctx.beginPath();p2Ctx.moveTo(lLeft,lineY+2.5);p2Ctx.lineTo(lRight,lineY+2.5);p2Ctx.stroke();
       p2Ctx.restore();
-
-      /* Draw seed — tiny dark red circle with subtle glow */
       p2Ctx.save();
-      /* outer soft glow */
-      p2Ctx.shadowBlur  = 10;
-      p2Ctx.shadowColor = 'rgba(140,20,40,0.35)';
-      p2Ctx.fillStyle   = '#7a1020';
-      p2Ctx.beginPath();
-      p2Ctx.arc(cx, seedY, seedR, 0, Math.PI * 2);
-      p2Ctx.fill();
-      /* inner highlight */
-      p2Ctx.shadowBlur  = 0;
-      p2Ctx.fillStyle   = 'rgba(220,100,120,0.45)';
-      p2Ctx.beginPath();
-      p2Ctx.arc(cx - seedR * 0.25, seedY - seedR * 0.28, seedR * 0.38, 0, Math.PI * 2);
-      p2Ctx.fill();
+      p2Ctx.shadowBlur=10;p2Ctx.shadowColor='rgba(140,20,40,0.35)';
+      p2Ctx.fillStyle='#7a1020';p2Ctx.beginPath();p2Ctx.arc(cx,seedY,seedR,0,Math.PI*2);p2Ctx.fill();
+      p2Ctx.shadowBlur=0;p2Ctx.fillStyle='rgba(220,100,120,0.45)';
+      p2Ctx.beginPath();p2Ctx.arc(cx-seedR*0.25,seedY-seedR*0.28,seedR*0.38,0,Math.PI*2);p2Ctx.fill();
       p2Ctx.restore();
-
-      if (t >= 1) {
-        phase       = 'impact';
-        impactStart = ts;
-      }
-
-    } else if (phase === 'impact') {
-      const it = Math.min(1, (ts - impactStart) / IMPACT_DUR);
-
-      /* Full ground line — stays drawn */
+      if(t>=1){phase='impact';impactStart=ts;}
+    } else if(phase==='impact'){
+      const it=Math.min(1,(ts-impactStart)/IMPACT_DUR);
       p2Ctx.save();
-      p2Ctx.strokeStyle = 'rgba(60,30,30,0.55)';
-      p2Ctx.lineWidth   = 2.2;
-      p2Ctx.lineCap     = 'round';
-      p2Ctx.beginPath();
-      p2Ctx.moveTo(lineX1, lineY);
-      p2Ctx.lineTo(lineX2, lineY);
-      p2Ctx.stroke();
-      p2Ctx.strokeStyle = 'rgba(40,15,15,0.12)';
-      p2Ctx.lineWidth   = 3.5;
-      p2Ctx.beginPath();
-      p2Ctx.moveTo(lineX1, lineY + 2.5);
-      p2Ctx.lineTo(lineX2, lineY + 2.5);
-      p2Ctx.stroke();
+      p2Ctx.strokeStyle='rgba(60,30,30,0.55)';p2Ctx.lineWidth=2.2;p2Ctx.lineCap='round';
+      p2Ctx.beginPath();p2Ctx.moveTo(lineX1,lineY);p2Ctx.lineTo(lineX2,lineY);p2Ctx.stroke();
+      p2Ctx.strokeStyle='rgba(40,15,15,0.12)';p2Ctx.lineWidth=3.5;
+      p2Ctx.beginPath();p2Ctx.moveTo(lineX1,lineY+2.5);p2Ctx.lineTo(lineX2,lineY+2.5);p2Ctx.stroke();
       p2Ctx.restore();
-
-      /* Seed sits on top of the line */
-      p2Ctx.save();
-      p2Ctx.fillStyle = '#7a1020';
-      p2Ctx.beginPath();
-      p2Ctx.arc(cx, landY, seedR, 0, Math.PI * 2);
-      p2Ctx.fill();
-      p2Ctx.restore();
-
-      /* Soft radial glow pulse — fades in then out gently */
-      const glowAlpha = Math.sin(it * Math.PI) * 0.35;
-      const glowR     = seedR + 28 * easeOutQuart(it);
-      const grd = p2Ctx.createRadialGradient(cx, landY, seedR, cx, landY, glowR);
-      grd.addColorStop(0,   `rgba(180,60,80,${glowAlpha})`);
-      grd.addColorStop(0.5, `rgba(160,40,60,${glowAlpha * 0.4})`);
-      grd.addColorStop(1,   `rgba(140,20,40,0)`);
-      p2Ctx.save();
-      p2Ctx.fillStyle = grd;
-      p2Ctx.beginPath();
-      p2Ctx.arc(cx, landY, glowR, 0, Math.PI * 2);
-      p2Ctx.fill();
-      p2Ctx.restore();
-
-      if (it >= 1) {
-        phase = 'done';
-        /* seed briefly holds, then tree sprouts */
-        setTimeout(() => startTreeGrowth(cx, lineY), 320);
-      }
+      p2Ctx.save();p2Ctx.fillStyle='#7a1020';
+      p2Ctx.beginPath();p2Ctx.arc(cx,landY,seedR,0,Math.PI*2);p2Ctx.fill();p2Ctx.restore();
+      const glowAlpha=Math.sin(it*Math.PI)*0.35;
+      const glowR=seedR+28*easeOutQuart(it);
+      const grd=p2Ctx.createRadialGradient(cx,landY,seedR,cx,landY,glowR);
+      grd.addColorStop(0,`rgba(180,60,80,${glowAlpha})`);
+      grd.addColorStop(0.5,`rgba(160,40,60,${glowAlpha*0.4})`);
+      grd.addColorStop(1,`rgba(140,20,40,0)`);
+      p2Ctx.save();p2Ctx.fillStyle=grd;
+      p2Ctx.beginPath();p2Ctx.arc(cx,landY,glowR,0,Math.PI*2);p2Ctx.fill();p2Ctx.restore();
+      if(it>=1){phase='done';setTimeout(()=>startTreeGrowth(cx,lineY),320);}
     } else {
-      /* done — hold static line + seed, tree takes over canvas */
       p2Ctx.save();
-      p2Ctx.strokeStyle = 'rgba(60,30,30,0.55)';
-      p2Ctx.lineWidth   = 2.2;
-      p2Ctx.lineCap     = 'round';
-      p2Ctx.beginPath();
-      p2Ctx.moveTo(lineX1, lineY);
-      p2Ctx.lineTo(lineX2, lineY);
-      p2Ctx.stroke();
-      p2Ctx.strokeStyle = 'rgba(40,15,15,0.12)';
-      p2Ctx.lineWidth   = 3.5;
-      p2Ctx.beginPath();
-      p2Ctx.moveTo(lineX1, lineY + 2.5);
-      p2Ctx.lineTo(lineX2, lineY + 2.5);
-      p2Ctx.stroke();
+      p2Ctx.strokeStyle='rgba(60,30,30,0.55)';p2Ctx.lineWidth=2.2;p2Ctx.lineCap='round';
+      p2Ctx.beginPath();p2Ctx.moveTo(lineX1,lineY);p2Ctx.lineTo(lineX2,lineY);p2Ctx.stroke();
+      p2Ctx.strokeStyle='rgba(40,15,15,0.12)';p2Ctx.lineWidth=3.5;
+      p2Ctx.beginPath();p2Ctx.moveTo(lineX1,lineY+2.5);p2Ctx.lineTo(lineX2,lineY+2.5);p2Ctx.stroke();
       p2Ctx.restore();
-
-      p2Ctx.save();
-      p2Ctx.shadowBlur  = 6;
-      p2Ctx.shadowColor = 'rgba(140,20,40,0.25)';
-      p2Ctx.fillStyle   = '#7a1020';
-      p2Ctx.beginPath();
-      p2Ctx.arc(cx, landY, seedR, 0, Math.PI * 2);
-      p2Ctx.fill();
+      p2Ctx.save();p2Ctx.shadowBlur=6;p2Ctx.shadowColor='rgba(140,20,40,0.25)';
+      p2Ctx.fillStyle='#7a1020';p2Ctx.beginPath();p2Ctx.arc(cx,landY,seedR,0,Math.PI*2);p2Ctx.fill();
       p2Ctx.restore();
-
-      return; /* stop this rAF loop — tree loop takes over */
+      return;
     }
-
     requestAnimationFrame(draw);
   }
-
   requestAnimationFrame(draw);
 }
-
 
 /* ════════════════════════════════════════
    INIT FINAL PAGE
 ════════════════════════════════════════ */
-function initFinalPage() {
-  resizeFinal();
-  requestAnimationFrame(animDust);
-}
+function initFinalPage(){resizeFinal();requestAnimationFrame(animDust);}
 
 /* ============================================
-   PHASE 3 – TREE GROWTH
-
-   Exact reference copy:
-   - Trunk: narrow pointed top, curves outward, wide flat base
-   - Grows upward from seed point (bottom to top)
-   - Then branches sprout organically one by one
-   - All drawn as clean filled silhouettes (flat teal, no texture)
+   PHASE 3 – TREE GROWTH  (mobile-aware)
+   All absolute pixel offsets are multiplied
+   by `mf` (mobileFactor) so the tree fits
+   within narrow viewports.
 ============================================ */
-
 function startTreeGrowth(rootX, groundY) {
-  const W = p2Canvas.width;
-  const H = p2Canvas.height;
+  const W  = p2Canvas.width;
+  const H  = p2Canvas.height;
+  const mf = mobileFactor();   // ← scale factor; 1 on desktop, <1 on phones
 
-  /* ————————————————————————————————————————
-     TREE MEASUREMENTS  (reference-matched)
-     Trunk is narrow like a blade at top,
-     swells and widens toward the base.
-  */
+  /* ── Tree measurements ── */
+  const TREE_H        = H * 0.68;
+  const TRUNK_DUR     = 2800;
+  const BRANCH_UNLOCK = 0.62;
 
-  const TREE_H        = H * 0.68;             // total height root→crown tip
-  const crownY        = groundY - TREE_H;     // Y of topmost tip
-  const TRUNK_DUR     = 2800;                 // ms for trunk to fully grow
-  const BRANCH_UNLOCK = 0.62;                 // trunk % before branches start
-
-  // Teal color – flat, matches reference exactly
   const TEAL      = '#2e9b72';
   const TEAL_DARK = '#267a5a';
   const TEAL_LITE = '#38b884';
 
-  /* ————————————————————————————————————————
-     TRUNK SHAPE  (left edge + right edge)
-     Defined as [x_offset, y_offset_from_ground]
-     negative y = upward.  x is relative to rootX.
-
-     Reference silhouette:
-       - Base: ~34px wide each side (flat, ground-level)
-       - Swells slightly at ~20% height (organic)
-       - Narrows steadily
-       - At ~65% height splits / very narrow ~6px each
-       - Top tip: ~1-2px — very narrow pointed
-  */
-
-  const TL = [  // left edge, from base to tip (bottom→top)
-    [-34,    0              ],
-    [-36,   -TREE_H * 0.06 ],   // slight swell just above root
-    [-33,   -TREE_H * 0.13 ],
-    [-28,   -TREE_H * 0.22 ],
-    [-22,   -TREE_H * 0.33 ],
-    [-16,   -TREE_H * 0.44 ],
-    [-10,   -TREE_H * 0.55 ],
-    [ -6,   -TREE_H * 0.65 ],
-    [ -4,   -TREE_H * 0.75 ],
-    [ -2,   -TREE_H * 0.86 ],
-    [ -1,   -TREE_H * 0.93 ],
-    [  0,   -TREE_H * 1.00 ],   // tip
+  /* ── Trunk silhouette — x offsets scaled by mf ── */
+  const TL = [
+    [-34*mf,    0              ],
+    [-36*mf,   -TREE_H * 0.06 ],
+    [-33*mf,   -TREE_H * 0.13 ],
+    [-28*mf,   -TREE_H * 0.22 ],
+    [-22*mf,   -TREE_H * 0.33 ],
+    [-16*mf,   -TREE_H * 0.44 ],
+    [-10*mf,   -TREE_H * 0.55 ],
+    [ -6*mf,   -TREE_H * 0.65 ],
+    [ -4*mf,   -TREE_H * 0.75 ],
+    [ -2*mf,   -TREE_H * 0.86 ],
+    [ -1*mf,   -TREE_H * 0.93 ],
+    [  0,      -TREE_H * 1.00 ],
+  ];
+  const TR = [
+    [ 34*mf,    0              ],
+    [ 36*mf,   -TREE_H * 0.06 ],
+    [ 31*mf,   -TREE_H * 0.13 ],
+    [ 26*mf,   -TREE_H * 0.22 ],
+    [ 19*mf,   -TREE_H * 0.33 ],
+    [ 14*mf,   -TREE_H * 0.44 ],
+    [  9*mf,   -TREE_H * 0.55 ],
+    [  6*mf,   -TREE_H * 0.65 ],
+    [  4*mf,   -TREE_H * 0.75 ],
+    [  2*mf,   -TREE_H * 0.86 ],
+    [  1*mf,   -TREE_H * 0.93 ],
+    [  0,      -TREE_H * 1.00 ],
   ];
 
-  const TR = [  // right edge
-    [ 34,    0              ],
-    [ 36,   -TREE_H * 0.06 ],
-    [ 31,   -TREE_H * 0.13 ],
-    [ 26,   -TREE_H * 0.22 ],
-    [ 19,   -TREE_H * 0.33 ],
-    [ 14,   -TREE_H * 0.44 ],
-    [  9,   -TREE_H * 0.55 ],
-    [  6,   -TREE_H * 0.65 ],
-    [  4,   -TREE_H * 0.75 ],
-    [  2,   -TREE_H * 0.86 ],
-    [  1,   -TREE_H * 0.93 ],
-    [  0,   -TREE_H * 1.00 ],
-  ];
-
-  /* ————————————————————————————————————————
-     FORK POINT  (where trunk splits into arms)
-     Reference: ~65% up the trunk height
-  */
   const forkY = groundY - TREE_H * 0.65;
 
-  /* ————————————————————————————————————————
-     BRANCHES
-     Modeled exactly on reference:
-       - Two long LOW arms sweeping far left/right
-       - Two UPPER arms angled outward + upward
-       - Thin CENTRE LEADER continuing up
-       - Multiple fine TWIGS off each arm
-
-     Each branch:
-       x0,y0              = start (absolute coords)
-       cp1x,cp1y, cp2x,cp2y = cubic bezier controls
-       x1,y1              = end tip
-       w0                 = width at base, w1 = width at tip
-       delay              = ms after branch-unlock
-       dur                = ms to draw
-       twigs              = sub-branches
-  */
-
+  /* ── Branches — all x/y pixel offsets scaled by mf ── */
+  const s = mf; // shorthand
   const BRANCHES = [
-
-    /* == LEFT LOW ARM ==
-       Long, nearly horizontal, sweeps far left
-       Matches reference's widest leftward sweep */
     {
-      x0:rootX-8,     y0:forkY + TREE_H*0.02,
-      cp1x:rootX-70,  cp1y:forkY + TREE_H*0.06,
-      cp2x:rootX-145, cp2y:forkY + TREE_H*0.10,
-      x1:rootX-188,   y1:forkY   + TREE_H*0.11,
-      w0:12, w1:1.5,
-      delay:0, dur:1100,
+      x0:rootX-8*s,     y0:forkY+TREE_H*0.02,
+      cp1x:rootX-70*s,  cp1y:forkY+TREE_H*0.06,
+      cp2x:rootX-145*s, cp2y:forkY+TREE_H*0.10,
+      x1:rootX-188*s,   y1:forkY+TREE_H*0.11,
+      w0:12*s, w1:1.5*s, delay:0, dur:1100,
       twigs:[
-        { t:0.35, ex:-60, ey:-TREE_H*0.06, cx:-28, cy:-TREE_H*0.10, w0:4.5, w1:0.7, delay:300, dur:480 },
-        { t:0.55, ex:-45, ey:-TREE_H*0.09, cx:-20, cy:-TREE_H*0.15, w0:3.5, w1:0.6, delay:450, dur:420 },
-        { t:0.74, ex:-30, ey:-TREE_H*0.07, cx:-12, cy:-TREE_H*0.13, w0:2.8, w1:0.5, delay:580, dur:370 },
-        { t:0.90, ex:-18, ey:-TREE_H*0.05, cx:-7,  cy:-TREE_H*0.09, w0:2,   w1:0.4, delay:700, dur:320 },
+        {t:0.35,ex:-60*s,ey:-TREE_H*0.06,cx:-28*s,cy:-TREE_H*0.10,w0:4.5*s,w1:0.7*s,delay:300,dur:480},
+        {t:0.55,ex:-45*s,ey:-TREE_H*0.09,cx:-20*s,cy:-TREE_H*0.15,w0:3.5*s,w1:0.6*s,delay:450,dur:420},
+        {t:0.74,ex:-30*s,ey:-TREE_H*0.07,cx:-12*s,cy:-TREE_H*0.13,w0:2.8*s,w1:0.5*s,delay:580,dur:370},
+        {t:0.90,ex:-18*s,ey:-TREE_H*0.05,cx:-7*s, cy:-TREE_H*0.09,w0:2*s,  w1:0.4*s,delay:700,dur:320},
       ]
     },
-
-    /* == RIGHT LOWER ARM ==
-       Reference: right arm at similar height, slightly shorter */
     {
-      x0:rootX+7,     y0:forkY + TREE_H*0.01,
-      cp1x:rootX+65,  cp1y:forkY - TREE_H*0.02,
-      cp2x:rootX+125, cp2y:forkY + TREE_H*0.00,
-      x1:rootX+158,   y1:forkY   - TREE_H*0.02,
-      w0:12, w1:1.5,
-      delay:80, dur:1050,
+      x0:rootX+7*s,     y0:forkY+TREE_H*0.01,
+      cp1x:rootX+65*s,  cp1y:forkY-TREE_H*0.02,
+      cp2x:rootX+125*s, cp2y:forkY+TREE_H*0.00,
+      x1:rootX+158*s,   y1:forkY-TREE_H*0.02,
+      w0:12*s, w1:1.5*s, delay:80, dur:1050,
       twigs:[
-        { t:0.38, ex:48,  ey:-TREE_H*0.07, cx:22, cy:-TREE_H*0.12, w0:4.5, w1:0.7, delay:320, dur:460 },
-        { t:0.58, ex:36,  ey:-TREE_H*0.09, cx:16, cy:-TREE_H*0.16, w0:3.5, w1:0.6, delay:470, dur:410 },
-        { t:0.78, ex:22,  ey:-TREE_H*0.07, cx:9,  cy:-TREE_H*0.12, w0:2.5, w1:0.5, delay:600, dur:360 },
+        {t:0.38,ex:48*s, ey:-TREE_H*0.07,cx:22*s,cy:-TREE_H*0.12,w0:4.5*s,w1:0.7*s,delay:320,dur:460},
+        {t:0.58,ex:36*s, ey:-TREE_H*0.09,cx:16*s,cy:-TREE_H*0.16,w0:3.5*s,w1:0.6*s,delay:470,dur:410},
+        {t:0.78,ex:22*s, ey:-TREE_H*0.07,cx:9*s, cy:-TREE_H*0.12,w0:2.5*s,w1:0.5*s,delay:600,dur:360},
       ]
     },
-
-    /* == LEFT UPPER ARM ==
-       Angled up-left, shorter than low arm */
     {
-      x0:rootX-5,    y0:forkY - TREE_H*0.04,
-      cp1x:rootX-50, cp1y:forkY - TREE_H*0.17,
-      cp2x:rootX-90, cp2y:forkY - TREE_H*0.28,
-      x1:rootX-115,  y1:forkY   - TREE_H*0.36,
-      w0:9, w1:1.2,
-      delay:160, dur:950,
+      x0:rootX-5*s,    y0:forkY-TREE_H*0.04,
+      cp1x:rootX-50*s, cp1y:forkY-TREE_H*0.17,
+      cp2x:rootX-90*s, cp2y:forkY-TREE_H*0.28,
+      x1:rootX-115*s,  y1:forkY-TREE_H*0.36,
+      w0:9*s, w1:1.2*s, delay:160, dur:950,
       twigs:[
-        { t:0.45, ex:-36, ey:-TREE_H*0.11, cx:-16, cy:-TREE_H*0.19, w0:3.5, w1:0.6, delay:360, dur:430 },
-        { t:0.70, ex:-26, ey:-TREE_H*0.14, cx:-10, cy:-TREE_H*0.23, w0:2.8, w1:0.5, delay:510, dur:380 },
-        { t:0.88, ex:-16, ey:-TREE_H*0.10, cx:-6,  cy:-TREE_H*0.18, w0:2,   w1:0.4, delay:640, dur:330 },
+        {t:0.45,ex:-36*s,ey:-TREE_H*0.11,cx:-16*s,cy:-TREE_H*0.19,w0:3.5*s,w1:0.6*s,delay:360,dur:430},
+        {t:0.70,ex:-26*s,ey:-TREE_H*0.14,cx:-10*s,cy:-TREE_H*0.23,w0:2.8*s,w1:0.5*s,delay:510,dur:380},
+        {t:0.88,ex:-16*s,ey:-TREE_H*0.10,cx:-6*s, cy:-TREE_H*0.18,w0:2*s,  w1:0.4*s,delay:640,dur:330},
       ]
     },
-
-    /* == RIGHT UPPER ARM == */
     {
-      x0:rootX+5,    y0:forkY - TREE_H*0.04,
-      cp1x:rootX+46, cp1y:forkY - TREE_H*0.18,
-      cp2x:rootX+82, cp2y:forkY - TREE_H*0.29,
-      x1:rootX+102,  y1:forkY   - TREE_H*0.37,
-      w0:9, w1:1.2,
-      delay:220, dur:920,
+      x0:rootX+5*s,    y0:forkY-TREE_H*0.04,
+      cp1x:rootX+46*s, cp1y:forkY-TREE_H*0.18,
+      cp2x:rootX+82*s, cp2y:forkY-TREE_H*0.29,
+      x1:rootX+102*s,  y1:forkY-TREE_H*0.37,
+      w0:9*s, w1:1.2*s, delay:220, dur:920,
       twigs:[
-        { t:0.44, ex:32,  ey:-TREE_H*0.11, cx:14, cy:-TREE_H*0.19, w0:3.5, w1:0.6, delay:350, dur:420 },
-        { t:0.68, ex:22,  ey:-TREE_H*0.14, cx:8,  cy:-TREE_H*0.23, w0:2.8, w1:0.5, delay:500, dur:370 },
-        { t:0.86, ex:14,  ey:-TREE_H*0.10, cx:5,  cy:-TREE_H*0.17, w0:2,   w1:0.4, delay:630, dur:320 },
+        {t:0.44,ex:32*s, ey:-TREE_H*0.11,cx:14*s,cy:-TREE_H*0.19,w0:3.5*s,w1:0.6*s,delay:350,dur:420},
+        {t:0.68,ex:22*s, ey:-TREE_H*0.14,cx:8*s, cy:-TREE_H*0.23,w0:2.8*s,w1:0.5*s,delay:500,dur:370},
+        {t:0.86,ex:14*s, ey:-TREE_H*0.10,cx:5*s, cy:-TREE_H*0.17,w0:2*s,  w1:0.4*s,delay:630,dur:320},
       ]
     },
-
-    /* == CENTRE LEADER ==
-       Thin upward spike at top – reference has one curving right */
     {
       x0:rootX,      y0:forkY,
-      cp1x:rootX+5,  cp1y:forkY - TREE_H*0.14,
-      cp2x:rootX+8,  cp2y:forkY - TREE_H*0.26,
-      x1:rootX+6,    y1:forkY   - TREE_H*0.40,
-      w0:8, w1:0.8,
-      delay:0, dur:1300,
+      cp1x:rootX+5*s,  cp1y:forkY-TREE_H*0.14,
+      cp2x:rootX+8*s,  cp2y:forkY-TREE_H*0.26,
+      x1:rootX+6*s,    y1:forkY-TREE_H*0.40,
+      w0:8*s, w1:0.8*s, delay:0, dur:1300,
       twigs:[
-        { t:0.60, ex:-22, ey:-TREE_H*0.10, cx:-10, cy:-TREE_H*0.17, w0:3,   w1:0.5, delay:520, dur:380 },
-        { t:0.78, ex:-14, ey:-TREE_H*0.08, cx:-5,  cy:-TREE_H*0.14, w0:2,   w1:0.4, delay:660, dur:320 },
-        { t:0.90, ex: 10, ey:-TREE_H*0.07, cx: 4,  cy:-TREE_H*0.12, w0:2,   w1:0.4, delay:740, dur:300 },
+        {t:0.60,ex:-22*s,ey:-TREE_H*0.10,cx:-10*s,cy:-TREE_H*0.17,w0:3*s,  w1:0.5*s,delay:520,dur:380},
+        {t:0.78,ex:-14*s,ey:-TREE_H*0.08,cx:-5*s, cy:-TREE_H*0.14,w0:2*s,  w1:0.4*s,delay:660,dur:320},
+        {t:0.90,ex:10*s, ey:-TREE_H*0.07,cx:4*s,  cy:-TREE_H*0.12,w0:2*s,  w1:0.4*s,delay:740,dur:300},
       ]
     },
-
-    /* == LOW LEFT STUB == (small knob visible in reference lower left) */
     {
-      x0:rootX-18,   y0:groundY - TREE_H*0.45,
-      cp1x:rootX-46, cp1y:groundY - TREE_H*0.48,
-      cp2x:rootX-62, cp2y:groundY - TREE_H*0.47,
-      x1:rootX-68,   y1:groundY   - TREE_H*0.46,
-      w0:6, w1:1,
-      delay:280, dur:580,
-      twigs:[]
+      x0:rootX-18*s,   y0:groundY-TREE_H*0.45,
+      cp1x:rootX-46*s, cp1y:groundY-TREE_H*0.48,
+      cp2x:rootX-62*s, cp2y:groundY-TREE_H*0.47,
+      x1:rootX-68*s,   y1:groundY-TREE_H*0.46,
+      w0:6*s, w1:1*s, delay:280, dur:580, twigs:[]
     },
-
-    /* == LOW RIGHT STUB == */
     {
-      x0:rootX+18,   y0:groundY - TREE_H*0.43,
-      cp1x:rootX+42, cp1y:groundY - TREE_H*0.46,
-      cp2x:rootX+56, cp2y:groundY - TREE_H*0.45,
-      x1:rootX+62,   y1:groundY   - TREE_H*0.44,
-      w0:5, w1:0.9,
-      delay:360, dur:540,
-      twigs:[]
+      x0:rootX+18*s,   y0:groundY-TREE_H*0.43,
+      cp1x:rootX+42*s, cp1y:groundY-TREE_H*0.46,
+      cp2x:rootX+56*s, cp2y:groundY-TREE_H*0.45,
+      x1:rootX+62*s,   y1:groundY-TREE_H*0.44,
+      w0:5*s, w1:0.9*s, delay:360, dur:540, twigs:[]
     },
   ];
 
-  /* ————————————————————————————————————————
-     HELPERS
-  */
+  /* ── Helpers ── */
+  function easeOutExpo(t){ return t===1?1:1-Math.pow(2,-10*t); }
+  function easeOut3(t)   { return 1-(1-t)*(1-t)*(1-t); }
 
-  function easeOutExpo(t){ return t===1 ? 1 : 1-Math.pow(2,-10*t); }
-  function easeOut3(t)    { return 1-(1-t)*(1-t)*(1-t); }
-  function easeInOut(t)   { return t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
-
-  /* Sample point on cubic bezier */
-  function bezPt(t, x0,y0, cp1x,cp1y, cp2x,cp2y, x1,y1) {
-    const mt = 1-t;
+  function bezPt(t,x0,y0,cp1x,cp1y,cp2x,cp2y,x1,y1){
+    const mt=1-t;
     return {
-      x: mt*mt*mt*x0 + 3*mt*mt*t*cp1x + 3*mt*t*t*cp2x + t*t*t*x1,
-      y: mt*mt*mt*y0 + 3*mt*mt*t*cp1y + 3*mt*t*t*cp2y + t*t*t*y1,
+      x:mt*mt*mt*x0+3*mt*mt*t*cp1x+3*mt*t*t*cp2x+t*t*t*x1,
+      y:mt*mt*mt*y0+3*mt*mt*t*cp1y+3*mt*t*t*cp2y+t*t*t*y1,
     };
   }
 
-  /* Draw a tapered branch as overlapping circles along a cubic bezier */
-  function drawBranch(ctx, x0,y0, cp1x,cp1y, cp2x,cp2y, x1,y1, w0,w1, prog, col) {
-    const N   = Math.max(8, Math.ceil(64 * prog));
-    const end = Math.floor(N * prog);
-    if (end < 1) return;
-    for (let i = 0; i <= end; i++) {
-      const t  = i / N;
-      const pt = bezPt(t, x0,y0, cp1x,cp1y, cp2x,cp2y, x1,y1);
-      const r  = Math.max(0.5, (w0 + (w1-w0)*t) / 2);
-      ctx.beginPath();
-      ctx.arc(pt.x, pt.y, r, 0, Math.PI*2);
-      ctx.fillStyle = col;
-      ctx.fill();
+  /* Fixed N=64 for smooth rendering at all prog values */
+  function drawBranch(ctx,x0,y0,cp1x,cp1y,cp2x,cp2y,x1,y1,w0,w1,prog,col){
+    const N=64, end=Math.floor(N*prog);
+    if(end<1)return;
+    for(let i=0;i<=end;i++){
+      const t=i/N;
+      const pt=bezPt(t,x0,y0,cp1x,cp1y,cp2x,cp2y,x1,y1);
+      const r=Math.max(0.5,(w0+(w1-w0)*t)/2);
+      ctx.beginPath();ctx.arc(pt.x,pt.y,r,0,Math.PI*2);
+      ctx.fillStyle=col;ctx.fill();
     }
   }
 
-  /* Draw trunk as smooth filled silhouette path */
-  function drawTrunk(ctx, prog) {
-    const n = TL.length;
-    // How many spine points to show
-    const vis   = Math.max(2, Math.ceil((n-1) * prog) + 1);
-    const clamp = Math.min(vis, n);
-
-    // Build absolute coords
-    const lefts  = TL.slice(0, clamp).map(([x,y]) => [rootX+x, groundY+y]);
-    const rights = TR.slice(0, clamp).map(([x,y]) => [rootX+x, groundY+y]);
-
-    // Partial interpolation of last point
-    if (clamp < n) {
-      const frac = ((n-1)*prog) - (clamp-2);
-      const pL = TL[clamp-2], nL = TL[clamp-1];
-      lefts[lefts.length-1] = [
-        rootX + pL[0] + (nL[0]-pL[0])*frac,
-        groundY + pL[1] + (nL[1]-pL[1])*frac
-      ];
-      const pR = TR[clamp-2], nR = TR[clamp-1];
-      rights[rights.length-1] = [
-        rootX + pR[0] + (nR[0]-pR[0])*frac,
-        groundY + pR[1] + (nR[1]-pR[1])*frac
-      ];
+  function drawTrunk(ctx,prog){
+    const n=TL.length;
+    const vis=Math.max(2,Math.ceil((n-1)*prog)+1);
+    const clamp=Math.min(vis,n);
+    const lefts =TL.slice(0,clamp).map(([x,y])=>[rootX+x,groundY+y]);
+    const rights=TR.slice(0,clamp).map(([x,y])=>[rootX+x,groundY+y]);
+    if(clamp<n){
+      const frac=((n-1)*prog)-(clamp-2);
+      const pL=TL[clamp-2],nL=TL[clamp-1];
+      lefts[lefts.length-1]=[rootX+pL[0]+(nL[0]-pL[0])*frac,groundY+pL[1]+(nL[1]-pL[1])*frac];
+      const pR=TR[clamp-2],nR=TR[clamp-1];
+      rights[rights.length-1]=[rootX+pR[0]+(nR[0]-pR[0])*frac,groundY+pR[1]+(nR[1]-pR[1])*frac];
     }
-
-    ctx.save();
-    ctx.beginPath();
-
-    // Left edge – smooth curve up
-    ctx.moveTo(lefts[0][0], lefts[0][1]);
-    for (let i=1; i<lefts.length; i++) {
-      if (i < lefts.length-1) {
-        // Smooth through midpoint
-        const mx = (lefts[i][0]+lefts[i+1][0])/2;
-        const my = (lefts[i][1]+lefts[i+1][1])/2;
-        ctx.quadraticCurveTo(lefts[i][0], lefts[i][1], mx, my);
-      } else {
-        ctx.lineTo(lefts[i][0], lefts[i][1]);
-      }
+    ctx.save();ctx.beginPath();
+    ctx.moveTo(lefts[0][0],lefts[0][1]);
+    for(let i=1;i<lefts.length;i++){
+      if(i<lefts.length-1){const mx=(lefts[i][0]+lefts[i+1][0])/2,my=(lefts[i][1]+lefts[i+1][1])/2;ctx.quadraticCurveTo(lefts[i][0],lefts[i][1],mx,my);}
+      else ctx.lineTo(lefts[i][0],lefts[i][1]);
     }
-
-    // Right edge – back down
-    for (let i=rights.length-1; i>=0; i--) {
-      if (i > 0) {
-        const mx = (rights[i][0]+rights[i-1][0])/2;
-        const my = (rights[i][1]+rights[i-1][1])/2;
-        ctx.quadraticCurveTo(rights[i][0], rights[i][1], mx, my);
-      } else {
-        ctx.lineTo(rights[i][0], rights[i][1]);
-      }
+    for(let i=rights.length-1;i>=0;i--){
+      if(i>0){const mx=(rights[i][0]+rights[i-1][0])/2,my=(rights[i][1]+rights[i-1][1])/2;ctx.quadraticCurveTo(rights[i][0],rights[i][1],mx,my);}
+      else ctx.lineTo(rights[i][0],rights[i][1]);
     }
-
     ctx.closePath();
-
-    // Gradient fill matching reference teal
-    const grd = ctx.createLinearGradient(rootX-36, 0, rootX+36, 0);
-    grd.addColorStop(0,    TEAL_DARK);
-    grd.addColorStop(0.20, TEAL);
-    grd.addColorStop(0.50, TEAL_LITE);
-    grd.addColorStop(0.80, TEAL);
-    grd.addColorStop(1,    TEAL_DARK);
-    ctx.fillStyle = grd;
-    ctx.fill();
-
-    // Subtle highlight strip on inner left
-    ctx.strokeStyle = 'rgba(100,230,170,0.15)';
-    ctx.lineWidth   = 1.8;
-    ctx.beginPath();
-    lefts.forEach(([x,y], i) => {
-      if (i===0) ctx.moveTo(x+6, y);
-      else ctx.lineTo(x+5, y);
-    });
-    ctx.stroke();
-
+    const grd=ctx.createLinearGradient(rootX-36*s,0,rootX+36*s,0);
+    grd.addColorStop(0,TEAL_DARK);grd.addColorStop(0.20,TEAL);grd.addColorStop(0.50,TEAL_LITE);grd.addColorStop(0.80,TEAL);grd.addColorStop(1,TEAL_DARK);
+    ctx.fillStyle=grd;ctx.fill();
+    ctx.strokeStyle='rgba(100,230,170,0.15)';ctx.lineWidth=1.8;
+    ctx.beginPath();lefts.forEach(([x,y],i)=>{if(i===0)ctx.moveTo(x+6*s,y);else ctx.lineTo(x+5*s,y);});ctx.stroke();
     ctx.restore();
   }
 
-  /* Redraw ground line so it persists across all frames */
-  const lineX1 = W*0.12, lineX2 = W*0.88;
-  function drawLine(ctx) {
+  const lineX1=W*0.12,lineX2=W*0.88;
+  function drawLine(ctx){
     ctx.save();
-    ctx.strokeStyle = 'rgba(60,30,30,0.55)';
-    ctx.lineWidth   = 2.2;
-    ctx.lineCap     = 'round';
-    ctx.beginPath();
-    ctx.moveTo(lineX1, groundY);
-    ctx.lineTo(lineX2, groundY);
-    ctx.stroke();
-
-    ctx.strokeStyle = 'rgba(40,15,15,0.12)';
-    ctx.lineWidth   = 3.5;
-    ctx.beginPath();
-    ctx.moveTo(lineX1, groundY+2.5);
-    ctx.lineTo(lineX2, groundY+2.5);
-    ctx.stroke();
+    ctx.strokeStyle='rgba(60,30,30,0.55)';ctx.lineWidth=2.2;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(lineX1,groundY);ctx.lineTo(lineX2,groundY);ctx.stroke();
+    ctx.strokeStyle='rgba(40,15,15,0.12)';ctx.lineWidth=3.5;
+    ctx.beginPath();ctx.moveTo(lineX1,groundY+2.5);ctx.lineTo(lineX2,groundY+2.5);ctx.stroke();
     ctx.restore();
   }
 
-  /* Draw a twig off a parent branch at parametric position t */
-  function drawTwig(ctx, branch, twig, prog) {
-    if (prog <= 0) return;
-    // Get spawn point on parent bezier
-    const sp = bezPt(twig.t,
-      branch.x0,   branch.y0,
-      branch.cp1x, branch.cp1y,
-      branch.cp2x, branch.cp2y,
-      branch.x1,   branch.y1);
-
-    const ex  = sp.x + twig.ex;
-    const ey  = sp.y + twig.ey;
-    const cx1 = sp.x + twig.cx * 0.5;
-    const cy1 = sp.y + twig.cy * 0.5;
-    const cx2 = sp.x + twig.cx;
-    const cy2 = sp.y + twig.cy;
-    drawBranch(ctx, sp.x,sp.y, cx1,cy1, cx2,cy2,
-      ex,ey, twig.w0,twig.w1, prog, TEAL);
+  function drawTwig(ctx,branch,twig,prog){
+    if(prog<=0)return;
+    const sp=bezPt(twig.t,branch.x0,branch.y0,branch.cp1x,branch.cp1y,branch.cp2x,branch.cp2y,branch.x1,branch.y1);
+    drawBranch(ctx,sp.x,sp.y,sp.x+twig.cx*0.5,sp.y+twig.cy*0.5,sp.x+twig.cx,sp.y+twig.cy,sp.x+twig.ex,sp.y+twig.ey,twig.w0,twig.w1,prog,TEAL);
   }
 
-  /* ————————————————————————————————————————
-     STATE
-  */
-  const brState = BRANCHES.map(b => ({
-    prog:0, startTs:null,
-    twigState: (b.twigs||[]).map(()=>({ prog:0, startTs:null })),
-  }));
+  /* ── State ── */
+  const brState=BRANCHES.map(b=>({prog:0,startTs:null,twigState:(b.twigs||[]).map(()=>({prog:0,startTs:null}))}));
 
-  /* ————————————————————————————————————————
-     MAIN LOOP
-  */
-  let tStart = null;
-
-  function loop(ts) {
-    if (!tStart) tStart = ts;
-    const elapsed = ts - tStart;
-
+  /* ── Main loop (with allDone fix) ── */
+  let tStart=null;
+  function loop(ts){
+    if(!tStart)tStart=ts;
+    const elapsed=ts-tStart;
     p2Ctx.clearRect(0,0,W,H);
     drawLine(p2Ctx);
-
-    // 1. TRUNK
-    const tp = easeOutExpo(Math.min(1, elapsed/TRUNK_DUR));
-    drawTrunk(p2Ctx, tp);
-
-    // 2. BRANCHES (unlock after trunk reaches BRANCH_UNLOCK %)
-    const unlockMs = TRUNK_DUR * BRANCH_UNLOCK;
-
-    let allDone = tp >= 1;
-
-    BRANCHES.forEach((b,bi) => {
-      const bs = brState[bi];
-      if (elapsed < unlockMs + b.delay) {
-        allDone=false; return;
-      }
-
-      if (!bs.startTs) bs.startTs = ts;
-      bs.prog = easeOut3(Math.min(1, (ts-bs.startTs)/b.dur));
-      if (bs.prog < 1) allDone = false;
-
-      drawBranch(p2Ctx,
-        b.x0,b.y0, b.cp1x,b.cp1y, b.cp2x,b.cp2y,
-        b.x1,b.y1,
-        b.w0, b.w1, bs.prog, TEAL);
-
-      // 3. TWIGS (unlock after parent is 38% drawn)
-      (b.twigs||[]).forEach((tw,ti) => {
-        const ts2 = bs.twigState[ti];
-        if (elapsed < unlockMs + b.delay + tw.delay || bs.prog < 0.38) {
-          allDone=false; return;
-        }
-        if (!ts2.startTs) ts2.startTs = ts;
-        ts2.prog = easeOut3(Math.min(1, (ts-ts2.startTs)/tw.dur));
-        if (ts2.prog < 1) allDone=false;
-        drawTwig(p2Ctx, b, tw, ts2.prog);
+    const tp=easeOutExpo(Math.min(1,elapsed/TRUNK_DUR));
+    drawTrunk(p2Ctx,tp);
+    const unlockMs=TRUNK_DUR*BRANCH_UNLOCK;
+    /* FIX: require both trunk done AND unlock window passed */
+    let allDone=tp>=1&&elapsed>=unlockMs;
+    BRANCHES.forEach((b,bi)=>{
+      const bs=brState[bi];
+      if(elapsed<unlockMs+b.delay){allDone=false;return;}
+      if(!bs.startTs)bs.startTs=ts;
+      bs.prog=easeOut3(Math.min(1,(ts-bs.startTs)/b.dur));
+      if(bs.prog<1)allDone=false;
+      drawBranch(p2Ctx,b.x0,b.y0,b.cp1x,b.cp1y,b.cp2x,b.cp2y,b.x1,b.y1,b.w0,b.w1,bs.prog,TEAL);
+      (b.twigs||[]).forEach((tw,ti)=>{
+        const twigSt=bs.twigState[ti];
+        if(elapsed<unlockMs+b.delay+tw.delay||bs.prog<0.38){allDone=false;return;}
+        if(!twigSt.startTs)twigSt.startTs=ts;
+        twigSt.prog=easeOut3(Math.min(1,(ts-twigSt.startTs)/tw.dur));
+        if(twigSt.prog<1)allDone=false;
+        drawTwig(p2Ctx,b,tw,twigSt.prog);
       });
     });
-
-    if (!allDone) {
+    if(!allDone){
       requestAnimationFrame(loop);
     } else {
-      // Draw final static frame cleanly
-      p2Ctx.clearRect(0,0,W,H);
-      drawLine(p2Ctx);
-      drawTrunk(p2Ctx, 1);
-      BRANCHES.forEach((b,bi) => {
-        drawBranch(p2Ctx, b.x0,b.y0,
-          b.cp1x,b.cp1y, b.cp2x,b.cp2y, b.x1,b.y1,
-          b.w0,b.w1, 1, TEAL);
-        (b.twigs||[]).forEach(tw =>
-          drawTwig(p2Ctx, b, tw, 1));
+      p2Ctx.clearRect(0,0,W,H);drawLine(p2Ctx);drawTrunk(p2Ctx,1);
+      BRANCHES.forEach((b)=>{
+        drawBranch(p2Ctx,b.x0,b.y0,b.cp1x,b.cp1y,b.cp2x,b.cp2y,b.x1,b.y1,b.w0,b.w1,1,TEAL);
+        (b.twigs||[]).forEach(tw=>drawTwig(p2Ctx,b,tw,1));
       });
-      // Hand off to petal bloom
-      setTimeout(()=>{
-        if (typeof startPetalBloom === 'function') {
-          startPetalBloom(rootX, groundY, TREE_H,
-            forkY, BRANCHES, p2Ctx, p2Canvas, drawLine,
-            drawTrunk, drawBranch, drawTwig);
-        }
-      }, 500);
+      setTimeout(()=>{if(typeof startPetalBloom==='function')startPetalBloom(rootX,groundY,TREE_H,forkY,BRANCHES,p2Ctx,p2Canvas,drawLine,drawTrunk,drawBranch,drawTwig);},500);
     }
   }
-
   requestAnimationFrame(loop);
 }
 
 /* ============================================
-   PHASE 4 – placeholder (next step)
+   PHASE 4 – placeholder
 ============================================ */
-function startPetalBloom(rootX, groundY, treeH,
-  forkY, branches, ctx, canvas, drawLine, drawTrunk,
-  drawBranch, drawTwig) {
+function startPetalBloom(rootX,groundY,treeH,forkY,branches,ctx,canvas,drawLine,drawTrunk,drawBranch,drawTwig){
   console.log('🌸 Tree fully grown – petal bloom coming next!');
 }
 
