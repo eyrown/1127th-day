@@ -804,12 +804,462 @@ function runSeedAnimation(heartCX, heartCY) {
   requestAnimationFrame(draw);
 }
 
+
 /* ════════════════════════════════════════
    INIT FINAL PAGE
 ════════════════════════════════════════ */
 function initFinalPage() {
   resizeFinal();
   requestAnimationFrame(animDust);
+}
+
+/* ============================================
+   PHASE 3 – TREE GROWTH
+
+   Exact reference copy:
+   - Trunk: narrow pointed top, curves outward, wide flat base
+   - Grows upward from seed point (bottom to top)
+   - Then branches sprout organically one by one
+   - All drawn as clean filled silhouettes (flat teal, no texture)
+============================================ */
+
+function startTreeGrowth(rootX, groundY) {
+  const W = p2Canvas.width;
+  const H = p2Canvas.height;
+
+  /* ————————————————————————————————————————
+     TREE MEASUREMENTS  (reference-matched)
+     Trunk is narrow like a blade at top,
+     swells and widens toward the base.
+  */
+
+  const TREE_H        = H * 0.68;             // total height root→crown tip
+  const crownY        = groundY - TREE_H;     // Y of topmost tip
+  const TRUNK_DUR     = 2800;                 // ms for trunk to fully grow
+  const BRANCH_UNLOCK = 0.62;                 // trunk % before branches start
+
+  // Teal color – flat, matches reference exactly
+  const TEAL      = '#2e9b72';
+  const TEAL_DARK = '#267a5a';
+  const TEAL_LITE = '#38b884';
+
+  /* ————————————————————————————————————————
+     TRUNK SHAPE  (left edge + right edge)
+     Defined as [x_offset, y_offset_from_ground]
+     negative y = upward.  x is relative to rootX.
+
+     Reference silhouette:
+       - Base: ~34px wide each side (flat, ground-level)
+       - Swells slightly at ~20% height (organic)
+       - Narrows steadily
+       - At ~65% height splits / very narrow ~6px each
+       - Top tip: ~1-2px — very narrow pointed
+  */
+
+  const TL = [  // left edge, from base to tip (bottom→top)
+    [-34,    0              ],
+    [-36,   -TREE_H * 0.06 ],   // slight swell just above root
+    [-33,   -TREE_H * 0.13 ],
+    [-28,   -TREE_H * 0.22 ],
+    [-22,   -TREE_H * 0.33 ],
+    [-16,   -TREE_H * 0.44 ],
+    [-10,   -TREE_H * 0.55 ],
+    [ -6,   -TREE_H * 0.65 ],
+    [ -4,   -TREE_H * 0.75 ],
+    [ -2,   -TREE_H * 0.86 ],
+    [ -1,   -TREE_H * 0.93 ],
+    [  0,   -TREE_H * 1.00 ],   // tip
+  ];
+
+  const TR = [  // right edge
+    [ 34,    0              ],
+    [ 36,   -TREE_H * 0.06 ],
+    [ 31,   -TREE_H * 0.13 ],
+    [ 26,   -TREE_H * 0.22 ],
+    [ 19,   -TREE_H * 0.33 ],
+    [ 14,   -TREE_H * 0.44 ],
+    [  9,   -TREE_H * 0.55 ],
+    [  6,   -TREE_H * 0.65 ],
+    [  4,   -TREE_H * 0.75 ],
+    [  2,   -TREE_H * 0.86 ],
+    [  1,   -TREE_H * 0.93 ],
+    [  0,   -TREE_H * 1.00 ],
+  ];
+
+  /* ————————————————————————————————————————
+     FORK POINT  (where trunk splits into arms)
+     Reference: ~65% up the trunk height
+  */
+  const forkY = groundY - TREE_H * 0.65;
+
+  /* ————————————————————————————————————————
+     BRANCHES
+     Modeled exactly on reference:
+       - Two long LOW arms sweeping far left/right
+       - Two UPPER arms angled outward + upward
+       - Thin CENTRE LEADER continuing up
+       - Multiple fine TWIGS off each arm
+
+     Each branch:
+       x0,y0              = start (absolute coords)
+       cp1x,cp1y, cp2x,cp2y = cubic bezier controls
+       x1,y1              = end tip
+       w0                 = width at base, w1 = width at tip
+       delay              = ms after branch-unlock
+       dur                = ms to draw
+       twigs              = sub-branches
+  */
+
+  const BRANCHES = [
+
+    /* == LEFT LOW ARM ==
+       Long, nearly horizontal, sweeps far left
+       Matches reference's widest leftward sweep */
+    {
+      x0:rootX-8,     y0:forkY + TREE_H*0.02,
+      cp1x:rootX-70,  cp1y:forkY + TREE_H*0.06,
+      cp2x:rootX-145, cp2y:forkY + TREE_H*0.10,
+      x1:rootX-188,   y1:forkY   + TREE_H*0.11,
+      w0:12, w1:1.5,
+      delay:0, dur:1100,
+      twigs:[
+        { t:0.35, ex:-60, ey:-TREE_H*0.06, cx:-28, cy:-TREE_H*0.10, w0:4.5, w1:0.7, delay:300, dur:480 },
+        { t:0.55, ex:-45, ey:-TREE_H*0.09, cx:-20, cy:-TREE_H*0.15, w0:3.5, w1:0.6, delay:450, dur:420 },
+        { t:0.74, ex:-30, ey:-TREE_H*0.07, cx:-12, cy:-TREE_H*0.13, w0:2.8, w1:0.5, delay:580, dur:370 },
+        { t:0.90, ex:-18, ey:-TREE_H*0.05, cx:-7,  cy:-TREE_H*0.09, w0:2,   w1:0.4, delay:700, dur:320 },
+      ]
+    },
+
+    /* == RIGHT LOWER ARM ==
+       Reference: right arm at similar height, slightly shorter */
+    {
+      x0:rootX+7,     y0:forkY + TREE_H*0.01,
+      cp1x:rootX+65,  cp1y:forkY - TREE_H*0.02,
+      cp2x:rootX+125, cp2y:forkY + TREE_H*0.00,
+      x1:rootX+158,   y1:forkY   - TREE_H*0.02,
+      w0:12, w1:1.5,
+      delay:80, dur:1050,
+      twigs:[
+        { t:0.38, ex:48,  ey:-TREE_H*0.07, cx:22, cy:-TREE_H*0.12, w0:4.5, w1:0.7, delay:320, dur:460 },
+        { t:0.58, ex:36,  ey:-TREE_H*0.09, cx:16, cy:-TREE_H*0.16, w0:3.5, w1:0.6, delay:470, dur:410 },
+        { t:0.78, ex:22,  ey:-TREE_H*0.07, cx:9,  cy:-TREE_H*0.12, w0:2.5, w1:0.5, delay:600, dur:360 },
+      ]
+    },
+
+    /* == LEFT UPPER ARM ==
+       Angled up-left, shorter than low arm */
+    {
+      x0:rootX-5,    y0:forkY - TREE_H*0.04,
+      cp1x:rootX-50, cp1y:forkY - TREE_H*0.17,
+      cp2x:rootX-90, cp2y:forkY - TREE_H*0.28,
+      x1:rootX-115,  y1:forkY   - TREE_H*0.36,
+      w0:9, w1:1.2,
+      delay:160, dur:950,
+      twigs:[
+        { t:0.45, ex:-36, ey:-TREE_H*0.11, cx:-16, cy:-TREE_H*0.19, w0:3.5, w1:0.6, delay:360, dur:430 },
+        { t:0.70, ex:-26, ey:-TREE_H*0.14, cx:-10, cy:-TREE_H*0.23, w0:2.8, w1:0.5, delay:510, dur:380 },
+        { t:0.88, ex:-16, ey:-TREE_H*0.10, cx:-6,  cy:-TREE_H*0.18, w0:2,   w1:0.4, delay:640, dur:330 },
+      ]
+    },
+
+    /* == RIGHT UPPER ARM == */
+    {
+      x0:rootX+5,    y0:forkY - TREE_H*0.04,
+      cp1x:rootX+46, cp1y:forkY - TREE_H*0.18,
+      cp2x:rootX+82, cp2y:forkY - TREE_H*0.29,
+      x1:rootX+102,  y1:forkY   - TREE_H*0.37,
+      w0:9, w1:1.2,
+      delay:220, dur:920,
+      twigs:[
+        { t:0.44, ex:32,  ey:-TREE_H*0.11, cx:14, cy:-TREE_H*0.19, w0:3.5, w1:0.6, delay:350, dur:420 },
+        { t:0.68, ex:22,  ey:-TREE_H*0.14, cx:8,  cy:-TREE_H*0.23, w0:2.8, w1:0.5, delay:500, dur:370 },
+        { t:0.86, ex:14,  ey:-TREE_H*0.10, cx:5,  cy:-TREE_H*0.17, w0:2,   w1:0.4, delay:630, dur:320 },
+      ]
+    },
+
+    /* == CENTRE LEADER ==
+       Thin upward spike at top – reference has one curving right */
+    {
+      x0:rootX,      y0:forkY,
+      cp1x:rootX+5,  cp1y:forkY - TREE_H*0.14,
+      cp2x:rootX+8,  cp2y:forkY - TREE_H*0.26,
+      x1:rootX+6,    y1:forkY   - TREE_H*0.40,
+      w0:8, w1:0.8,
+      delay:0, dur:1300,
+      twigs:[
+        { t:0.60, ex:-22, ey:-TREE_H*0.10, cx:-10, cy:-TREE_H*0.17, w0:3,   w1:0.5, delay:520, dur:380 },
+        { t:0.78, ex:-14, ey:-TREE_H*0.08, cx:-5,  cy:-TREE_H*0.14, w0:2,   w1:0.4, delay:660, dur:320 },
+        { t:0.90, ex: 10, ey:-TREE_H*0.07, cx: 4,  cy:-TREE_H*0.12, w0:2,   w1:0.4, delay:740, dur:300 },
+      ]
+    },
+
+    /* == LOW LEFT STUB == (small knob visible in reference lower left) */
+    {
+      x0:rootX-18,   y0:groundY - TREE_H*0.45,
+      cp1x:rootX-46, cp1y:groundY - TREE_H*0.48,
+      cp2x:rootX-62, cp2y:groundY - TREE_H*0.47,
+      x1:rootX-68,   y1:groundY   - TREE_H*0.46,
+      w0:6, w1:1,
+      delay:280, dur:580,
+      twigs:[]
+    },
+
+    /* == LOW RIGHT STUB == */
+    {
+      x0:rootX+18,   y0:groundY - TREE_H*0.43,
+      cp1x:rootX+42, cp1y:groundY - TREE_H*0.46,
+      cp2x:rootX+56, cp2y:groundY - TREE_H*0.45,
+      x1:rootX+62,   y1:groundY   - TREE_H*0.44,
+      w0:5, w1:0.9,
+      delay:360, dur:540,
+      twigs:[]
+    },
+  ];
+
+  /* ————————————————————————————————————————
+     HELPERS
+  */
+
+  function easeOutExpo(t){ return t===1 ? 1 : 1-Math.pow(2,-10*t); }
+  function easeOut3(t)    { return 1-(1-t)*(1-t)*(1-t); }
+  function easeInOut(t)   { return t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+
+  /* Sample point on cubic bezier */
+  function bezPt(t, x0,y0, cp1x,cp1y, cp2x,cp2y, x1,y1) {
+    const mt = 1-t;
+    return {
+      x: mt*mt*mt*x0 + 3*mt*mt*t*cp1x + 3*mt*t*t*cp2x + t*t*t*x1,
+      y: mt*mt*mt*y0 + 3*mt*mt*t*cp1y + 3*mt*t*t*cp2y + t*t*t*y1,
+    };
+  }
+
+  /* Draw a tapered branch as overlapping circles along a cubic bezier */
+  function drawBranch(ctx, x0,y0, cp1x,cp1y, cp2x,cp2y, x1,y1, w0,w1, prog, col) {
+    const N   = Math.max(8, Math.ceil(64 * prog));
+    const end = Math.floor(N * prog);
+    if (end < 1) return;
+    for (let i = 0; i <= end; i++) {
+      const t  = i / N;
+      const pt = bezPt(t, x0,y0, cp1x,cp1y, cp2x,cp2y, x1,y1);
+      const r  = Math.max(0.5, (w0 + (w1-w0)*t) / 2);
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, r, 0, Math.PI*2);
+      ctx.fillStyle = col;
+      ctx.fill();
+    }
+  }
+
+  /* Draw trunk as smooth filled silhouette path */
+  function drawTrunk(ctx, prog) {
+    const n = TL.length;
+    // How many spine points to show
+    const vis   = Math.max(2, Math.ceil((n-1) * prog) + 1);
+    const clamp = Math.min(vis, n);
+
+    // Build absolute coords
+    const lefts  = TL.slice(0, clamp).map(([x,y]) => [rootX+x, groundY+y]);
+    const rights = TR.slice(0, clamp).map(([x,y]) => [rootX+x, groundY+y]);
+
+    // Partial interpolation of last point
+    if (clamp < n) {
+      const frac = ((n-1)*prog) - (clamp-2);
+      const pL = TL[clamp-2], nL = TL[clamp-1];
+      lefts[lefts.length-1] = [
+        rootX + pL[0] + (nL[0]-pL[0])*frac,
+        groundY + pL[1] + (nL[1]-pL[1])*frac
+      ];
+      const pR = TR[clamp-2], nR = TR[clamp-1];
+      rights[rights.length-1] = [
+        rootX + pR[0] + (nR[0]-pR[0])*frac,
+        groundY + pR[1] + (nR[1]-pR[1])*frac
+      ];
+    }
+
+    ctx.save();
+    ctx.beginPath();
+
+    // Left edge – smooth curve up
+    ctx.moveTo(lefts[0][0], lefts[0][1]);
+    for (let i=1; i<lefts.length; i++) {
+      if (i < lefts.length-1) {
+        // Smooth through midpoint
+        const mx = (lefts[i][0]+lefts[i+1][0])/2;
+        const my = (lefts[i][1]+lefts[i+1][1])/2;
+        ctx.quadraticCurveTo(lefts[i][0], lefts[i][1], mx, my);
+      } else {
+        ctx.lineTo(lefts[i][0], lefts[i][1]);
+      }
+    }
+
+    // Right edge – back down
+    for (let i=rights.length-1; i>=0; i--) {
+      if (i > 0) {
+        const mx = (rights[i][0]+rights[i-1][0])/2;
+        const my = (rights[i][1]+rights[i-1][1])/2;
+        ctx.quadraticCurveTo(rights[i][0], rights[i][1], mx, my);
+      } else {
+        ctx.lineTo(rights[i][0], rights[i][1]);
+      }
+    }
+
+    ctx.closePath();
+
+    // Gradient fill matching reference teal
+    const grd = ctx.createLinearGradient(rootX-36, 0, rootX+36, 0);
+    grd.addColorStop(0,    TEAL_DARK);
+    grd.addColorStop(0.20, TEAL);
+    grd.addColorStop(0.50, TEAL_LITE);
+    grd.addColorStop(0.80, TEAL);
+    grd.addColorStop(1,    TEAL_DARK);
+    ctx.fillStyle = grd;
+    ctx.fill();
+
+    // Subtle highlight strip on inner left
+    ctx.strokeStyle = 'rgba(100,230,170,0.15)';
+    ctx.lineWidth   = 1.8;
+    ctx.beginPath();
+    lefts.forEach(([x,y], i) => {
+      if (i===0) ctx.moveTo(x+6, y);
+      else ctx.lineTo(x+5, y);
+    });
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  /* Redraw ground line so it persists across all frames */
+  const lineX1 = W*0.12, lineX2 = W*0.88;
+  function drawLine(ctx) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(60,30,30,0.55)';
+    ctx.lineWidth   = 2.2;
+    ctx.lineCap     = 'round';
+    ctx.beginPath();
+    ctx.moveTo(lineX1, groundY);
+    ctx.lineTo(lineX2, groundY);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(40,15,15,0.12)';
+    ctx.lineWidth   = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(lineX1, groundY+2.5);
+    ctx.lineTo(lineX2, groundY+2.5);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  /* Draw a twig off a parent branch at parametric position t */
+  function drawTwig(ctx, branch, twig, prog) {
+    if (prog <= 0) return;
+    // Get spawn point on parent bezier
+    const sp = bezPt(twig.t,
+      branch.x0,   branch.y0,
+      branch.cp1x, branch.cp1y,
+      branch.cp2x, branch.cp2y,
+      branch.x1,   branch.y1);
+
+    const ex  = sp.x + twig.ex;
+    const ey  = sp.y + twig.ey;
+    const cx1 = sp.x + twig.cx * 0.5;
+    const cy1 = sp.y + twig.cy * 0.5;
+    const cx2 = sp.x + twig.cx;
+    const cy2 = sp.y + twig.cy;
+    drawBranch(ctx, sp.x,sp.y, cx1,cy1, cx2,cy2,
+      ex,ey, twig.w0,twig.w1, prog, TEAL);
+  }
+
+  /* ————————————————————————————————————————
+     STATE
+  */
+  const brState = BRANCHES.map(b => ({
+    prog:0, startTs:null,
+    twigState: (b.twigs||[]).map(()=>({ prog:0, startTs:null })),
+  }));
+
+  /* ————————————————————————————————————————
+     MAIN LOOP
+  */
+  let tStart = null;
+
+  function loop(ts) {
+    if (!tStart) tStart = ts;
+    const elapsed = ts - tStart;
+
+    p2Ctx.clearRect(0,0,W,H);
+    drawLine(p2Ctx);
+
+    // 1. TRUNK
+    const tp = easeOutExpo(Math.min(1, elapsed/TRUNK_DUR));
+    drawTrunk(p2Ctx, tp);
+
+    // 2. BRANCHES (unlock after trunk reaches BRANCH_UNLOCK %)
+    const unlockMs = TRUNK_DUR * BRANCH_UNLOCK;
+
+    let allDone = tp >= 1;
+
+    BRANCHES.forEach((b,bi) => {
+      const bs = brState[bi];
+      if (elapsed < unlockMs + b.delay) {
+        allDone=false; return;
+      }
+
+      if (!bs.startTs) bs.startTs = ts;
+      bs.prog = easeOut3(Math.min(1, (ts-bs.startTs)/b.dur));
+      if (bs.prog < 1) allDone = false;
+
+      drawBranch(p2Ctx,
+        b.x0,b.y0, b.cp1x,b.cp1y, b.cp2x,b.cp2y,
+        b.x1,b.y1,
+        b.w0, b.w1, bs.prog, TEAL);
+
+      // 3. TWIGS (unlock after parent is 38% drawn)
+      (b.twigs||[]).forEach((tw,ti) => {
+        const ts2 = bs.twigState[ti];
+        if (elapsed < unlockMs + b.delay + tw.delay || bs.prog < 0.38) {
+          allDone=false; return;
+        }
+        if (!ts2.startTs) ts2.startTs = ts;
+        ts2.prog = easeOut3(Math.min(1, (ts-ts2.startTs)/tw.dur));
+        if (ts2.prog < 1) allDone=false;
+        drawTwig(p2Ctx, b, tw, ts2.prog);
+      });
+    });
+
+    if (!allDone) {
+      requestAnimationFrame(loop);
+    } else {
+      // Draw final static frame cleanly
+      p2Ctx.clearRect(0,0,W,H);
+      drawLine(p2Ctx);
+      drawTrunk(p2Ctx, 1);
+      BRANCHES.forEach((b,bi) => {
+        drawBranch(p2Ctx, b.x0,b.y0,
+          b.cp1x,b.cp1y, b.cp2x,b.cp2y, b.x1,b.y1,
+          b.w0,b.w1, 1, TEAL);
+        (b.twigs||[]).forEach(tw =>
+          drawTwig(p2Ctx, b, tw, 1));
+      });
+      // Hand off to petal bloom
+      setTimeout(()=>{
+        if (typeof startPetalBloom === 'function') {
+          startPetalBloom(rootX, groundY, TREE_H,
+            forkY, BRANCHES, p2Ctx, p2Canvas, drawLine,
+            drawTrunk, drawBranch, drawTwig);
+        }
+      }, 500);
+    }
+  }
+
+  requestAnimationFrame(loop);
+}
+
+/* ============================================
+   PHASE 4 – placeholder (next step)
+============================================ */
+function startPetalBloom(rootX, groundY, treeH,
+  forkY, branches, ctx, canvas, drawLine, drawTrunk,
+  drawBranch, drawTwig) {
+  console.log('🌸 Tree fully grown – petal bloom coming next!');
 }
 
 </script>
