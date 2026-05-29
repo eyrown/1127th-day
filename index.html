@@ -585,8 +585,8 @@ function runSeedAnimation(cx, startY){
   const seedR=5;
   const lineY=H*0.82;
   const landY=lineY-seedR;
-  const lineX1=W*0.12;
-  const lineX2=W*0.88;
+  const lineX1=W*0.04;
+  const lineX2=W*0.96;
   const FALL_DUR=1800,LINE_DUR=1800,IMPACT_DUR=900;
   let startTime=null,phase='falling',impactStart=null;
 
@@ -836,7 +836,7 @@ function startTreeGrowth(rootX, groundY) {
     ctx.restore();
   }
 
-  const lineX1=W*0.12,lineX2=W*0.88;
+  const lineX1=W*0.04,lineX2=W*0.96;
   function drawLine(ctx){
     ctx.save();
     ctx.strokeStyle='rgba(60,30,30,0.55)';ctx.lineWidth=2.2;ctx.lineCap='round';
