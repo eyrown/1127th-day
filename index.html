@@ -662,7 +662,7 @@ function startTreeGrowth(rootX, groundY) {
   const H  = p2Canvas.height;
   const mf = mobileFactor();
 
-  const TREE_H        = Math.min(H * 0.40, groundY - H * 0.14);
+  const TREE_H        = Math.min(H * 0.30, groundY - H * 0.18);
   const TRUNK_DUR     = 2800;
   const BRANCH_UNLOCK = 0.62;
 
@@ -670,7 +670,7 @@ function startTreeGrowth(rootX, groundY) {
   const TEAL_DARK = '#267a5a';
   const TEAL_LITE = '#38b884';
 
-  const s = mf * 0.55;
+  const s = mf * 0.38;
 
   const TL = [
     [-28*s,    0              ],
@@ -978,7 +978,7 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
   const maxDist = Math.max(...hearts.map(h => h.dist));
   const edgeThreshold = maxDist * 0.70;
   const edgeHearts  = hearts.filter(h => h.dist >= edgeThreshold).sort((a,b) => b.dist - a.dist);
-  const innerHearts = hearts.filter(h => h.dist <  edgeThreshold).sort((a,b) => b.dist - a.dist);
+  const innerHearts = hearts.filter(h => h.dist <  edgeThreshold).sort(() => Math.random() - 0.5);
 
   function drawHeart(cx, cy, size, rot, col, alph) {
     p2Ctx.save();
@@ -1063,11 +1063,85 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
         p2Ctx.clearRect(0, 0, W, H);
         redrawTree();
         hearts.forEach(hp => drawHeart(hp.x, hp.y, hp.size, hp.rot, hp.col, hp.alph));
+        window._bloomHearts = hearts;
+        // --- falling petals ---
+const fallingPetals = [];
+const PETAL_COLS = window._bloomHearts
+  ? [...new Set(window._bloomHearts.map(h => h.col))]
+  : ['#e8293f','#f07095','#f0bf18','#c038ce'];
+
+function spawnFallingPetal() {
+  const cx2 = canopyCX + (Math.random() - 0.5) * cW * 0.7;
+  const cy2 = canopyMidY + (Math.random() - 0.5) * cH * 0.6;
+  fallingPetals.push({
+    x: cx2, y: cy2,
+    vx: -(Math.random() * 1.2 + 0.4),
+    vy: Math.random() * 0.6 + 0.3,
+    rot: Math.random() * Math.PI * 2,
+    vr: (Math.random() - 0.5) * 0.06,
+    size: (4 + Math.random() * 7) * mf,
+    col: PETAL_COLS[Math.floor(Math.random() * PETAL_COLS.length)],
+    alpha: 0.85,
+    life: 0,
+    maxLife: 120 + Math.random() * 80,
+    sway: Math.random() * 0.04 + 0.01,
+    phase: Math.random() * Math.PI * 2,
+  });
+}
+
+let fallStart = null;
+let fallRaf;
+function fallLoop(ts) {
+  if (!fallStart) fallStart = ts;
+  const elapsed = ts - fallStart;
+
+  p2Ctx.clearRect(0, 0, W, H);
+  redrawTree();
+  hearts.forEach(hp => drawHeart(hp.x, hp.y, hp.size, hp.rot, hp.col, hp.alph));
+
+  if (elapsed % 180 < 20) spawnFallingPetal();
+
+  fallingPetals.forEach((p, i) => {
+    p.life++;
+    p.x += p.vx + Math.sin(p.life * p.sway + p.phase) * 0.5;
+    p.y += p.vy;
+    p.rot += p.vr;
+    p.alpha = 0.85 * (1 - p.life / p.maxLife);
+
+    p2Ctx.save();
+    p2Ctx.globalAlpha = Math.max(0, p.alpha);
+    p2Ctx.translate(p.x, p.y);
+    p2Ctx.rotate(p.rot);
+    p2Ctx.fillStyle = p.col;
+    p2Ctx.beginPath();
+    p2Ctx.ellipse(0, 0, p.size * 0.38, p.size * 0.22, 0, 0, Math.PI * 2);
+    p2Ctx.fill();
+    p2Ctx.restore();
+  });
+
+  // remove dead petals
+  for (let i = fallingPetals.length - 1; i >= 0; i--) {
+    if (fallingPetals[i].life >= fallingPetals[i].maxLife) fallingPetals.splice(i, 1);
+  }
+
+  fallRaf = requestAnimationFrame(fallLoop);
+}
+requestAnimationFrame(fallLoop);
+// stop falling after 4s then proceed
+setTimeout(() => {
+  cancelAnimationFrame(fallRaf);
+  setTimeout(() => startFinalLetter(rootX, groundY, TREE_H, BRANCHES, p2Ctx, p2Canvas, drawLine, drawTrunk, drawBranch, drawTwig), 800);
+}, 4000);
+
       }
     }
   }
-
+  
   requestAnimationFrame(bloomLoop);
+}
+
+
+  {requestAnimationFrame(masterLoop);
 }
 
 </script>
