@@ -1031,7 +1031,6 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
   function redrawTree() {
     p2Ctx.save();
     p2Ctx.translate(slideOffsetX, 0);
-    drawLine(p2Ctx);
     drawTrunk(p2Ctx, 1);
     BRANCHES.forEach(b => {
       drawBranch(p2Ctx, b.x0, b.y0, b.cp1x, b.cp1y, b.cp2x, b.cp2y, b.x1, b.y1, b.w0, b.w1, 1, TEAL);
