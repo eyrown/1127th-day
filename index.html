@@ -1011,176 +1011,146 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
     });
   }
 
-  const OUTLINE_DUR = 2000;
-  const FILL_DUR    = 2600;
-  let bloomStart    = null;
-  let fillBorn      = 0;
-  const fillBirthTs = new Array(innerHearts.length).fill(null);
+  const allHearts = [...hearts].sort(() => Math.random() - 0.5);
+const BLOOM_DUR = 2800;
+const STAGGER   = BLOOM_DUR * 0.72;
+let bloomStart  = null;
+const birthTimes = allHearts.map((_, i) => (i / allHearts.length) * STAGGER);
 
-  function bloomLoop(ts) {
-    if (!bloomStart) bloomStart = ts;
-    const elapsed = ts - bloomStart;
-    p2Ctx.clearRect(0, 0, W, H);
-    redrawTree();
+function bloomLoop(ts) {
+  if (!bloomStart) bloomStart = ts;
+  const elapsed = ts - bloomStart;
+  p2Ctx.clearRect(0, 0, W, H);
+  redrawTree();
 
-    if (elapsed < OUTLINE_DUR) {
-      const t     = elapsed / OUTLINE_DUR;
-      const count = Math.floor(t * edgeHearts.length);
-      for (let i = 0; i < count; i++) {
-        const hp  = edgeHearts[i];
-        const age = elapsed - (OUTLINE_DUR * (i / edgeHearts.length));
-        const pop = Math.min(1, Math.max(0, age) / 180);
-        const sc  = 0.1 + 0.9 * (1 - Math.pow(1 - pop, 3));
-        drawHeart(hp.x, hp.y, hp.size * sc, hp.rot, hp.col, hp.alph * Math.min(1, pop * 1.8));
-      }
-      requestAnimationFrame(bloomLoop);
-
-    } else {
-      edgeHearts.forEach(hp => drawHeart(hp.x, hp.y, hp.size, hp.rot, hp.col, hp.alph));
-
-      const t2     = Math.min(1, (elapsed - OUTLINE_DUR) / FILL_DUR);
-      const eased  = t2 < 0.5 ? 2*t2*t2 : 1 - Math.pow(-2*t2+2, 2)/2;
-      const target = Math.floor(eased * innerHearts.length);
-
-      while (fillBorn < target) { fillBirthTs[fillBorn] = ts; fillBorn++; }
-
-      for (let i = 0; i < fillBorn; i++) {
-        const hp  = innerHearts[i];
-        const age = fillBirthTs[i] !== null ? (ts - fillBirthTs[i]) : 999;
-        const pop = Math.min(1, age / 220);
-        const sc  = 0.1 + 0.9 * (1 - Math.pow(1 - pop, 3));
-        drawHeart(hp.x, hp.y, hp.size * sc, hp.rot, hp.col, hp.alph * Math.min(1, pop * 1.6));
-      }
-
-      if (t2 < 1) {
-        requestAnimationFrame(bloomLoop);
-      } else {
-        // bloom complete — draw final static tree + hearts, then start endless petals
-        p2Ctx.clearRect(0, 0, W, H);
-        redrawTree();
-        hearts.forEach(hp => drawHeart(hp.x, hp.y, hp.size, hp.rot, hp.col, hp.alph));
-        window._bloomHearts = hearts;
-
-        // ── ENDLESS FALLING HEART PETALS (wind-blown left) ──
-        const fallingPetals = [];
-        const PETAL_COLS = [...new Set(hearts.map(h => h.col))];
-
-        // Wind parameters — steady leftward drift + gentle gusts
-        const WIND_BASE = -1.8;   // steady leftward push
-        let windGust    = 0;      // fluctuates over time
-        let gustTimer   = 0;
-
-        function spawnFallingPetal() {
-        // Try to find a point strictly inside the heart canopy
-        let cx2, cy2, attempts = 0;
-        do {
-          cx2 = canopyCX + (Math.random() * 2 - 1) * cW * 0.48;
-          cy2 = canopyMidY + (Math.random() * 2 - 1) * cH * 0.48;
-          attempts++;
-        } while (!insideHeart(cx2, cy2) && attempts < 20);
-        if (!insideHeart(cx2, cy2)) return; // give up if no valid point found
-
-        const size = (4 + Math.random() * 10) * mf;
-        fallingPetals.push({
-          x: cx2,
-          y: cy2,
-          vx: WIND_BASE + (Math.random() - 0.8) * 1.2,
-          vy: Math.random() * 0.55 + 0.18,
-          rot: Math.random() * Math.PI * 2,
-          vr: -(Math.random() * 0.04 + 0.008),
-          size,
-          col: PETAL_COLS[Math.floor(Math.random() * PETAL_COLS.length)],
-          alpha: 0.82 + Math.random() * 0.18,
-          life: 0,
-          maxLife: 260 + Math.random() * 300,
-          sway: Math.random() * 0.025 + 0.008,
-          phase: Math.random() * Math.PI * 2,
-        });
-      }
-
-        let fallStart = null;
-        function fallLoop(ts) {
-          // Spawn rate: 1 petal every ~40 frames (sparse but continuous)
-          if (gustTimer % 40 === 0) spawnFallingPetal();
-
-          // Update wind gust — smoothly varying
-          gustTimer++;
-          if (gustTimer % 90 === 0) {
-            windGust = (Math.random() - 0.5) * 1.4; // occasional gust shift
-          }
-          const liveWind = WIND_BASE + windGust;
-
-          p2Ctx.clearRect(0, 0, W, H);
-          redrawTree();
-          hearts.forEach(hp => drawHeart(hp.x, hp.y, hp.size, hp.rot, hp.col, hp.alph));
-
-          // Spawn rate: steady trickle
-          if (gustTimer % 5 === 0) spawnFallingPetal();
-          // Occasional burst
-          if (Math.random() < 0.06) spawnFallingPetal();
-
-          fallingPetals.forEach(p => {
-            p.life++;
-            // Apply live wind influence gradually (feels natural)
-            p.vx += (liveWind - p.vx) * 0.012;
-            // Gentle vertical sway from wind turbulence
-            p.x += p.vx + Math.sin(p.life * p.sway + p.phase) * 0.4;
-            p.y += p.vy + Math.cos(p.life * p.sway * 0.7 + p.phase) * 0.2;
-            p.rot += p.vr;
-
-            const fadeIn  = Math.min(1, p.life / 25);
-            const fadeOut = Math.max(0, 1 - (p.life / p.maxLife));
-            const a = p.alpha * fadeIn * fadeOut;
-
-            p2Ctx.save();
-            p2Ctx.globalAlpha = Math.max(0, a);
-            p2Ctx.translate(p.x, p.y);
-            p2Ctx.rotate(p.rot);
-            p2Ctx.shadowBlur  = p.size * 0.3;
-            p2Ctx.shadowColor = p.col;
-            p2Ctx.fillStyle   = p.col;
-
-            // Draw a small heart shape for each petal
-            const s = p.size * 0.5;
-            p2Ctx.beginPath();
-            p2Ctx.moveTo(0, s * 0.35);
-            p2Ctx.bezierCurveTo(-s*0.08, -s*0.22, -s*1.02, -s*0.22, -s*1.02,  s*0.28);
-            p2Ctx.bezierCurveTo(-s*1.02,  s*0.88, -s*0.08,  s*1.22,  0,        s*1.58);
-            p2Ctx.bezierCurveTo( s*0.08,  s*1.22,  s*1.02,  s*0.88,  s*1.02,  s*0.28);
-            p2Ctx.bezierCurveTo( s*1.02, -s*0.22,  s*0.08, -s*0.22,  0,        s*0.35);
-            p2Ctx.closePath();
-            p2Ctx.fill();
-
-            // Small shine highlight
-            p2Ctx.shadowBlur  = 0;
-            p2Ctx.globalAlpha = a * 0.20;
-            p2Ctx.fillStyle   = 'rgba(255,255,255,0.95)';
-            p2Ctx.beginPath();
-            p2Ctx.ellipse(-s*0.26, s*0.10, s*0.20, s*0.12, -0.55, 0, Math.PI * 2);
-            p2Ctx.fill();
-
-            p2Ctx.restore();
-          });
-
-          // Remove petals that have expired or drifted well off-screen
-          for (let i = fallingPetals.length - 1; i >= 0; i--) {
-            const p = fallingPetals[i];
-            if (p.life >= p.maxLife || p.x < -p.size * 6 || p.y > H + p.size * 4) {
-              fallingPetals.splice(i, 1);
-            }
-          }
-
-          requestAnimationFrame(fallLoop);
-        }
-
-        requestAnimationFrame(fallLoop);
-      }
-    }
+  let allDone = true;
+  for (let i = 0; i < allHearts.length; i++) {
+    if (elapsed < birthTimes[i]) { allDone = false; continue; }
+    const hp  = allHearts[i];
+    const age = elapsed - birthTimes[i];
+    const pop = Math.min(1, age / 200);
+    if (pop < 1) allDone = false;
+    const sc  = 0.05 + 0.95 * (1 - Math.pow(1 - pop, 3));
+    const drift = (1 - pop) * 14;
+    const dx = (Math.random() - 0.5) * drift;
+    const dy = (Math.random() - 0.5) * drift;
+    drawHeart(hp.x + dx, hp.y + dy, hp.size * sc, hp.rot, hp.col, hp.alph * Math.min(1, pop * 2));
   }
 
-  requestAnimationFrame(bloomLoop);
+  if (!allDone) {
+    requestAnimationFrame(bloomLoop);
+  } else {
+    p2Ctx.clearRect(0, 0, W, H);
+    redrawTree();
+    hearts.forEach(hp => drawHeart(hp.x, hp.y, hp.size, hp.rot, hp.col, hp.alph));
+    window._bloomHearts = hearts;
+
+    // ── ENDLESS FALLING HEART PETALS (wind-blown left) ──
+    const fallingPetals = [];
+    const PETAL_COLS = [...new Set(hearts.map(h => h.col))];
+
+    const WIND_BASE = -1.8;
+    let windGust    = 0;
+    let gustTimer   = 0;
+
+    function spawnFallingPetal() {
+      let cx2, cy2, attempts = 0;
+      do {
+        cx2 = canopyCX + (Math.random() * 2 - 1) * cW * 0.48;
+        cy2 = canopyMidY + (Math.random() * 2 - 1) * cH * 0.48;
+        attempts++;
+      } while (!insideHeart(cx2, cy2) && attempts < 20);
+      if (!insideHeart(cx2, cy2)) return;
+
+      const size = (4 + Math.random() * 10) * mf;
+      fallingPetals.push({
+        x: cx2, y: cy2,
+        vx: WIND_BASE + (Math.random() - 0.8) * 1.2,
+        vy: Math.random() * 0.55 + 0.18,
+        rot: Math.random() * Math.PI * 2,
+        vr: -(Math.random() * 0.04 + 0.008),
+        size,
+        col: PETAL_COLS[Math.floor(Math.random() * PETAL_COLS.length)],
+        alpha: 0.82 + Math.random() * 0.18,
+        life: 0,
+        maxLife: 260 + Math.random() * 300,
+        sway: Math.random() * 0.025 + 0.008,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+
+    let fallStart = null;
+    function fallLoop(ts) {
+      if (!fallStart) fallStart = ts;
+
+      gustTimer++;
+      if (gustTimer % 90 === 0) {
+        windGust = (Math.random() - 0.5) * 1.4;
+      }
+      const liveWind = WIND_BASE + windGust;
+
+      // Spawn: 1 petal every ~40 frames
+      if (gustTimer % 40 === 0) spawnFallingPetal();
+
+      p2Ctx.clearRect(0, 0, W, H);
+      redrawTree();
+      hearts.forEach(hp => drawHeart(hp.x, hp.y, hp.size, hp.rot, hp.col, hp.alph));
+
+      fallingPetals.forEach(p => {
+        p.life++;
+        p.vx += (liveWind - p.vx) * 0.012;
+        p.x += p.vx + Math.sin(p.life * p.sway + p.phase) * 0.4;
+        p.y += p.vy + Math.cos(p.life * p.sway * 0.7 + p.phase) * 0.2;
+        p.rot += p.vr;
+
+        const fadeIn  = Math.min(1, p.life / 25);
+        const fadeOut = Math.max(0, 1 - (p.life / p.maxLife));
+        const a = p.alpha * fadeIn * fadeOut;
+
+        p2Ctx.save();
+        p2Ctx.globalAlpha = Math.max(0, a);
+        p2Ctx.translate(p.x, p.y);
+        p2Ctx.rotate(p.rot);
+        p2Ctx.shadowBlur  = p.size * 0.3;
+        p2Ctx.shadowColor = p.col;
+        p2Ctx.fillStyle   = p.col;
+
+        const s = p.size * 0.5;
+        p2Ctx.beginPath();
+        p2Ctx.moveTo(0, s * 0.35);
+        p2Ctx.bezierCurveTo(-s*0.08, -s*0.22, -s*1.02, -s*0.22, -s*1.02,  s*0.28);
+        p2Ctx.bezierCurveTo(-s*1.02,  s*0.88, -s*0.08,  s*1.22,  0,        s*1.58);
+        p2Ctx.bezierCurveTo( s*0.08,  s*1.22,  s*1.02,  s*0.88,  s*1.02,  s*0.28);
+        p2Ctx.bezierCurveTo( s*1.02, -s*0.22,  s*0.08, -s*0.22,  0,        s*0.35);
+        p2Ctx.closePath();
+        p2Ctx.fill();
+
+        p2Ctx.shadowBlur  = 0;
+        p2Ctx.globalAlpha = a * 0.20;
+        p2Ctx.fillStyle   = 'rgba(255,255,255,0.95)';
+        p2Ctx.beginPath();
+        p2Ctx.ellipse(-s*0.26, s*0.10, s*0.20, s*0.12, -0.55, 0, Math.PI * 2);
+        p2Ctx.fill();
+        p2Ctx.restore();
+      });
+
+      for (let i = fallingPetals.length - 1; i >= 0; i--) {
+        const p = fallingPetals[i];
+        if (p.life >= p.maxLife || p.x < -p.size * 6 || p.y > H + p.size * 4) {
+          fallingPetals.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(fallLoop);
+    }
+
+    requestAnimationFrame(fallLoop);
+  }
 }
-  
+
+requestAnimationFrame(bloomLoop);
+}
+
 </script>
 </body>
 </html>
