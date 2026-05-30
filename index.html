@@ -1044,15 +1044,15 @@ function drawCountdown() {
   // Scale based on available left space (tree takes right ~22%)
   const availW    = W * 0.55;
   const labelSize = availW * 0.055;
-  const numSize   = availW * 0.115;
-  const unitSize  = availW * 0.048;
+  const numSize   = availW * 0.100;
+  const unitSize  = availW * 0.043  ;
   const gap       = availW * 0.025;
 
   // Label
   p2Ctx.font         = `400 ${labelSize}px 'Nunito', sans-serif`;
   p2Ctx.fillStyle    = 'rgba(90,60,60,0.62)';
   p2Ctx.textBaseline = 'alphabetic';
-  p2Ctx.fillText('Mi amor por ti comenzó hace tres años...', leftX, baseY - numSize * 1.85);
+  p2Ctx.fillText('Mi amor por ti comenzó hace tres años...', leftX, baseY - numSize * 1.35);
 
   // Single row: number + unit for each part
   const parts = [
