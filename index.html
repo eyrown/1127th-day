@@ -55,13 +55,10 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   font-family:'Playfair Display',serif; font-size:clamp(.9rem,3.5vw,1.35rem);
   color:#6a4a7a; text-align:center; letter-spacing:.04em; line-height:1.7; z-index:2;
   margin-bottom:.9rem;
-  /* removed static poemFloat — typewriter manages its own reveal */
 }
 .stitch-poem em { color:#5a90c0; font-style:italic; }
-/* Typewriter cursor */
 .tw-cursor { display:inline-block; width:2px; background:#6a4a7a; margin-left:2px; animation:twBlink .7s step-end infinite; vertical-align:text-bottom; height:1.1em; }
 @keyframes twBlink { 0%,100%{opacity:1;} 50%{opacity:0;} }
-/* Window frame pulse */
 @keyframes framePulse { 0%,100%{box-shadow:0 0 0 6px rgba(200,176,216,.13),0 10px 40px rgba(120,80,160,.13),inset 0 1px 0 rgba(255,255,255,.8);} 50%{box-shadow:0 0 0 10px rgba(200,176,216,.22),0 14px 48px rgba(120,80,160,.22),inset 0 1px 0 rgba(255,255,255,.9);} }
 .window-frame {
   position:relative; z-index:2;
@@ -237,6 +234,65 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 #phase2-canvas.show { opacity:1; }
 #pg-final, #phase2-canvas { overflow:hidden; }
 
+/* ── FLOATING LETTER OVERLAY (HTML, left side, scrollable) ── */
+#letter-overlay {
+  position: fixed;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+  /* positioned dynamically via JS */
+}
+#letter-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+#letter-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  position: relative;
+}
+#letter-scroll::-webkit-scrollbar { display: none; }
+#letter-content {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: rgba(80, 48, 55, 0.88);
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+#letter-content .letter-greeting {
+  color: rgba(120, 48, 60, 0.95);
+  display: block;
+  margin-bottom: 0.2em;
+}
+#letter-content .letter-signoff {
+  color: rgba(120, 48, 60, 0.92);
+  display: block;
+  margin-top: 0.2em;
+}
+#letter-content .letter-cursor {
+  display: inline-block;
+  width: 1.5px;
+  background: rgba(120, 48, 60, 0.7);
+  vertical-align: text-bottom;
+  animation: twBlink .7s step-end infinite;
+}
+/* Fade gradient at bottom of letter scroll area */
+#letter-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  pointer-events: none;
+  /* will use inline style for bg color matching */
+  background: linear-gradient(to bottom, rgba(240,232,224,0) 0%, rgba(240,232,224,0.92) 100%);
+  border-radius: 0 0 8px 8px;
+}
+
 /* MUSIC TOGGLE */
 #music-btn {
   position:fixed; bottom:1.4rem; left:1.4rem; z-index:400;
@@ -275,11 +331,11 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1rem;
   pointer-events:none; opacity:0;
   background:rgba(240,232,224,0);
-  transition:opacity 1.4s ease, background 1.4s ease;
+  transition:opacity 1.8s ease, background 1.8s ease;
 }
 #end-overlay.show {
   opacity:1;
-  background:rgba(240,232,224,0.88);
+  background:rgba(240,232,224,0.90);
   pointer-events:all;
 }
 .end-msg-text {
@@ -292,7 +348,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   text-shadow:0 2px 30px rgba(180,80,100,.18);
   opacity:0;
   transform:translateY(20px);
-  transition:opacity 1.2s ease 0.4s, transform 1.2s ease 0.4s;
+  transition:opacity 1.6s ease 0.8s, transform 1.6s ease 0.8s;
 }
 .end-msg-text em { color:#b04060; font-style:italic; }
 #end-overlay.show .end-msg-text { opacity:1; transform:translateY(0); }
@@ -300,17 +356,18 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   font-family:'Nunito',sans-serif;
   font-size:clamp(.78rem,3vw,.95rem);
   color:rgba(120,60,70,.65);
-  letter-spacing:.16em;
-  text-transform:uppercase;
+  letter-spacing:.08em;
+  text-align:center;
+  max-width:80vw;
   opacity:0;
-  transition:opacity 1.2s ease 1s;
+  transition:opacity 1.4s ease 1.6s;
 }
 #end-overlay.show .end-msg-sub { opacity:1; }
 #end-overlay-close {
   margin-top:.5rem; padding:.5rem 1.6rem;
   background:none; border:1.5px solid rgba(120,60,70,.4); border-radius:40px;
   color:rgba(120,60,70,.7); font-family:'Playfair Display',serif; font-size:.85rem;
-  letter-spacing:.08em; cursor:pointer; opacity:0; transition:opacity 1s ease 1.4s, transform .2s;
+  letter-spacing:.08em; cursor:pointer; opacity:0; transition:opacity 1s ease 2.2s, transform .2s;
 }
 #end-overlay.show #end-overlay-close { opacity:1; }
 #end-overlay-close:hover { transform:scale(1.05); }
@@ -467,7 +524,6 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
         <rect x="116" y="28" width="68" height="8" rx="4" fill="url(#shackleGrad)" stroke="rgba(200,170,240,0.6)" stroke-width="1.5"/>
         <path d="M116 32 Q116 10 150 10 Q184 10 184 32" fill="none" stroke="url(#shackleGrad)" stroke-width="12" stroke-linecap="round"/>
         <path d="M122 32 Q122 14 150 14 Q178 14 178 32" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round"/>
-        <!-- engraved hint -->
         <text x="150" y="25" text-anchor="middle" font-family="'Playfair Display',serif" font-size="6.5" fill="rgba(200,170,240,0.55)" letter-spacing="1.5">0 7 2 1</text>
         <rect x="128" y="56" width="44" height="14" rx="7" fill="rgba(160,30,90,0.55)"/>
         <path d="M150 270 Q60 210 42 155 Q20 95 65 72 Q95 58 116 78 Q130 92 150 108 Q170 92 184 78 Q205 58 235 72 Q280 95 258 155 Q240 210 150 270 Z" fill="url(#heartGrad)" filter="url(#heartShadow)"/>
@@ -533,6 +589,14 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   </div>
 </div>
 
+<!-- FLOATING LETTER (HTML overlay, left side, scrollable) -->
+<div id="letter-overlay">
+  <div id="letter-scroll">
+    <div id="letter-content"></div>
+  </div>
+  <div id="letter-fade"></div>
+</div>
+
 <!-- MUSIC TOGGLE -->
 <button id="music-btn" onclick="toggleMusic()">
   <span id="music-note">♪</span>
@@ -589,9 +653,8 @@ function finishLoad(){cancelAnimationFrame(lRaf);document.getElementById('pg-loa
 /* ══════════════════════════════════════════
    TYPEWRITER EFFECT — Page 2
 ══════════════════════════════════════════ */
-const POEM_LINES = ['A little something,', '\npicked just for you.'];
 const POEM_FULL = 'A little something,\npicked just for you.';
-let twIndex = 0, twRunning = false;
+let twRunning = false;
 
 function startTypewriter() {
   twRunning = true;
@@ -602,13 +665,10 @@ function startTypewriter() {
   function type() {
     if (!twRunning) return;
     if (i <= text.length) {
-      // render with line break
       const chunk = text.slice(0, i);
       el.innerHTML = chunk.replace('\n', '<br><em>').replace('you.', 'you.</em>');
-      // Simpler: just handle em manually after full write
       if (i === text.length) {
         el.innerHTML = 'A little something,<br><em>picked just for you.</em>';
-        // hide cursor after done
         setTimeout(() => { cursor.style.display = 'none'; }, 800);
         return;
       }
@@ -630,11 +690,9 @@ function clickNo(){
     btnNo.style.padding=`${.6*noScale}rem ${1.4*noScale}rem`;
     btnNo.style.opacity=Math.max(0.3,noScale).toString();
   }
-  // spin effect on each click
   const spinDeg = noClicks * 180;
   btnNo.style.transform = `rotate(${spinDeg}deg)`;
   setTimeout(() => { btnNo.style.transform = `rotate(0deg)`; }, 350);
-
   if(noClicks===1){const r=btnNo.getBoundingClientRect();btnNo.style.position='fixed';btnNo.style.left=r.left+'px';btnNo.style.top=r.top+'px';btnNo.style.margin='0';}
   const m=60;
   btnNo.style.left=(m+Math.random()*(window.innerWidth-m*2))+'px';
@@ -670,92 +728,46 @@ let lastBS=0;
 function animBlossoms(ts){bRaf=requestAnimationFrame(animBlossoms);bCtx.clearRect(0,0,bCanvas.width,bCanvas.height);if(ts-lastBS>90){spawnBlossom();lastBS=ts;}blossoms=blossoms.filter(p=>p.y<bCanvas.height+30);blossoms.forEach(p=>{p.age++;p.x+=p.vx+Math.sin(p.age*p.sway+p.phase)*.55;p.y+=p.vy;p.rot+=p.vr;drawBlossom(p);});}
 function startBlossoms(){if(bRunning)return;bRunning=true;requestAnimationFrame(animBlossoms);}
 
-/* ══════════════════════════════════════════
-   SPARKLE DOTS — orbiting tulip tip
-══════════════════════════════════════════ */
+/* ── SPARKLES ── */
 const spkCanvas = document.getElementById('sparkle-canvas');
 const spkCtx = spkCanvas.getContext('2d');
 let spkRunning = false, spkRaf;
 function resizeSparkle() { spkCanvas.width = window.innerWidth; spkCanvas.height = window.innerHeight; }
 resizeSparkle();
-
 const SPARKLE_COLS_BLUE   = ['#a0d8f0','#c8eeff','#7ec8f8','#ffffff','#b0e0ff'];
 const SPARKLE_COLS_PURPLE = ['#e0b0ff','#c060ff','#ffffff','#f0d0ff','#a040e0'];
-
 let sparkles = [];
 function spawnSparkle(cx, cy, theme) {
   const angle  = Math.random() * Math.PI * 2;
   const radius = 28 + Math.random() * 22;
   const cols   = theme === 'purple' ? SPARKLE_COLS_PURPLE : SPARKLE_COLS_BLUE;
-  sparkles.push({
-    orbitAngle : angle,
-    orbitSpeed : (Math.random() * 0.028 + 0.018) * (Math.random() > 0.5 ? 1 : -1),
-    orbitRadius: radius,
-    cx, cy,
-    size       : Math.random() * 3 + 1.2,
-    col        : cols[Math.floor(Math.random() * cols.length)],
-    alpha      : Math.random() * 0.6 + 0.4,
-    life       : 0,
-    maxLife    : 80 + Math.random() * 80,
-    twinkleSpeed: Math.random() * 0.12 + 0.06,
-    twinklePhase: Math.random() * Math.PI * 2,
-  });
+  sparkles.push({orbitAngle:angle,orbitSpeed:(Math.random()*0.028+0.018)*(Math.random()>0.5?1:-1),orbitRadius:radius,cx,cy,size:Math.random()*3+1.2,col:cols[Math.floor(Math.random()*cols.length)],alpha:Math.random()*0.6+0.4,life:0,maxLife:80+Math.random()*80,twinkleSpeed:Math.random()*0.12+0.06,twinklePhase:Math.random()*Math.PI*2});
 }
-
 function animSparkles(ts) {
   spkRaf = requestAnimationFrame(animSparkles);
-  spkCtx.clearRect(0, 0, spkCanvas.width, spkCanvas.height);
-
-  // Find tulip tip position (center of the scene element)
-  const scene = document.getElementById('tulip-scene');
-  const svg   = document.getElementById('tulip-svg');
-  const r     = svg.getBoundingClientRect();
-  // tip is roughly top-center of the SVG, ~25% from top
-  const tipX  = r.left + r.width * 0.50;
-  const tipY  = r.top  + r.height * 0.20;
-
-  // Spawn new sparkles
-  if (Math.random() < 0.22) spawnSparkle(tipX, tipY, blossomTheme);
-
-  sparkles = sparkles.filter(s => s.life < s.maxLife);
-  sparkles.forEach(s => {
-    s.life++;
-    s.orbitAngle += s.orbitSpeed;
-    const x = s.cx + Math.cos(s.orbitAngle) * s.orbitRadius;
-    const y = s.cy + Math.sin(s.orbitAngle) * s.orbitRadius * 0.55;
-
-    const lifeRatio = s.life / s.maxLife;
-    const twinkle   = 0.5 + 0.5 * Math.sin(s.life * s.twinkleSpeed + s.twinklePhase);
-    const fadeIn    = Math.min(1, s.life / 12);
-    const fadeOut   = Math.max(0, 1 - lifeRatio * 1.4);
-    const a         = s.alpha * twinkle * fadeIn * fadeOut;
-
-    spkCtx.save();
-    spkCtx.globalAlpha = Math.max(0, a);
-    spkCtx.shadowBlur  = 8;
-    spkCtx.shadowColor = s.col;
-    spkCtx.fillStyle   = s.col;
-    // Draw 4-pointed star
-    spkCtx.translate(x, y);
-    spkCtx.beginPath();
-    for (let i = 0; i < 4; i++) {
-      const ang = (i / 4) * Math.PI * 2;
-      const ir  = s.size * 0.3;
-      const or  = s.size;
-      spkCtx.lineTo(Math.cos(ang) * or, Math.sin(ang) * or);
-      spkCtx.lineTo(Math.cos(ang + Math.PI/4) * ir, Math.sin(ang + Math.PI/4) * ir);
-    }
-    spkCtx.closePath();
-    spkCtx.fill();
-    spkCtx.restore();
+  spkCtx.clearRect(0,0,spkCanvas.width,spkCanvas.height);
+  const svg=document.getElementById('tulip-svg');
+  const r=svg.getBoundingClientRect();
+  const tipX=r.left+r.width*0.50;
+  const tipY=r.top+r.height*0.20;
+  if(Math.random()<0.22)spawnSparkle(tipX,tipY,blossomTheme);
+  sparkles=sparkles.filter(s=>s.life<s.maxLife);
+  sparkles.forEach(s=>{
+    s.life++;s.orbitAngle+=s.orbitSpeed;
+    const x=s.cx+Math.cos(s.orbitAngle)*s.orbitRadius;
+    const y=s.cy+Math.sin(s.orbitAngle)*s.orbitRadius*0.55;
+    const lifeRatio=s.life/s.maxLife;
+    const twinkle=0.5+0.5*Math.sin(s.life*s.twinkleSpeed+s.twinklePhase);
+    const fadeIn=Math.min(1,s.life/12);
+    const fadeOut=Math.max(0,1-lifeRatio*1.4);
+    const a=s.alpha*twinkle*fadeIn*fadeOut;
+    spkCtx.save();spkCtx.globalAlpha=Math.max(0,a);spkCtx.shadowBlur=8;spkCtx.shadowColor=s.col;spkCtx.fillStyle=s.col;
+    spkCtx.translate(x,y);spkCtx.beginPath();
+    for(let i=0;i<4;i++){const ang=(i/4)*Math.PI*2;const ir=s.size*0.3;const or=s.size;spkCtx.lineTo(Math.cos(ang)*or,Math.sin(ang)*or);spkCtx.lineTo(Math.cos(ang+Math.PI/4)*ir,Math.sin(ang+Math.PI/4)*ir);}
+    spkCtx.closePath();spkCtx.fill();spkCtx.restore();
   });
 }
-
-function startSparkles() {
-  if (spkRunning) return;
-  spkRunning = true;
-  requestAnimationFrame(animSparkles);
-}
+function startSparkles(){if(spkRunning)return;spkRunning=true;requestAnimationFrame(animSparkles);}
 
 /* ── TULIP REVEAL ── */
 function showTulip(){
@@ -772,15 +784,11 @@ const TULIP_PURPLE={core:['#f0d8ff','#c070f0','#9040d0'],outer:['#e8c8ff','#b060
 function applyTulipColors(p){document.getElementById('pCore0').setAttribute('stop-color',p.core[0]);document.getElementById('pCore1').setAttribute('stop-color',p.core[1]);document.getElementById('pCore2').setAttribute('stop-color',p.core[2]);document.getElementById('pOut0').setAttribute('stop-color',p.outer[0]);document.getElementById('pOut1').setAttribute('stop-color',p.outer[1]);document.getElementById('pOut2').setAttribute('stop-color',p.outer[2]);document.getElementById('pSide0').setAttribute('stop-color',p.side[0]);document.getElementById('pSide1').setAttribute('stop-color',p.side[1]);document.getElementById('pSide2').setAttribute('stop-color',p.side[2]);document.getElementById('glowHalo').setAttribute('fill',p.halo);document.getElementById('innerGlow').setAttribute('fill',p.inner);}
 function switchTheme(){isPurple=!isPurple;const themeBg=document.getElementById('theme-bg'),switchBtn=document.getElementById('switch-btn'),dot=document.getElementById('switch-dot'),label=document.getElementById('switch-label'),bqText=document.getElementById('bq-text'),tulipFloat=document.getElementById('tulip-float');if(isPurple){themeBg.classList.add('purple');switchBtn.classList.add('purple-mode');dot.classList.add('purple');label.textContent='Switch ☀️';bqText.classList.add('purple');blossomTheme='purple';retargetBlossoms();applyTulipColors(TULIP_PURPLE);tulipFloat.classList.replace('petal-anim-blue','petal-anim-purple');}else{themeBg.classList.remove('purple');switchBtn.classList.remove('purple-mode');dot.classList.remove('purple');label.textContent='Switch 🌙';bqText.classList.remove('purple');blossomTheme='blue';retargetBlossoms();applyTulipColors(TULIP_BLUE);tulipFloat.classList.replace('petal-anim-purple','petal-anim-blue');}}
 
-/* ══════════════════════════════════════════
-   PADLOCK — with heartbeat sound & red flash
-══════════════════════════════════════════ */
+/* ── PADLOCK ── */
 function goNext(){
-  // Tulip flies off screen upward
   const scene = document.getElementById('tulip-scene');
   scene.classList.remove('show');
   scene.classList.add('fly-up');
-
   document.getElementById('switch-btn').style.display='none';
   setTimeout(() => {
     const pgLock=document.getElementById('pg-lock');
@@ -803,7 +811,6 @@ function nudgeDial(idx,dir){
   setTimeout(()=>el.classList.remove('flip-up','flip-down'),250);
 }
 
-/* Web Audio heartbeat */
 let audioCtx = null;
 function getAudioCtx() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -824,8 +831,7 @@ function playHeartbeat() {
       osc.start(ctx.currentTime + delay);
       osc.stop(ctx.currentTime + delay + 0.22);
     }
-    thump(0,    0.55);
-    thump(0.18, 0.35);
+    thump(0,0.55);thump(0.18,0.35);
   } catch(e) {}
 }
 function playWrongSound() {
@@ -843,30 +849,17 @@ function playWrongSound() {
     osc.stop(ctx.currentTime + 0.35);
   } catch(e) {}
 }
-
 function flashDialsRed() {
-  const displays = document.querySelectorAll('.dial-display');
-  displays.forEach(d => {
+  document.querySelectorAll('.dial-display').forEach(d => {
     d.classList.add('wrong-flash');
     setTimeout(() => d.classList.remove('wrong-flash'), 500);
   });
 }
-
 function tryUnlock(){
   const ok=vals[0]===CODE[0]&&vals[1]===CODE[1]&&vals[2]===CODE[2]&&vals[3]===CODE[3];
-  if(ok){
-    playHeartbeat();
-    setTimeout(() => playHeartbeat(), 600);
-    unlockSuccess();
-  } else {
-    wrongCount++;
-    playWrongSound();
-    flashDialsRed();
-    shakeHeart();
-    showHint(HINTS[Math.min(wrongCount-1,HINTS.length-1)]);
-  }
+  if(ok){playHeartbeat();setTimeout(()=>playHeartbeat(),600);unlockSuccess();}
+  else{wrongCount++;playWrongSound();flashDialsRed();shakeHeart();showHint(HINTS[Math.min(wrongCount-1,HINTS.length-1)]);}
 }
-
 function shakeHeart(){const hl=document.getElementById('heart-lock');hl.classList.remove('shake');void hl.offsetWidth;hl.classList.add('shake');}
 function showHint(text){const h=document.getElementById('lock-hint');h.classList.remove('show');void h.offsetWidth;h.textContent=text;requestAnimationFrame(()=>requestAnimationFrame(()=>h.classList.add('show')));}
 
@@ -891,7 +884,7 @@ function unlockSuccess(){
   },1100);
 }
 
-/* ── FINAL PAGE — DUST PARTICLES ── */
+/* ── FINAL PAGE DUST ── */
 const fCanvas=document.getElementById('final-canvas');
 const fCtx=fCanvas.getContext('2d');
 let fDust=[];
@@ -901,7 +894,7 @@ const DUST_COLS=[[180,150,140],[160,140,170],[140,160,180],[190,160,150],[170,15
 function spawnDust(){const c=DUST_COLS[Math.floor(Math.random()*DUST_COLS.length)];fDust.push({x:Math.random()*fCanvas.width,y:Math.random()*fCanvas.height,vx:(Math.random()-0.5)*0.18,vy:-Math.random()*0.14-0.04,r:Math.random()*1.6+0.5,alpha:Math.random()*0.18+0.04,c,life:0,maxLife:280+Math.random()*220,sway:Math.random()*0.012+0.004,phase:Math.random()*Math.PI*2});}
 function animDust(){requestAnimationFrame(animDust);fCtx.clearRect(0,0,fCanvas.width,fCanvas.height);while(fDust.length<50)spawnDust();fDust=fDust.filter(d=>d.life<d.maxLife);fDust.forEach(d=>{d.life++;d.x+=d.vx+Math.sin(d.life*d.sway+d.phase)*0.22;d.y+=d.vy;const a=d.alpha*Math.sin((d.life/d.maxLife)*Math.PI);fCtx.save();fCtx.globalAlpha=a;fCtx.fillStyle=`rgb(${d.c[0]},${d.c[1]},${d.c[2]})`;fCtx.beginPath();fCtx.arc(d.x,d.y,d.r,0,Math.PI*2);fCtx.fill();fCtx.restore();});}
 
-/* ── PHASE 2 — SEED FALL + GROUND LINE ── */
+/* ── PHASE 2 ── */
 const p2Canvas=document.getElementById('phase2-canvas');
 const p2Ctx=p2Canvas.getContext('2d');
 function resizeP2(){p2Canvas.width=window.innerWidth;p2Canvas.height=window.innerHeight;}
@@ -926,13 +919,13 @@ function heartClicked(){
     wrap.style.display='none';
     resizeP2();
     p2Canvas.classList.add('show');
-    const cx = p2Canvas.width / 2;
-    const startY = p2Canvas.height * 0.42;
-    runSeedAnimation(cx, startY);
+    const cx=p2Canvas.width/2;
+    const startY=p2Canvas.height*0.42;
+    runSeedAnimation(cx,startY);
   },560);
 }
 
-function runSeedAnimation(cx, startY){
+function runSeedAnimation(cx,startY){
   const W=p2Canvas.width;
   const H=p2Canvas.height;
   const seedR=5;
@@ -942,7 +935,6 @@ function runSeedAnimation(cx, startY){
   const lineX2=W*0.96;
   const FALL_DUR=1800,LINE_DUR=1800,IMPACT_DUR=900;
   let startTime=null,phase='falling',impactStart=null;
-
   function draw(ts){
     if(!startTime)startTime=ts;
     const elapsed=ts-startTime;
@@ -1008,20 +1000,16 @@ function runSeedAnimation(cx, startY){
 function initFinalPage(){
   resizeFinal();
   requestAnimationFrame(animDust);
-  // Show music button
   const mb = document.getElementById('music-btn');
   mb.style.display = 'flex';
   initMusic();
 }
 
-/* ══════════════════════════════════════════
-   MUSIC — Web Audio lo-fi piano
-══════════════════════════════════════════ */
+/* ── MUSIC ── */
 let musicPlaying = false, musicLoop = null, musicGain = null;
 let musicAudioCtx = null;
 
 function initMusic() {
-  // Auto-play ambient music
   setTimeout(() => {
     startMusic();
     document.getElementById('music-btn').classList.add('playing');
@@ -1036,15 +1024,11 @@ function startMusic() {
   musicGain.gain.setValueAtTime(0, musicAudioCtx.currentTime);
   musicGain.gain.linearRampToValueAtTime(0.13, musicAudioCtx.currentTime + 2);
   musicGain.connect(musicAudioCtx.destination);
-
-  // Soft reverb
   const convolver = musicAudioCtx.createConvolver();
   const reverbGain = musicAudioCtx.createGain();
   reverbGain.gain.value = 0.35;
   musicGain.connect(reverbGain);
   reverbGain.connect(musicAudioCtx.destination);
-
-  // Generate impulse response for reverb
   const rate = musicAudioCtx.sampleRate;
   const len  = rate * 2;
   const buf  = musicAudioCtx.createBuffer(2, len, rate);
@@ -1055,105 +1039,75 @@ function startMusic() {
   convolver.buffer = buf;
   reverbGain.connect(convolver);
   convolver.connect(musicAudioCtx.destination);
-
-  // Simple pentatonic melody loop
-  const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 392.00, 329.63];
-  const bass  = [130.81, 146.83, 164.81, 196.00];
+  const notes = [261.63,293.66,329.63,392.00,440.00,523.25,392.00,329.63];
+  const bass  = [130.81,146.83,164.81,196.00];
   let beat = 0;
   const BPM = 72;
-  const beatMs = (60 / BPM) * 1000;
-
+  const beatMs = (60/BPM)*1000;
   function scheduleBeat() {
     if (!musicPlaying) return;
-
     const ctx = musicAudioCtx;
     const t   = ctx.currentTime;
-
-    // Melody note
     if (Math.random() > 0.25) {
-      const freq = notes[Math.floor(Math.random() * notes.length)] * (Math.random() > 0.7 ? 2 : 1);
+      const freq = notes[Math.floor(Math.random()*notes.length)] * (Math.random()>0.7?2:1);
       const osc  = ctx.createOscillator();
       const env  = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      osc.connect(env);
-      env.connect(musicGain);
-      const vel = 0.04 + Math.random() * 0.05;
-      env.gain.setValueAtTime(0, t);
-      env.gain.linearRampToValueAtTime(vel, t + 0.02);
-      env.gain.exponentialRampToValueAtTime(0.001, t + 0.55 + Math.random() * 0.4);
-      osc.start(t);
-      osc.stop(t + 1.2);
+      osc.type = 'sine'; osc.frequency.value = freq;
+      osc.connect(env); env.connect(musicGain);
+      const vel = 0.04 + Math.random()*0.05;
+      env.gain.setValueAtTime(0,t);env.gain.linearRampToValueAtTime(vel,t+0.02);env.gain.exponentialRampToValueAtTime(0.001,t+0.55+Math.random()*0.4);
+      osc.start(t);osc.stop(t+1.2);
     }
-
-    // Bass note every 4 beats
-    if (beat % 4 === 0) {
-      const bfreq = bass[Math.floor(Math.random() * bass.length)];
+    if (beat%4===0) {
+      const bfreq = bass[Math.floor(Math.random()*bass.length)];
       const bosc  = ctx.createOscillator();
       const benv  = ctx.createGain();
-      bosc.type = 'triangle';
-      bosc.frequency.value = bfreq;
-      bosc.connect(benv);
-      benv.connect(musicGain);
-      benv.gain.setValueAtTime(0, t);
-      benv.gain.linearRampToValueAtTime(0.06, t + 0.04);
-      benv.gain.exponentialRampToValueAtTime(0.001, t + 0.9);
-      bosc.start(t);
-      bosc.stop(t + 1.2);
+      bosc.type = 'triangle'; bosc.frequency.value = bfreq;
+      bosc.connect(benv); benv.connect(musicGain);
+      benv.gain.setValueAtTime(0,t);benv.gain.linearRampToValueAtTime(0.06,t+0.04);benv.gain.exponentialRampToValueAtTime(0.001,t+0.9);
+      bosc.start(t);bosc.stop(t+1.2);
     }
-
     beat++;
-    musicLoop = setTimeout(scheduleBeat, beatMs * (0.8 + Math.random() * 0.5));
+    musicLoop = setTimeout(scheduleBeat, beatMs*(0.8+Math.random()*0.5));
   }
-
   scheduleBeat();
 }
 
 function stopMusic() {
   clearTimeout(musicLoop);
   if (musicGain) {
-    musicGain.gain.linearRampToValueAtTime(0, (musicAudioCtx?.currentTime||0) + 0.5);
+    musicGain.gain.linearRampToValueAtTime(0,(musicAudioCtx?.currentTime||0)+0.5);
   }
 }
 
 function toggleMusic() {
-  const btn   = document.getElementById('music-btn');
-  const label = document.getElementById('music-label');
-  const note  = document.getElementById('music-note');
+  const btn=document.getElementById('music-btn');
+  const label=document.getElementById('music-label');
+  const note=document.getElementById('music-note');
   if (musicPlaying) {
-    stopMusic();
-    musicPlaying = false;
-    btn.classList.remove('playing');
-    label.textContent = 'Music';
-    note.textContent  = '♪';
+    stopMusic(); musicPlaying=false;
+    btn.classList.remove('playing'); label.textContent='Music'; note.textContent='♪';
   } else {
-    musicPlaying = true;
-    startMusic();
-    btn.classList.add('playing');
-    label.textContent = 'Pause';
-    note.textContent  = '♫';
+    musicPlaying=true; startMusic();
+    btn.classList.add('playing'); label.textContent='Pause'; note.textContent='♫';
   }
 }
 
-/* ── REPLAY ── */
-function replayAll() {
-  location.reload();
-}
+function replayAll() { location.reload(); }
 
 /* ── END OVERLAY ── */
 let endOverlayShown = false;
 function showEndOverlay() {
   if (endOverlayShown) return;
   endOverlayShown = true;
-  const ov = document.getElementById('end-overlay');
-  ov.classList.add('show');
+  document.getElementById('end-overlay').classList.add('show');
 }
 function closeEndOverlay() {
   document.getElementById('end-overlay').classList.remove('show');
 }
 
 /* ══════════════════════════════════════════
-   PHASE 3 – TREE GROWTH  (mobile-aware)
+   TREE GROWTH
 ══════════════════════════════════════════ */
 function startTreeGrowth(rootX, groundY) {
   const W  = p2Canvas.width;
@@ -1170,16 +1124,8 @@ function startTreeGrowth(rootX, groundY) {
 
   const s = mf * 0.38;
 
-  const TL = [
-    [-28*s,0],[-30*s,-TREE_H*0.06],[-27*s,-TREE_H*0.13],[-22*s,-TREE_H*0.22],
-    [-17*s,-TREE_H*0.33],[-12*s,-TREE_H*0.44],[-8*s,-TREE_H*0.55],[-5*s,-TREE_H*0.65],
-    [-3*s,-TREE_H*0.75],[-2*s,-TREE_H*0.86],[-1*s,-TREE_H*0.93],[0,-TREE_H*1.00],
-  ];
-  const TR = [
-    [28*s,0],[30*s,-TREE_H*0.06],[25*s,-TREE_H*0.13],[20*s,-TREE_H*0.22],
-    [15*s,-TREE_H*0.33],[11*s,-TREE_H*0.44],[7*s,-TREE_H*0.55],[5*s,-TREE_H*0.65],
-    [3*s,-TREE_H*0.75],[2*s,-TREE_H*0.86],[1*s,-TREE_H*0.93],[0,-TREE_H*1.00],
-  ];
+  const TL = [[-28*s,0],[-30*s,-TREE_H*0.06],[-27*s,-TREE_H*0.13],[-22*s,-TREE_H*0.22],[-17*s,-TREE_H*0.33],[-12*s,-TREE_H*0.44],[-8*s,-TREE_H*0.55],[-5*s,-TREE_H*0.65],[-3*s,-TREE_H*0.75],[-2*s,-TREE_H*0.86],[-1*s,-TREE_H*0.93],[0,-TREE_H*1.00]];
+  const TR = [[28*s,0],[30*s,-TREE_H*0.06],[25*s,-TREE_H*0.13],[20*s,-TREE_H*0.22],[15*s,-TREE_H*0.33],[11*s,-TREE_H*0.44],[7*s,-TREE_H*0.55],[5*s,-TREE_H*0.65],[3*s,-TREE_H*0.75],[2*s,-TREE_H*0.86],[1*s,-TREE_H*0.93],[0,-TREE_H*1.00]];
 
   const forkY = groundY - TREE_H * 0.65;
 
@@ -1193,20 +1139,10 @@ function startTreeGrowth(rootX, groundY) {
     {x0:rootX+14*s,y0:groundY-TREE_H*0.43,cp1x:rootX+34*s,cp1y:groundY-TREE_H*0.46,cp2x:rootX+46*s,cp2y:groundY-TREE_H*0.45,x1:rootX+50*s,y1:groundY-TREE_H*0.44,w0:4*s,w1:0.9*s,delay:360,dur:540,twigs:[]},
   ];
 
-  function easeOutExpo(t){ return t===1?1:1-Math.pow(2,-10*t); }
-  function easeOut3(t)   { return 1-(1-t)*(1-t)*(1-t); }
-
-  function bezPt(t,x0,y0,cp1x,cp1y,cp2x,cp2y,x1,y1){
-    const mt=1-t;
-    return {x:mt*mt*mt*x0+3*mt*mt*t*cp1x+3*mt*t*t*cp2x+t*t*t*x1,y:mt*mt*mt*y0+3*mt*mt*t*cp1y+3*mt*t*t*cp2y+t*t*t*y1};
-  }
-
-  function drawBranch(ctx,x0,y0,cp1x,cp1y,cp2x,cp2y,x1,y1,w0,w1,prog,col){
-    const N=64,end=Math.floor(N*prog);
-    if(end<1)return;
-    for(let i=0;i<=end;i++){const t=i/N;const pt=bezPt(t,x0,y0,cp1x,cp1y,cp2x,cp2y,x1,y1);const r=Math.max(0.5,(w0+(w1-w0)*t)/2);ctx.beginPath();ctx.arc(pt.x,pt.y,r,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();}
-  }
-
+  function easeOutExpo(t){return t===1?1:1-Math.pow(2,-10*t);}
+  function easeOut3(t){return 1-(1-t)*(1-t)*(1-t);}
+  function bezPt(t,x0,y0,cp1x,cp1y,cp2x,cp2y,x1,y1){const mt=1-t;return {x:mt*mt*mt*x0+3*mt*mt*t*cp1x+3*mt*t*t*cp2x+t*t*t*x1,y:mt*mt*mt*y0+3*mt*mt*t*cp1y+3*mt*t*t*cp2y+t*t*t*y1};}
+  function drawBranch(ctx,x0,y0,cp1x,cp1y,cp2x,cp2y,x1,y1,w0,w1,prog,col){const N=64,end=Math.floor(N*prog);if(end<1)return;for(let i=0;i<=end;i++){const t=i/N;const pt=bezPt(t,x0,y0,cp1x,cp1y,cp2x,cp2y,x1,y1);const r=Math.max(0.5,(w0+(w1-w0)*t)/2);ctx.beginPath();ctx.arc(pt.x,pt.y,r,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();}}
   function drawTrunk(ctx,prog){
     const n=TL.length;const vis=Math.max(2,Math.ceil((n-1)*prog)+1);const clamp=Math.min(vis,n);
     const lefts=TL.slice(0,clamp).map(([x,y])=>[rootX+x,groundY+y]);
@@ -1225,18 +1161,11 @@ function startTreeGrowth(rootX, groundY) {
   }
 
   const lineX1=W*0.04,lineX2=W*0.96;
-  function drawLine(ctx){
-    ctx.save();ctx.strokeStyle='rgba(60,30,30,0.55)';ctx.lineWidth=2.2;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(lineX1,groundY);ctx.lineTo(lineX2,groundY);ctx.stroke();ctx.strokeStyle='rgba(40,15,15,0.12)';ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(lineX1,groundY+2.5);ctx.lineTo(lineX2,groundY+2.5);ctx.stroke();ctx.restore();
-  }
+  function drawLine(ctx){ctx.save();ctx.strokeStyle='rgba(60,30,30,0.55)';ctx.lineWidth=2.2;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(lineX1,groundY);ctx.lineTo(lineX2,groundY);ctx.stroke();ctx.strokeStyle='rgba(40,15,15,0.12)';ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(lineX1,groundY+2.5);ctx.lineTo(lineX2,groundY+2.5);ctx.stroke();ctx.restore();}
 
-  function drawTwig(ctx,branch,twig,prog){
-    if(prog<=0)return;
-    const sp=bezPt(twig.t,branch.x0,branch.y0,branch.cp1x,branch.cp1y,branch.cp2x,branch.cp2y,branch.x1,branch.y1);
-    drawBranch(ctx,sp.x,sp.y,sp.x+twig.cx*0.5,sp.y+twig.cy*0.5,sp.x+twig.cx,sp.y+twig.cy,sp.x+twig.ex,sp.y+twig.ey,twig.w0,twig.w1,prog,TEAL);
-  }
+  function drawTwig(ctx,branch,twig,prog){if(prog<=0)return;const sp=bezPt(twig.t,branch.x0,branch.y0,branch.cp1x,branch.cp1y,branch.cp2x,branch.cp2y,branch.x1,branch.y1);drawBranch(ctx,sp.x,sp.y,sp.x+twig.cx*0.5,sp.y+twig.cy*0.5,sp.x+twig.cx,sp.y+twig.cy,sp.x+twig.ex,sp.y+twig.ey,twig.w0,twig.w1,prog,TEAL);}
 
   const brState=BRANCHES.map(b=>({prog:0,startTs:null,twigState:(b.twigs||[]).map(()=>({prog:0,startTs:null}))}));
-
   let tStart=null;
   function loop(ts){
     if(!tStart)tStart=ts;
@@ -1267,10 +1196,7 @@ function startTreeGrowth(rootX, groundY) {
       requestAnimationFrame(loop);
     } else {
       p2Ctx.clearRect(0,0,W,H);drawLine(p2Ctx);drawTrunk(p2Ctx,1);
-      BRANCHES.forEach((b)=>{
-        drawBranch(p2Ctx,b.x0,b.y0,b.cp1x,b.cp1y,b.cp2x,b.cp2y,b.x1,b.y1,b.w0,b.w1,1,TEAL);
-        (b.twigs||[]).forEach(tw=>drawTwig(p2Ctx,b,tw,1));
-      });
+      BRANCHES.forEach(b=>{drawBranch(p2Ctx,b.x0,b.y0,b.cp1x,b.cp1y,b.cp2x,b.cp2y,b.x1,b.y1,b.w0,b.w1,1,TEAL);(b.twigs||[]).forEach(tw=>drawTwig(p2Ctx,b,tw,1));});
       setTimeout(()=>{
         if(typeof startPetalBloom==='function')
           startPetalBloom(rootX,groundY,TREE_H,forkY,BRANCHES,p2Ctx,p2Canvas,drawLine,drawTrunk,drawBranch,drawTwig);
@@ -1281,7 +1207,7 @@ function startTreeGrowth(rootX, groundY) {
 }
 
 /* ══════════════════════════════════════════
-   PETAL BLOOM + LETTER + FALLING PETALS
+   PETAL BLOOM + LETTER (HTML overlay) + FALLING PETALS
 ══════════════════════════════════════════ */
 function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canvas, drawLine, drawTrunk, drawBranch, drawTwig) {
 
@@ -1296,7 +1222,6 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
 
   let slideOffsetX   = 0;
   let countdownAlpha = 0;
-  let letterAlpha    = 0;
 
   const START_DATE = new Date(Date.now() - (1119 * 24 * 60 * 60 * 1000));
 
@@ -1361,6 +1286,7 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
     if(countdownAlpha<=0)return;
     const {days,hours,minutes,seconds}=getElapsed();
     p2Ctx.save();p2Ctx.globalAlpha=countdownAlpha;
+    // Position countdown at bottom-left, below ground line
     const leftX=W*0.04;
     const baseY=groundY;
     const availW=W*0.55;
@@ -1381,7 +1307,7 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
   }
 
   /* ══════════════════════════════════════════
-     TYPED LETTER — word by word, right panel
+     HTML LETTER OVERLAY — left side, scrollable, transparent bg
   ══════════════════════════════════════════ */
   const LETTER_LINES = [
     "Eley,",
@@ -1401,118 +1327,117 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
     "— your mahal",
   ];
 
-  let letterWords = [];
-  let letterVisibleCount = 0;
+  let letterVisibleWords = 0;
   let letterTyping = false;
+  let letterWordList = [];
 
-  function buildLetterWords() {
-    letterWords = [];
+  function buildLetterWordList() {
+    letterWordList = [];
     LETTER_LINES.forEach((line, li) => {
       if (line === '') {
-        letterWords.push({ text: '', isBreak: true, lineIndex: li });
+        letterWordList.push({ text: '', isBreak: true, lineIndex: li });
       } else {
         const words = line.split(' ');
         words.forEach((w, wi) => {
-          letterWords.push({ text: w + (wi < words.length-1 ? ' ' : ''), isBreak: false, lineIndex: li });
+          letterWordList.push({ text: w + (wi < words.length - 1 ? '\u00A0' : ''), isBreak: false, lineIndex: li, isFirst: wi === 0 });
         });
-        letterWords.push({ text: '\n', isBreak: false, isNewline: true, lineIndex: li });
+        letterWordList.push({ isNewline: true, lineIndex: li });
       }
     });
   }
 
+function positionLetterOverlay() {
+  const W2 = window.innerWidth;
+  const H2 = window.innerHeight;
+
+  const panelRight = rootX + slideOffsetX - W2 * 0.03;
+  const panelLeft  = W2 * 0.03;
+  const panelW     = Math.max(60, panelRight - panelLeft);
+
+  const groundYpx  = H2 * 0.82;
+  const panelTop   = H2 * 0.07;
+  const panelBottom = groundYpx - H2 * 0.16;
+  const panelH     = Math.max(80, panelBottom - panelTop);
+  const fontSize   = Math.max(9, panelW * 0.092);
+
+  const overlay = document.getElementById('letter-overlay');
+  const scroll  = document.getElementById('letter-scroll');
+  const content = document.getElementById('letter-content');
+
+  overlay.style.left       = panelLeft + 'px';
+  overlay.style.top        = panelTop  + 'px';
+  overlay.style.width      = panelW    + 'px';
+  overlay.style.height     = panelH    + 'px';
+  overlay.style.transition = 'opacity 1.2s ease';
+
+  scroll.style.width    = '100%';
+  scroll.style.height   = '100%';
+  scroll.style.position = 'relative';
+
+  content.style.fontSize   = fontSize + 'px';
+  content.style.lineHeight = '1.8';
+  content.style.padding    = '0 4px 40px 0';
+}
+
+  function renderLetterHTML() {
+    const content = document.getElementById('letter-content');
+    let html = '';
+    let curLine = -1;
+
+    letterWordList.slice(0, letterVisibleWords).forEach((w, i) => {
+      if (w.isNewline) {
+        html += '<br>';
+        return;
+      }
+      if (w.isBreak) {
+        html += '<span style="display:block;height:0.5em;"></span>';
+        return;
+      }
+      const isGreeting  = w.lineIndex === 0;
+      const isSignoff   = w.lineIndex >= LETTER_LINES.length - 2;
+      const color = (isGreeting || isSignoff)
+        ? 'rgba(120,48,60,0.95)'
+        : 'rgba(70,40,48,0.82)';
+      html += `<span style="color:${color};">${w.text} </span>`;
+    });
+
+    // Blinking cursor
+    if (letterTyping && letterVisibleWords < letterWordList.length) {
+      html += '<span class="letter-cursor" style="display:inline-block;width:1.5px;height:1em;background:rgba(120,48,60,0.7);vertical-align:text-bottom;animation:twBlink .7s step-end infinite;"></span>';
+    }
+
+    content.innerHTML = html;
+
+    // Auto-scroll to bottom as text appears
+    const scroll = document.getElementById('letter-scroll');
+    scroll.scrollTop = scroll.scrollHeight;
+  }
+
   function startLetterTyping() {
-    buildLetterWords();
-    letterVisibleCount = 0;
+    buildLetterWordList();
+    letterVisibleWords = 0;
     letterTyping = true;
     function typeNext() {
       if (!letterTyping) return;
-      if (letterVisibleCount < letterWords.length) {
-        letterVisibleCount++;
-        const delay = letterWords[letterVisibleCount-1]?.isBreak ? 80 : 90 + Math.random()*40;
+      if (letterVisibleWords < letterWordList.length) {
+        letterVisibleWords++;
+        renderLetterHTML();
+        const w = letterWordList[letterVisibleWords - 1];
+        const delay = w?.isBreak ? 120 : 85 + Math.random() * 50;
         setTimeout(typeNext, delay);
+      } else {
+        letterTyping = false;
+        renderLetterHTML();
       }
     }
     typeNext();
   }
 
-  function drawLetter() {
-    if (letterAlpha <= 0 || letterVisibleCount === 0) return;
-
-    const rightX   = W * 0.62;
-    const cardW    = W * 0.34;
-    const cardTop  = groundY - TREE_H * 1.55;
-    const cardH    = TREE_H * 1.40;
-
-    p2Ctx.save();
-    p2Ctx.globalAlpha = letterAlpha;
-
-    // Card background
-    p2Ctx.shadowBlur  = 24;
-    p2Ctx.shadowColor = 'rgba(180,100,120,0.14)';
-    p2Ctx.fillStyle   = 'rgba(255,250,247,0.90)';
-    roundRectPath(p2Ctx, rightX, cardTop, cardW, cardH, 14);
-    p2Ctx.fill();
-    p2Ctx.shadowBlur = 0;
-
-    // Subtle border
-    p2Ctx.strokeStyle = 'rgba(180,140,150,0.25)';
-    p2Ctx.lineWidth   = 1.2;
-    roundRectPath(p2Ctx, rightX, cardTop, cardW, cardH, 14);
-    p2Ctx.stroke();
-
-    // Letter text — render word by word
-    const fontSize  = Math.max(9, cardW * 0.072);
-    const lineH     = fontSize * 1.65;
-    const padX      = cardW  * 0.10;
-    const padY      = cardH  * 0.08;
-    let   cx        = rightX + padX;
-    let   cy        = cardTop + padY + fontSize;
-    let   curLineI  = -1;
-
-    p2Ctx.font      = `italic ${fontSize}px 'Playfair Display', serif`;
-    p2Ctx.textBaseline = 'alphabetic';
-
-    let visible = letterWords.slice(0, letterVisibleCount);
-    visible.forEach(w => {
-      if (w.lineIndex !== curLineI) {
-        if (curLineI !== -1) { cy += lineH; cx = rightX + padX; }
-        curLineI = w.lineIndex;
-      }
-      if (w.isBreak) {
-        cy += lineH * 0.45; cx = rightX + padX; return;
-      }
-      if (w.isNewline) { return; }
-
-      // Color: greeting/sign-off lines slightly different
-      const isSpecial = w.lineIndex === 0 || w.lineIndex >= LETTER_LINES.length - 2;
-      p2Ctx.fillStyle = isSpecial
-        ? 'rgba(120,48,60,0.92)'
-        : 'rgba(80,48,55,0.82)';
-
-      // Wrap if overflowing card
-      if (cx + p2Ctx.measureText(w.text).width > rightX + cardW - padX) {
-        cy += lineH; cx = rightX + padX;
-      }
-      p2Ctx.fillText(w.text, cx, cy);
-      cx += p2Ctx.measureText(w.text).width;
-    });
-
-    // Blinking cursor at end of last word
-    if (letterVisibleCount < letterWords.length) {
-      const blink = Math.floor(Date.now() / 500) % 2 === 0;
-      if (blink) {
-        p2Ctx.fillStyle = 'rgba(120,48,60,0.7)';
-        p2Ctx.fillRect(cx, cy - fontSize * 0.85, 1.5, fontSize);
-      }
-    }
-
-    p2Ctx.restore();
-  }
-
-  function roundRectPath(ctx, x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
-  }
+function showLetterOverlay(alpha) {
+  const overlay = document.getElementById('letter-overlay');
+  overlay.style.opacity      = String(alpha);
+  overlay.style.pointerEvents = alpha > 0.5 ? 'auto' : 'none';
+}
 
   function redrawTree(){
     p2Ctx.save();p2Ctx.translate(slideOffsetX,0);
@@ -1533,7 +1458,7 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
     drawGroundLine();
     redrawTreeAndHearts();
     drawCountdown();
-    drawLetter();
+    // letter is handled by HTML overlay - no canvas drawing needed
   }
 
   /* BLOOM PHASE */
@@ -1565,37 +1490,45 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
       window._bloomHearts=hearts;
 
       // Show replay button
-      const rb = document.getElementById('replay-btn');
-      rb.style.display = 'flex';
+      document.getElementById('replay-btn').style.display = 'flex';
 
-      // SLIDE + COUNTDOWN + LETTER PHASE
-      const targetSlideX=W*0.22;
-      const SLIDE_DUR=1400;
-      let slideStart2=null;
+      // SLIDE: tree moves RIGHT, letter appears LEFT
+      const targetSlideX = W * 0.22;  // positive = tree shifts right
+      const SLIDE_DUR = 1400;
+      let slideStart2 = null;
       function easeOutCubic(t){return 1-Math.pow(1-t,3);}
+
+      // Position the letter overlay before revealing
+      positionLetterOverlay();
 
       function slideLoop(ts){
         if(!slideStart2)slideStart2=ts;
         const t=Math.min(1,(ts-slideStart2)/SLIDE_DUR);
         const e=easeOutCubic(t);
-        slideOffsetX=targetSlideX*e;
-        countdownAlpha=e;
-        letterAlpha=e;
+        slideOffsetX = targetSlideX * e;
+        countdownAlpha = e;
+
+        // Fade in the HTML letter overlay with the slide
+        showLetterOverlay(e);
+
         fullRedraw();
-        if(t<1){requestAnimationFrame(slideLoop);}
-        else{
-          slideOffsetX=targetSlideX;countdownAlpha=1;letterAlpha=1;
+        if(t<1){
+          requestAnimationFrame(slideLoop);
+        } else {
+          slideOffsetX = targetSlideX;
+          countdownAlpha = 1;
+          positionLetterOverlay();  // ← dito na, hindi bago mag-slide
+          showLetterOverlay(1);
           startLetterTyping();
           startFallLoop();
-          // Show end overlay after delay
-          setTimeout(showEndOverlay, 8000);
+          setTimeout(showEndOverlay, 24000);
         }
       }
-      setTimeout(()=>requestAnimationFrame(slideLoop),600);
+      setTimeout(()=>requestAnimationFrame(slideLoop), 600);
     }
   }
 
-  /* FALLING PETALS PHASE */
+  /* FALLING PETALS */
   function startFallLoop(){
     const fallingPetals=[];
     const PETAL_COLS=[...new Set(hearts.map(h=>h.col))];
@@ -1612,7 +1545,7 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
     function fallLoop(){
       gustTimer++;if(gustTimer%90===0)windGust=(Math.random()-0.5)*1.4;if(gustTimer%40===0)spawnFallingPetal();
       const liveWind=WIND_BASE+windGust;
-      p2Ctx.clearRect(0,0,W,H);drawGroundLine();redrawTreeAndHearts();drawCountdown();drawLetter();
+      p2Ctx.clearRect(0,0,W,H);drawGroundLine();redrawTreeAndHearts();drawCountdown();
       p2Ctx.save();p2Ctx.translate(slideOffsetX,0);
       fallingPetals.forEach(p=>{
         p.life++;p.vx+=(liveWind-p.vx)*0.012;p.x+=p.vx+Math.sin(p.life*p.sway+p.phase)*0.4;p.y+=p.vy+Math.cos(p.life*p.sway*0.7+p.phase)*0.2;p.rot+=p.vr;
