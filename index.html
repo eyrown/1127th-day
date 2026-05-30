@@ -1038,23 +1038,23 @@ function drawCountdown() {
   p2Ctx.save();
   p2Ctx.globalAlpha = countdownAlpha;
 
-  const isPhone  = W < 500;
   const leftX    = W * 0.04;
   const baseY    = groundY;
 
-  // Responsive sizes
-  const labelSize = isPhone ? W * 0.038 : W * 0.018;
-  const numSize   = isPhone ? W * 0.075 : W * 0.038;
-  const unitSize  = isPhone ? W * 0.032 : W * 0.016;
-  const gap       = numSize * 0.22;
+  // Scale based on available left space (tree takes right ~22%)
+  const availW    = W * 0.55;
+  const labelSize = availW * 0.055;
+  const numSize   = availW * 0.115;
+  const unitSize  = availW * 0.048;
+  const gap       = availW * 0.025;
 
-  // Label above
+  // Label
   p2Ctx.font         = `400 ${labelSize}px 'Nunito', sans-serif`;
   p2Ctx.fillStyle    = 'rgba(90,60,60,0.62)';
   p2Ctx.textBaseline = 'alphabetic';
-  p2Ctx.fillText('Mi amor por ti comenzó hace tres años...', leftX, baseY - numSize * 2.0);
+  p2Ctx.fillText('Mi amor por ti comenzó hace tres años...', leftX, baseY - numSize * 1.85);
 
-  // On phone: stack into 2 rows. On desktop: single row.
+  // Single row: number + unit for each part
   const parts = [
     { val: String(days),    unit: 'days:'     },
     { val: String(hours),   unit: 'hours:'    },
@@ -1062,54 +1062,23 @@ function drawCountdown() {
     { val: String(seconds), unit: 'seconds:' },
   ];
 
-  if (isPhone) {
-    // Row 1: days + hours
-    let cursor = leftX;
-    const row1Y = baseY - numSize * 0.9;
-    const row2Y = baseY + numSize * 0.25;
+  const numY  = baseY - unitSize * 0.4;
+  let cursor  = leftX;
 
-    [parts[0], parts[1]].forEach(part => {
-      p2Ctx.font         = `700 ${numSize}px 'Playfair Display', serif`;
-      p2Ctx.fillStyle    = 'rgba(60,30,30,0.85)';
-      p2Ctx.textBaseline = 'alphabetic';
-      p2Ctx.fillText(part.val, cursor, row1Y);
-      cursor += p2Ctx.measureText(part.val).width + gap * 0.4;
-      p2Ctx.font      = `400 ${unitSize}px 'Nunito', sans-serif`;
-      p2Ctx.fillStyle = 'rgba(90,60,60,0.65)';
-      p2Ctx.fillText(part.unit, cursor, row1Y);
-      cursor += p2Ctx.measureText(part.unit).width + gap * 2.2;
-    });
+  parts.forEach(part => {
+    // Big number
+    p2Ctx.font         = `700 ${numSize}px 'Playfair Display', serif`;
+    p2Ctx.fillStyle    = 'rgba(55,28,28,0.88)';
+    p2Ctx.textBaseline = 'alphabetic';
+    p2Ctx.fillText(part.val, cursor, numY);
+    cursor += p2Ctx.measureText(part.val).width + gap * 0.5;
 
-    // Row 2: minutes + seconds
-    cursor = leftX;
-    [parts[2], parts[3]].forEach(part => {
-      p2Ctx.font         = `700 ${numSize}px 'Playfair Display', serif`;
-      p2Ctx.fillStyle    = 'rgba(60,30,30,0.85)';
-      p2Ctx.textBaseline = 'alphabetic';
-      p2Ctx.fillText(part.val, cursor, row2Y);
-      cursor += p2Ctx.measureText(part.val).width + gap * 0.4;
-      p2Ctx.font      = `400 ${unitSize}px 'Nunito', sans-serif`;
-      p2Ctx.fillStyle = 'rgba(90,60,60,0.65)';
-      p2Ctx.fillText(part.unit, cursor, row2Y);
-      cursor += p2Ctx.measureText(part.unit).width + gap * 2.2;
-    });
-
-  } else {
-    // Desktop: single row
-    let cursor = leftX;
-    const numY = baseY - unitSize * 0.5;
-    parts.forEach(part => {
-      p2Ctx.font         = `600 ${numSize}px 'Playfair Display', serif`;
-      p2Ctx.fillStyle    = 'rgba(60,30,30,0.82)';
-      p2Ctx.textBaseline = 'alphabetic';
-      p2Ctx.fillText(part.val, cursor, numY);
-      cursor += p2Ctx.measureText(part.val).width + gap * 0.5;
-      p2Ctx.font      = `400 ${unitSize}px 'Nunito', sans-serif`;
-      p2Ctx.fillStyle = 'rgba(90,60,60,0.60)';
-      p2Ctx.fillText(part.unit, cursor, numY);
-      cursor += p2Ctx.measureText(part.unit).width + gap * 1.6;
-    });
-  }
+    // Small unit label
+    p2Ctx.font      = `400 ${unitSize}px 'Nunito', sans-serif`;
+    p2Ctx.fillStyle = 'rgba(90,60,60,0.60)';
+    p2Ctx.fillText(part.unit, cursor, numY);
+    cursor += p2Ctx.measureText(part.unit).width + gap * 1.8;
+  });
 
   p2Ctx.restore();
 }
