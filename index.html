@@ -1435,8 +1435,13 @@ function positionLetterOverlay() {
 
 function showLetterOverlay(alpha) {
   const overlay = document.getElementById('letter-overlay');
-  overlay.style.opacity      = String(alpha);
-  overlay.style.pointerEvents = alpha > 0.5 ? 'auto' : 'none';
+  overlay.style.cssText += `
+    opacity: ${alpha} !important;
+    pointer-events: ${alpha > 0.5 ? 'auto' : 'none'};
+    background: rgba(255,0,0,0.2) !important;
+    border: 2px solid red !important;
+    z-index: 9999 !important;
+  `;
 }
 
   function redrawTree(){
@@ -1501,29 +1506,29 @@ function showLetterOverlay(alpha) {
       // Position the letter overlay before revealing
       positionLetterOverlay();
 
-      function slideLoop(ts){
-        if(!slideStart2)slideStart2=ts;
-        const t=Math.min(1,(ts-slideStart2)/SLIDE_DUR);
-        const e=easeOutCubic(t);
-        slideOffsetX = targetSlideX * e;
-        countdownAlpha = e;
+function slideLoop(ts){
+  if(!slideStart2)slideStart2=ts;
+  const t=Math.min(1,(ts-slideStart2)/SLIDE_DUR);
+  const e=easeOutCubic(t);
+  slideOffsetX = targetSlideX * e;
+  countdownAlpha = e;
 
-        // Fade in the HTML letter overlay with the slide
-        showLetterOverlay(e);
+  positionLetterOverlay();   // ← DAGDAG dito, every frame
+  showLetterOverlay(e);
 
-        fullRedraw();
-        if(t<1){
-          requestAnimationFrame(slideLoop);
-        } else {
-          slideOffsetX = targetSlideX;
-          countdownAlpha = 1;
-          positionLetterOverlay();  // ← dito na, hindi bago mag-slide
-          showLetterOverlay(1);
-          startLetterTyping();
-          startFallLoop();
-          setTimeout(showEndOverlay, 24000);
-        }
-      }
+  fullRedraw();
+  if(t<1){
+    requestAnimationFrame(slideLoop);
+  } else {
+    slideOffsetX = targetSlideX;
+    countdownAlpha = 1;
+    positionLetterOverlay();
+    showLetterOverlay(1);
+    startLetterTyping();
+    startFallLoop();
+    setTimeout(showEndOverlay, 24000);
+  }
+}
       setTimeout(()=>requestAnimationFrame(slideLoop), 600);
     }
   }
