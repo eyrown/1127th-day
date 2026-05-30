@@ -1031,51 +1031,88 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
     p2Ctx.restore();
   }
 
-  function drawCountdown() {
-    if (countdownAlpha <= 0) return;
-    const { days, hours, minutes, seconds } = getElapsed();
+function drawCountdown() {
+  if (countdownAlpha <= 0) return;
+  const { days, hours, minutes, seconds } = getElapsed();
 
-    p2Ctx.save();
-    p2Ctx.globalAlpha = countdownAlpha;
+  p2Ctx.save();
+  p2Ctx.globalAlpha = countdownAlpha;
 
-    const leftX     = W * 0.04;
-    const baseY     = groundY;
-    const labelSize = Math.max(7,  W * 0.013) * mf;
-    const numSize   = Math.max(11, W * 0.030) * mf;
-    const unitSize  = Math.max(9,  W * 0.014) * mf;
-    const gap       = numSize * 0.28;
+  const isPhone  = W < 500;
+  const leftX    = W * 0.04;
+  const baseY    = groundY;
 
-    // Label above the line
-    p2Ctx.font         = `400 ${labelSize}px 'Nunito', sans-serif`;
-    p2Ctx.fillStyle    = 'rgba(90,60,60,0.62)';
-    p2Ctx.textBaseline = 'alphabetic';
-    p2Ctx.fillText('Mi amor por ti comenzó hace tres años....', leftX, baseY - labelSize * 2.0);
+  // Responsive sizes
+  const labelSize = isPhone ? W * 0.038 : W * 0.018;
+  const numSize   = isPhone ? W * 0.075 : W * 0.038;
+  const unitSize  = isPhone ? W * 0.032 : W * 0.016;
+  const gap       = numSize * 0.22;
 
-    // Numbers row
-    const numY  = baseY - unitSize * 0.5;
-    let cursor  = leftX;
-    const parts = [
-      { val: String(days),    unit: 'days:'     },
-      { val: String(hours),   unit: 'hours:'    },
-      { val: String(minutes), unit: 'minutes:'  },
-      { val: String(seconds), unit: 'seconds:' },
-    ];
+  // Label above
+  p2Ctx.font         = `400 ${labelSize}px 'Nunito', sans-serif`;
+  p2Ctx.fillStyle    = 'rgba(90,60,60,0.62)';
+  p2Ctx.textBaseline = 'alphabetic';
+  p2Ctx.fillText('Mi amor por ti comenzó hace tres años...', leftX, baseY - numSize * 2.0);
 
+  // On phone: stack into 2 rows. On desktop: single row.
+  const parts = [
+    { val: String(days),    unit: 'days:'     },
+    { val: String(hours),   unit: 'hours:'    },
+    { val: String(minutes), unit: 'minutes:'  },
+    { val: String(seconds), unit: 'seconds:' },
+  ];
+
+  if (isPhone) {
+    // Row 1: days + hours
+    let cursor = leftX;
+    const row1Y = baseY - numSize * 0.9;
+    const row2Y = baseY + numSize * 0.25;
+
+    [parts[0], parts[1]].forEach(part => {
+      p2Ctx.font         = `700 ${numSize}px 'Playfair Display', serif`;
+      p2Ctx.fillStyle    = 'rgba(60,30,30,0.85)';
+      p2Ctx.textBaseline = 'alphabetic';
+      p2Ctx.fillText(part.val, cursor, row1Y);
+      cursor += p2Ctx.measureText(part.val).width + gap * 0.4;
+      p2Ctx.font      = `400 ${unitSize}px 'Nunito', sans-serif`;
+      p2Ctx.fillStyle = 'rgba(90,60,60,0.65)';
+      p2Ctx.fillText(part.unit, cursor, row1Y);
+      cursor += p2Ctx.measureText(part.unit).width + gap * 2.2;
+    });
+
+    // Row 2: minutes + seconds
+    cursor = leftX;
+    [parts[2], parts[3]].forEach(part => {
+      p2Ctx.font         = `700 ${numSize}px 'Playfair Display', serif`;
+      p2Ctx.fillStyle    = 'rgba(60,30,30,0.85)';
+      p2Ctx.textBaseline = 'alphabetic';
+      p2Ctx.fillText(part.val, cursor, row2Y);
+      cursor += p2Ctx.measureText(part.val).width + gap * 0.4;
+      p2Ctx.font      = `400 ${unitSize}px 'Nunito', sans-serif`;
+      p2Ctx.fillStyle = 'rgba(90,60,60,0.65)';
+      p2Ctx.fillText(part.unit, cursor, row2Y);
+      cursor += p2Ctx.measureText(part.unit).width + gap * 2.2;
+    });
+
+  } else {
+    // Desktop: single row
+    let cursor = leftX;
+    const numY = baseY - unitSize * 0.5;
     parts.forEach(part => {
       p2Ctx.font         = `600 ${numSize}px 'Playfair Display', serif`;
       p2Ctx.fillStyle    = 'rgba(60,30,30,0.82)';
       p2Ctx.textBaseline = 'alphabetic';
       p2Ctx.fillText(part.val, cursor, numY);
       cursor += p2Ctx.measureText(part.val).width + gap * 0.5;
-
       p2Ctx.font      = `400 ${unitSize}px 'Nunito', sans-serif`;
       p2Ctx.fillStyle = 'rgba(90,60,60,0.60)';
       p2Ctx.fillText(part.unit, cursor, numY);
       cursor += p2Ctx.measureText(part.unit).width + gap * 1.6;
     });
-
-    p2Ctx.restore();
   }
+
+  p2Ctx.restore();
+}
 
   function redrawTree() {
     p2Ctx.save();
