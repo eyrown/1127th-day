@@ -899,21 +899,36 @@ function startTreeGrowth(rootX, groundY) {
 
 function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canvas, drawLine, drawTrunk, drawBranch, drawTwig) {
 
-  const W  = p2Canvas.width;
-  const H  = p2Canvas.height;
-  const mf = Math.min(1, W / 560);
+  const W   = p2Canvas.width;
+  const H   = p2Canvas.height;
+  const mf  = Math.min(1, W / 560);
 
-  const canopyCX = rootX;
-  const cW = TREE_H * 0.95;
-  const cH = TREE_H * 0.90;
+  const canopyCX   = rootX;
+  const cW         = TREE_H * 0.95;
+  const cH         = TREE_H * 0.90;
   const canopyMidY = groundY - TREE_H * 0.82;
 
-  // Slide offset — starts at 0, animates to targetSlideX after bloom
-  let slideOffsetX = 0;
+  let slideOffsetX   = 0;
+  let countdownAlpha = 0;
+
+  // ── CHANGE THIS to your real relationship start date ──
+  const START_DATE = new Date(Date.now() - (1119 * 24 * 60 * 60 * 1000));
+
+  function getElapsed() {
+    const diff         = Math.max(0, Date.now() - START_DATE.getTime());
+    const totalSeconds = Math.floor(diff / 1000);
+    const seconds      = totalSeconds % 60;
+    const totalMinutes = Math.floor(totalSeconds / 60);
+    const minutes      = totalMinutes % 60;
+    const totalHours   = Math.floor(totalMinutes / 60);
+    const hours        = totalHours % 24;
+    const days         = Math.floor(totalHours / 24);
+    return { days, hours, minutes, seconds };
+  }
 
   function insideHeart(px, py) {
-    const x = (px - canopyCX) / (cW * 0.50);
-    const y = (py - canopyMidY) / (cH * 0.50);
+    const x  = (px - canopyCX) / (cW * 0.50);
+    const y  = (py - canopyMidY) / (cH * 0.50);
     const yf = -y + 0.18;
     return Math.pow(x*x + yf*yf - 1, 3) - x*x * yf*yf*yf <= 0;
   }
@@ -927,16 +942,12 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
     const COLS = 38, ROWS = 36;
     const cellW = (bx2 - bx1) / COLS;
     const cellH = (by2 - by1) / ROWS;
-
     for (let row = 0; row < ROWS; row++) {
       for (let col = 0; col < COLS; col++) {
         for (let attempt = 0; attempt < 8; attempt++) {
           const x = bx1 + (col + Math.random()) * cellW;
           const y = by1 + (row + Math.random()) * cellH;
-          if (insideHeart(x, y)) {
-            result.push({ x, y });
-            break;
-          }
+          if (insideHeart(x, y)) { result.push({ x, y }); break; }
         }
       }
     }
@@ -958,12 +969,12 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
     '#ff6b6b','#ff8e53','#ffd93d','#ff6bcb',
   ];
 
-  const pts = generateHearts();
+  const pts    = generateHearts();
   const hearts = pts.map(pt => {
-    const dist = Math.hypot(pt.x - canopyCX, pt.y - canopyMidY);
+    const dist       = Math.hypot(pt.x - canopyCX, pt.y - canopyMidY);
     const edgeFactor = 1 - (dist / (cW * 0.52));
-    const baseSize = (6 + Math.random() * 11) * mf;
-    const size = baseSize * (0.70 + edgeFactor * 0.45);
+    const baseSize   = (6 + Math.random() * 11) * mf;
+    const size       = baseSize * (0.70 + edgeFactor * 0.45);
     return {
       x: pt.x, y: pt.y, size,
       rot:  (Math.random() - 0.5) * 1.4,
@@ -972,11 +983,6 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
       dist,
     };
   });
-
-  const maxDist = Math.max(...hearts.map(h => h.dist));
-  const edgeThreshold = maxDist * 0.70;
-  const edgeHearts  = hearts.filter(h => h.dist >= edgeThreshold).sort((a,b) => b.dist - a.dist);
-  const innerHearts = hearts.filter(h => h.dist <  edgeThreshold).sort(() => Math.random() - 0.5);
 
   function drawHeart(cx, cy, size, rot, col, alph) {
     p2Ctx.save();
@@ -989,45 +995,88 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
     const s = size * 0.5;
     p2Ctx.beginPath();
     p2Ctx.moveTo(0, s * 0.35);
-    p2Ctx.bezierCurveTo(-s*0.08, -s*0.22, -s*1.02, -s*0.22, -s*1.02,  s*0.28);
-    p2Ctx.bezierCurveTo(-s*1.02,  s*0.88, -s*0.08,  s*1.22,  0,        s*1.58);
-    p2Ctx.bezierCurveTo( s*0.08,  s*1.22,  s*1.02,  s*0.88,  s*1.02,  s*0.28);
-    p2Ctx.bezierCurveTo( s*1.02, -s*0.22,  s*0.08, -s*0.22,  0,        s*0.35);
+    p2Ctx.bezierCurveTo(-s*0.08,-s*0.22,-s*1.02,-s*0.22,-s*1.02, s*0.28);
+    p2Ctx.bezierCurveTo(-s*1.02, s*0.88,-s*0.08, s*1.22, 0,       s*1.58);
+    p2Ctx.bezierCurveTo( s*0.08, s*1.22, s*1.02, s*0.88, s*1.02,  s*0.28);
+    p2Ctx.bezierCurveTo( s*1.02,-s*0.22, s*0.08,-s*0.22, 0,        s*0.35);
     p2Ctx.closePath();
     p2Ctx.fill();
     p2Ctx.shadowBlur  = 0;
     p2Ctx.globalAlpha = alph * 0.22;
     p2Ctx.fillStyle   = 'rgba(255,255,255,0.95)';
     p2Ctx.beginPath();
-    p2Ctx.ellipse(-s*0.26, s*0.10, s*0.20, s*0.12, -0.55, 0, Math.PI * 2);
+    p2Ctx.ellipse(-s*0.26, s*0.10, s*0.20, s*0.12, -0.55, 0, Math.PI*2);
     p2Ctx.fill();
     p2Ctx.restore();
   }
 
   const TEAL = '#2e9b72';
 
-  // Draws only the ground line (never translated)
   function drawGroundLine() {
-    const lineX1 = W * 0.04;
-    const lineX2 = W * 0.96;
+    const lx1 = W * 0.04, lx2 = W * 0.96;
     p2Ctx.save();
     p2Ctx.strokeStyle = 'rgba(60,30,30,0.55)';
-    p2Ctx.lineWidth = 2.2;
-    p2Ctx.lineCap = 'round';
+    p2Ctx.lineWidth   = 2.2;
+    p2Ctx.lineCap     = 'round';
     p2Ctx.beginPath();
-    p2Ctx.moveTo(lineX1, groundY);
-    p2Ctx.lineTo(lineX2, groundY);
+    p2Ctx.moveTo(lx1, groundY);
+    p2Ctx.lineTo(lx2, groundY);
     p2Ctx.stroke();
     p2Ctx.strokeStyle = 'rgba(40,15,15,0.12)';
-    p2Ctx.lineWidth = 3.5;
+    p2Ctx.lineWidth   = 3.5;
     p2Ctx.beginPath();
-    p2Ctx.moveTo(lineX1, groundY + 2.5);
-    p2Ctx.lineTo(lineX2, groundY + 2.5);
+    p2Ctx.moveTo(lx1, groundY + 2.5);
+    p2Ctx.lineTo(lx2, groundY + 2.5);
     p2Ctx.stroke();
     p2Ctx.restore();
   }
 
-  // Draws tree + hearts offset by slideOffsetX
+  function drawCountdown() {
+    if (countdownAlpha <= 0) return;
+    const { days, hours, minutes, seconds } = getElapsed();
+
+    p2Ctx.save();
+    p2Ctx.globalAlpha = countdownAlpha;
+
+    const leftX     = W * 0.04;
+    const baseY     = groundY;
+    const labelSize = Math.max(7,  W * 0.013) * mf;
+    const numSize   = Math.max(11, W * 0.030) * mf;
+    const unitSize  = Math.max(9,  W * 0.014) * mf;
+    const gap       = numSize * 0.28;
+
+    // Label above the line
+    p2Ctx.font         = `400 ${labelSize}px 'Nunito', sans-serif`;
+    p2Ctx.fillStyle    = 'rgba(90,60,60,0.62)';
+    p2Ctx.textBaseline = 'alphabetic';
+    p2Ctx.fillText('Mi amor por ti comenzó hace tres años....', leftX, baseY - labelSize * 2.0);
+
+    // Numbers row
+    const numY  = baseY - unitSize * 0.5;
+    let cursor  = leftX;
+    const parts = [
+      { val: String(days),    unit: 'days:'     },
+      { val: String(hours),   unit: 'hours:'    },
+      { val: String(minutes), unit: 'minutes:'  },
+      { val: String(seconds), unit: 'seconds:' },
+    ];
+
+    parts.forEach(part => {
+      p2Ctx.font         = `600 ${numSize}px 'Playfair Display', serif`;
+      p2Ctx.fillStyle    = 'rgba(60,30,30,0.82)';
+      p2Ctx.textBaseline = 'alphabetic';
+      p2Ctx.fillText(part.val, cursor, numY);
+      cursor += p2Ctx.measureText(part.val).width + gap * 0.5;
+
+      p2Ctx.font      = `400 ${unitSize}px 'Nunito', sans-serif`;
+      p2Ctx.fillStyle = 'rgba(90,60,60,0.60)';
+      p2Ctx.fillText(part.unit, cursor, numY);
+      cursor += p2Ctx.measureText(part.unit).width + gap * 1.6;
+    });
+
+    p2Ctx.restore();
+  }
+
   function redrawTree() {
     p2Ctx.save();
     p2Ctx.translate(slideOffsetX, 0);
@@ -1047,16 +1096,24 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
     p2Ctx.restore();
   }
 
+  function fullRedraw() {
+    p2Ctx.clearRect(0, 0, W, H);
+    drawGroundLine();
+    redrawTreeAndHearts();
+    drawCountdown();
+  }
+
   // ── BLOOM PHASE ──
-  const allHearts = [...hearts].sort(() => Math.random() - 0.5);
-  const BLOOM_DUR = 2800;
-  const STAGGER   = BLOOM_DUR * 0.72;
-  let bloomStart  = null;
+  const allHearts  = [...hearts].sort(() => Math.random() - 0.5);
+  const BLOOM_DUR  = 2800;
+  const STAGGER    = BLOOM_DUR * 0.72;
+  let   bloomStart = null;
   const birthTimes = allHearts.map((_, i) => (i / allHearts.length) * STAGGER);
 
   function bloomLoop(ts) {
     if (!bloomStart) bloomStart = ts;
     const elapsed = ts - bloomStart;
+
     p2Ctx.clearRect(0, 0, W, H);
     drawGroundLine();
     redrawTree();
@@ -1064,67 +1121,67 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
     let allDone = true;
     for (let i = 0; i < allHearts.length; i++) {
       if (elapsed < birthTimes[i]) { allDone = false; continue; }
-      const hp  = allHearts[i];
-      const age = elapsed - birthTimes[i];
-      const pop = Math.min(1, age / 200);
+      const hp    = allHearts[i];
+      const age   = elapsed - birthTimes[i];
+      const pop   = Math.min(1, age / 200);
       if (pop < 1) allDone = false;
-      const sc   = 0.05 + 0.95 * (1 - Math.pow(1 - pop, 3));
+      const sc    = 0.05 + 0.95 * (1 - Math.pow(1 - pop, 3));
       const drift = (1 - pop) * 14;
-      const dx = (Math.random() - 0.5) * drift;
-      const dy = (Math.random() - 0.5) * drift;
       p2Ctx.save();
       p2Ctx.translate(slideOffsetX, 0);
-      drawHeart(hp.x + dx, hp.y + dy, hp.size * sc, hp.rot, hp.col, hp.alph * Math.min(1, pop * 2));
+      drawHeart(
+        hp.x + (Math.random() - 0.5) * drift,
+        hp.y + (Math.random() - 0.5) * drift,
+        hp.size * sc, hp.rot, hp.col,
+        hp.alph * Math.min(1, pop * 2)
+      );
       p2Ctx.restore();
     }
 
     if (!allDone) {
       requestAnimationFrame(bloomLoop);
     } else {
-      // Bloom done — freeze final state, then slide
-      p2Ctx.clearRect(0, 0, W, H);
-      drawGroundLine();
-      redrawTreeAndHearts();
+      fullRedraw();
       window._bloomHearts = hearts;
 
-      // ── SLIDE PHASE ──
-      // Target: shift tree to right (~22% of width from center)
+      // ── SLIDE + COUNTDOWN PHASE ──
       const targetSlideX = W * 0.22;
-      const SLIDE_DUR = 1400;
-      let slideStart = null;
+      const SLIDE_DUR    = 1400;
+      let   slideStart2  = null;
 
       function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
       function slideLoop(ts) {
-        if (!slideStart) slideStart = ts;
-        const t = Math.min(1, (ts - slideStart) / SLIDE_DUR);
-        slideOffsetX = targetSlideX * easeOutCubic(t);
+        if (!slideStart2) slideStart2 = ts;
+        const t = Math.min(1, (ts - slideStart2) / SLIDE_DUR);
+        const e = easeOutCubic(t);
 
-        p2Ctx.clearRect(0, 0, W, H);
-        drawGroundLine();
-        redrawTreeAndHearts();
+        slideOffsetX   = targetSlideX * e;
+        countdownAlpha = e; // synced perfectly with slide
+
+        fullRedraw();
 
         if (t < 1) {
           requestAnimationFrame(slideLoop);
         } else {
-          slideOffsetX = targetSlideX;
-          // Slide done — start falling petals
+          slideOffsetX   = targetSlideX;
+          countdownAlpha = 1;
           startFallLoop();
         }
       }
 
-      // Small pause before slide starts (feels more intentional)
+      // Small pause before slide — feels intentional
       setTimeout(() => requestAnimationFrame(slideLoop), 600);
     }
   }
 
-  // ── FALLING PETALS PHASE (after slide) ──
+  // ── FALLING PETALS PHASE ──
   function startFallLoop() {
     const fallingPetals = [];
-    const PETAL_COLS = [...new Set(hearts.map(h => h.col))];
-    const WIND_BASE = -1.8;
-    let windGust  = 0;
-    let gustTimer = 0;
+    const PETAL_COLS    = [...new Set(hearts.map(h => h.col))];
+    const WIND_BASE     = -1.8;
+    let   windGust      = 0;
+    let   gustTimer     = 0;
 
     function spawnFallingPetal() {
       let cx2, cy2, attempts = 0;
@@ -1135,24 +1192,24 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
       } while (!insideHeart(cx2, cy2) && attempts < 20);
       if (!insideHeart(cx2, cy2)) return;
 
-      const size = (4 + Math.random() * 10) * mf;
       fallingPetals.push({
-        x: cx2, y: cy2,
-        vx: WIND_BASE + (Math.random() - 0.8) * 1.2,
-        vy: Math.random() * 0.55 + 0.18,
-        rot: Math.random() * Math.PI * 2,
-        vr: -(Math.random() * 0.04 + 0.008),
-        size,
-        col: PETAL_COLS[Math.floor(Math.random() * PETAL_COLS.length)],
-        alpha: 0.82 + Math.random() * 0.18,
-        life: 0,
+        x:       cx2,
+        y:       cy2,
+        vx:      WIND_BASE + (Math.random() - 0.8) * 1.2,
+        vy:      Math.random() * 0.55 + 0.18,
+        rot:     Math.random() * Math.PI * 2,
+        vr:      -(Math.random() * 0.04 + 0.008),
+        size:    (4 + Math.random() * 10) * mf,
+        col:     PETAL_COLS[Math.floor(Math.random() * PETAL_COLS.length)],
+        alpha:   0.82 + Math.random() * 0.18,
+        life:    0,
         maxLife: 260 + Math.random() * 300,
-        sway: Math.random() * 0.025 + 0.008,
-        phase: Math.random() * Math.PI * 2,
+        sway:    Math.random() * 0.025 + 0.008,
+        phase:   Math.random() * Math.PI * 2,
       });
     }
 
-    function fallLoop(ts) {
+    function fallLoop() {
       gustTimer++;
       if (gustTimer % 90 === 0) windGust = (Math.random() - 0.5) * 1.4;
       if (gustTimer % 40 === 0) spawnFallingPetal();
@@ -1161,13 +1218,13 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
 
       p2Ctx.clearRect(0, 0, W, H);
       drawGroundLine();
-
-      // Tree + static hearts (offset by slideOffsetX)
       redrawTreeAndHearts();
+      drawCountdown(); // live ticking every frame
 
-      // Falling petals (also offset so they fall FROM the tree)
+      // Falling petals travel with tree offset
       p2Ctx.save();
       p2Ctx.translate(slideOffsetX, 0);
+
       fallingPetals.forEach(p => {
         p.life++;
         p.vx += (liveWind - p.vx) * 0.012;
@@ -1177,7 +1234,7 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
 
         const fadeIn  = Math.min(1, p.life / 25);
         const fadeOut = Math.max(0, 1 - (p.life / p.maxLife));
-        const a = p.alpha * fadeIn * fadeOut;
+        const a       = p.alpha * fadeIn * fadeOut;
 
         p2Ctx.save();
         p2Ctx.globalAlpha = Math.max(0, a);
@@ -1186,33 +1243,31 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
         p2Ctx.shadowBlur  = p.size * 0.3;
         p2Ctx.shadowColor = p.col;
         p2Ctx.fillStyle   = p.col;
-
         const s = p.size * 0.5;
         p2Ctx.beginPath();
         p2Ctx.moveTo(0, s * 0.35);
-        p2Ctx.bezierCurveTo(-s*0.08, -s*0.22, -s*1.02, -s*0.22, -s*1.02,  s*0.28);
-        p2Ctx.bezierCurveTo(-s*1.02,  s*0.88, -s*0.08,  s*1.22,  0,        s*1.58);
-        p2Ctx.bezierCurveTo( s*0.08,  s*1.22,  s*1.02,  s*0.88,  s*1.02,  s*0.28);
-        p2Ctx.bezierCurveTo( s*1.02, -s*0.22,  s*0.08, -s*0.22,  0,        s*0.35);
+        p2Ctx.bezierCurveTo(-s*0.08,-s*0.22,-s*1.02,-s*0.22,-s*1.02, s*0.28);
+        p2Ctx.bezierCurveTo(-s*1.02, s*0.88,-s*0.08, s*1.22, 0,       s*1.58);
+        p2Ctx.bezierCurveTo( s*0.08, s*1.22, s*1.02, s*0.88, s*1.02,  s*0.28);
+        p2Ctx.bezierCurveTo( s*1.02,-s*0.22, s*0.08,-s*0.22, 0,        s*0.35);
         p2Ctx.closePath();
         p2Ctx.fill();
-
         p2Ctx.shadowBlur  = 0;
         p2Ctx.globalAlpha = a * 0.20;
         p2Ctx.fillStyle   = 'rgba(255,255,255,0.95)';
         p2Ctx.beginPath();
-        p2Ctx.ellipse(-s*0.26, s*0.10, s*0.20, s*0.12, -0.55, 0, Math.PI * 2);
+        p2Ctx.ellipse(-s*0.26, s*0.10, s*0.20, s*0.12, -0.55, 0, Math.PI*2);
         p2Ctx.fill();
         p2Ctx.restore();
       });
+
       p2Ctx.restore();
 
-      // Cull dead petals
+      // Remove dead petals
       for (let i = fallingPetals.length - 1; i >= 0; i--) {
         const p = fallingPetals[i];
-        if (p.life >= p.maxLife || p.x < -p.size * 6 || p.y > H + p.size * 4) {
+        if (p.life >= p.maxLife || p.x < -p.size * 6 || p.y > H + p.size * 4)
           fallingPetals.splice(i, 1);
-        }
       }
 
       requestAnimationFrame(fallLoop);
@@ -1223,6 +1278,7 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
 
   requestAnimationFrame(bloomLoop);
 }
+
 </script>
 </body>
 </html>
