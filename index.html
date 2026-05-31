@@ -847,7 +847,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 <div id="end-overlay">
   <p class="end-msg-text">Happy <em>1127th Day</em><br>with you, Eley.</p>
   <p class="end-msg-sub">I will keep counting our days together til eternity.</p>
-  <button id="end-overlay-close" onclick="closeEndOverlay()">continue exploring ↓</button>
+  <button id="end-overlay-close" onclick="closeEndOverlay()">add to your core memory.. ↓</button>
 </div>
 
 <script>
@@ -1459,7 +1459,7 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
   let slideOffsetX   = 0;
   let countdownAlpha = 0;
 
-  const START_DATE = new Date(Date.now() - (1119 * 24 * 60 * 60 * 1000));
+  const START_DATE = new Date('2023-08-19T00:00:00');
 
   function getElapsed() {
     const diff=Math.max(0,Date.now()-START_DATE.getTime());
