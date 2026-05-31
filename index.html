@@ -1989,6 +1989,7 @@ function onLetterNext() {
   document.getElementById('envelope').classList.remove('opening');
   document.getElementById('envelope-wrap').classList.remove('fade-out');
   document.getElementById('env-paper').classList.remove('rising');
+  _letterOpenCount = 0;
 
   // Fly butterfly to "add to your core memory" button
 setTimeout(() => {
@@ -2006,6 +2007,7 @@ setTimeout(() => {
 
 function closeEndOverlay() {
   document.getElementById('end-overlay').classList.remove('show');
+  _letterOpenCount = 0;
 
   const W = window.innerWidth;
   const H = window.innerHeight;
