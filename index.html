@@ -1701,6 +1701,9 @@ function showEnvelope(panelCX, panelCY) {
 function openEnvelope() {
   if (_envOpened) return;
   _envOpened = true;
+  const modal = document.getElementById('letter-modal');
+  modal.classList.remove('closing');
+  document.getElementById('letter-body-text').innerHTML = '';
   const env = document.getElementById('envelope');
   env.classList.add('opening');
 
@@ -1756,6 +1759,12 @@ function onLetterNext() {
   document.getElementById('music-btn').style.pointerEvents = 'auto';
   document.getElementById('replay-btn').style.opacity = '1';
   document.getElementById('replay-btn').style.pointerEvents = 'auto';
+
+  // Bring envelope back
+  _envOpened = false;
+  document.getElementById('envelope').classList.remove('opening');
+  document.getElementById('envelope-wrap').classList.remove('fade-out');
+  document.getElementById('env-paper').classList.remove('rising');
 
   // Show the happy anniversary message
   setTimeout(showEndOverlay, 680);
