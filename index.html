@@ -234,65 +234,6 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 #phase2-canvas.show { opacity:1; }
 #pg-final, #phase2-canvas { overflow:hidden; }
 
-/* ── FLOATING LETTER OVERLAY (HTML, left side, scrollable) ── */
-#letter-overlay {
-  position: fixed;
-  z-index: 6;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 1.4s ease;
-  /* positioned dynamically via JS */
-}
-#letter-overlay.show {
-  opacity: 1;
-  pointer-events: auto;
-}
-#letter-scroll {
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  position: relative;
-}
-#letter-scroll::-webkit-scrollbar { display: none; }
-#letter-content {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  color: rgba(80, 48, 55, 0.88);
-  line-height: 1.75;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-#letter-content .letter-greeting {
-  color: rgba(120, 48, 60, 0.95);
-  display: block;
-  margin-bottom: 0.2em;
-}
-#letter-content .letter-signoff {
-  color: rgba(120, 48, 60, 0.92);
-  display: block;
-  margin-top: 0.2em;
-}
-#letter-content .letter-cursor {
-  display: inline-block;
-  width: 1.5px;
-  background: rgba(120, 48, 60, 0.7);
-  vertical-align: text-bottom;
-  animation: twBlink .7s step-end infinite;
-}
-/* Fade gradient at bottom of letter scroll area */
-#letter-fade {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  pointer-events: none;
-  /* will use inline style for bg color matching */
-  background: linear-gradient(to bottom, rgba(240,232,224,0) 0%, rgba(240,232,224,0.92) 100%);
-  border-radius: 0 0 8px 8px;
-}
-
 /* MUSIC TOGGLE */
 #music-btn {
   position:fixed; bottom:1.4rem; left:1.4rem; z-index:400;
@@ -371,6 +312,207 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 }
 #end-overlay.show #end-overlay-close { opacity:1; }
 #end-overlay-close:hover { transform:scale(1.05); }
+
+/* ══════════════════════════════════════════
+   ENVELOPE SYSTEM
+══════════════════════════════════════════ */
+#envelope-wrap {
+  position:fixed; z-index:310;
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+  opacity:0; transform:translateY(28px) scale(0.88);
+  transition:opacity 1s ease, transform 1s cubic-bezier(.22,1,.36,1);
+  pointer-events:none;
+}
+#envelope-wrap.show { opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+#envelope-wrap.fade-out {
+  opacity:0; transform:scale(0.82) translateY(-10px);
+  pointer-events:none;
+  transition:opacity 0.55s ease, transform 0.55s ease;
+}
+.env-label {
+  font-family:'Nunito',sans-serif; font-size:0.58rem;
+  letter-spacing:0.22em; text-transform:uppercase;
+  color:rgba(150,90,80,0.52); user-select:none;
+}
+#envelope {
+  position:relative; cursor:pointer;
+  transition:transform 0.2s ease, filter 0.2s ease;
+  filter:drop-shadow(0 8px 28px rgba(160,70,70,.22));
+  perspective:600px;
+}
+#envelope:hover { transform:translateY(-4px) scale(1.04); filter:drop-shadow(0 14px 36px rgba(160,70,70,.32)); }
+.env-body {
+  position:relative; border-radius:10px;
+  background:linear-gradient(150deg,#fbe8e0,#f5d0c8);
+  box-shadow:0 8px 32px rgba(160,70,70,.18), inset 0 1px 0 rgba(255,255,255,.6);
+  overflow:hidden;
+}
+/* diagonal fold lines */
+.env-body::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:
+    linear-gradient(135deg,transparent calc(50% - .7px),rgba(225,155,140,.30) calc(50% - .7px),rgba(225,155,140,.30) calc(50% + .7px),transparent calc(50% + .7px)),
+    linear-gradient(225deg,transparent calc(50% - .7px),rgba(225,155,140,.30) calc(50% - .7px),rgba(225,155,140,.30) calc(50% + .7px),transparent calc(50% + .7px));
+}
+/* stamp top-right */
+.env-stamp {
+  position:absolute; top:10px; right:10px; z-index:5;
+  width:20px; height:24px;
+  border:1.5px solid rgba(190,110,100,.38); border-radius:3px;
+  background:rgba(255,220,210,.45);
+}
+/* paper inside */
+#env-paper {
+  position:absolute; left:12%; right:12%; bottom:12%;
+  border-radius:5px 5px 3px 3px;
+  background:linear-gradient(180deg,#fffef8,#fef9e8);
+  box-shadow:0 -2px 10px rgba(0,0,0,.07);
+  overflow:hidden; z-index:2;
+  transform:translateY(8%);
+  transition:transform 0.72s cubic-bezier(.22,1,.36,1) 0.3s;
+}
+#env-paper::after {
+  content:''; position:absolute; inset:6px;
+  background-image:repeating-linear-gradient(
+    to bottom,transparent 0,transparent 10px,rgba(160,140,120,.14) 10px,rgba(160,140,120,.14) 11px
+  );
+}
+#env-paper.rising { transform:translateY(-50%); }
+/* top flap */
+.env-flap {
+  position:absolute; top:0; left:0; right:0; z-index:3;
+  transform-origin:top center; transform-style:preserve-3d;
+  transition:transform 0.58s cubic-bezier(.22,1,.36,1);
+}
+.env-flap-inner {
+  width:100%;
+  background:linear-gradient(170deg,#f8ddd5,#f0c8bc);
+  clip-path:polygon(0 0,100% 0,50% 100%);
+}
+#envelope.opening .env-flap { transform:rotateX(-175deg); }
+/* wax seal */
+.env-seal {
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  z-index:4; width:30px; height:30px; border-radius:50%;
+  background:radial-gradient(circle at 38% 32%,#d04060,#8b1428);
+  box-shadow:0 3px 10px rgba(140,20,50,.5), inset 0 1px 0 rgba(255,120,120,.25);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; color:rgba(255,200,210,.82);
+  transition:opacity 0.28s ease;
+}
+#envelope.opening .env-seal { opacity:0; transition-delay:0.1s; }
+
+/* ══════════════════════════════════════════
+   LETTER MODAL
+══════════════════════════════════════════ */
+#letter-modal {
+  position:fixed; inset:0; z-index:320;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(50,20,15,0.40);
+  backdrop-filter:blur(14px) saturate(1.1);
+  -webkit-backdrop-filter:blur(14px) saturate(1.1);
+  opacity:0; pointer-events:none;
+  transition:opacity 0.72s ease;
+}
+#letter-modal.show { opacity:1; pointer-events:auto; }
+#letter-modal.closing { opacity:0; pointer-events:none; }
+#letter-card {
+  position:relative;
+  background:linear-gradient(160deg,#fffef8 0%,#fefae8 60%,#fdf5dc 100%);
+  border-radius:18px;
+  box-shadow:0 28px 90px rgba(80,40,20,.30), 0 2px 0 rgba(255,255,255,.85) inset;
+  display:flex; flex-direction:column; overflow:hidden;
+  transform:scale(0.88) translateY(18px);
+  transition:transform 0.6s cubic-bezier(.22,1,.36,1);
+}
+#letter-modal.show #letter-card { transform:scale(1) translateY(0); }
+/* ruled lines */
+#letter-card::before {
+  content:''; position:absolute; pointer-events:none;
+  left:0; right:0; top:80px; bottom:68px;
+  background-image:repeating-linear-gradient(
+    to bottom,transparent 0,transparent 27px,rgba(160,140,100,.11) 27px,rgba(160,140,100,.11) 28px
+  );
+}
+/* red margin line */
+#letter-card::after {
+  content:''; position:absolute; pointer-events:none;
+  left:50px; top:80px; bottom:68px; width:1px;
+  background:rgba(210,130,120,.28);
+}
+.letter-header {
+  padding:18px 22px 6px;
+  display:flex; justify-content:flex-end; flex-shrink:0;
+}
+.letter-date {
+  font-family:'Nunito',sans-serif; font-size:0.74rem;
+  letter-spacing:0.14em; text-transform:uppercase;
+  color:rgba(120,90,55,.60);
+}
+.letter-greeting {
+  padding:2px 22px 0 56px; flex-shrink:0;
+  font-family:'Playfair Display',serif;
+  font-size:clamp(.95rem,3vw,1.18rem);
+  color:rgba(85,48,32,.92); font-style:italic;
+}
+#letter-body-scroll {
+  flex:1; overflow-y:auto; overflow-x:hidden;
+  padding:10px 22px 14px 56px;
+  scrollbar-width:thin; scrollbar-color:rgba(180,130,90,.28) transparent;
+  -webkit-overflow-scrolling:touch;
+}
+#letter-body-scroll::-webkit-scrollbar { width:4px; }
+#letter-body-scroll::-webkit-scrollbar-track { background:transparent; }
+#letter-body-scroll::-webkit-scrollbar-thumb { background:rgba(180,130,90,.28); border-radius:4px; }
+#letter-body-text {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(.82rem,2.4vw,.98rem);
+  color:rgba(65,40,22,.80); line-height:1.90; white-space:pre-wrap;
+}
+.letter-footer {
+  padding:6px 22px 16px; flex-shrink:0;
+  display:flex; flex-direction:column; align-items:flex-end; gap:4px;
+}
+.letter-signoff {
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:clamp(.82rem,2.5vw,.96rem);
+  color:rgba(85,48,32,.82); text-align:right;
+}
+.letter-name {
+  font-size:clamp(1rem,3.5vw,1.35rem);
+  color:rgba(85,38,28,.90); display:block; margin-top:1px;
+}
+#letter-next-btn {
+  padding:5px 18px; min-height:34px;
+  background:linear-gradient(135deg,#3a2018,#5c2a20);
+  color:rgba(255,220,200,.92); border:none; border-radius:40px;
+  font-family:'Nunito',sans-serif; font-size:0.70rem;
+  letter-spacing:0.18em; text-transform:uppercase;
+  cursor:pointer; box-shadow:0 4px 18px rgba(60,20,15,.38);
+  transition:transform 0.18s, box-shadow 0.18s;
+}
+#letter-next-btn:hover { transform:scale(1.07); box-shadow:0 6px 24px rgba(60,20,15,.55); }
+#letter-next-btn:active { transform:scale(0.95); }
+
+/* ══════════════════════════════════════════
+   BUTTERFLY
+══════════════════════════════════════════ */
+#butterfly {
+  position:fixed; z-index:325; pointer-events:none;
+  display:none; will-change:transform,left,top;
+}
+@keyframes wingFlapL {
+  0%,100% { transform:scaleX(1); }
+  50%      { transform:scaleX(0.04); }
+}
+@keyframes wingFlapR {
+  0%,100% { transform:scaleX(1); }
+  50%      { transform:scaleX(0.04); }
+}
+.bf-wl  { transform-box:fill-box; transform-origin:100% 50%; animation:wingFlapL 0.50s ease-in-out infinite; }
+.bf-wr  { transform-box:fill-box; transform-origin:0%   50%; animation:wingFlapR 0.50s ease-in-out infinite; }
+.bf-wll { transform-box:fill-box; transform-origin:100% 50%; animation:wingFlapL 0.50s ease-in-out infinite 0.04s; }
+.bf-wrl { transform-box:fill-box; transform-origin:0%   50%; animation:wingFlapR 0.50s ease-in-out infinite 0.04s; }
 </style>
 </head>
 <body>
@@ -589,12 +731,105 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   </div>
 </div>
 
-<!-- FLOATING LETTER (HTML overlay, left side, scrollable) -->
-<div id="letter-overlay">
-  <div id="letter-scroll">
-    <div id="letter-content"></div>
+<!-- ENVELOPE (appears after tree slides) -->
+<div id="envelope-wrap">
+  <div class="env-label">UNLOCKED ✦</div>
+  <div id="envelope" onclick="openEnvelope()">
+    <div class="env-body">
+      <div class="env-stamp"></div>
+      <!-- Paper peek -->
+      <div id="env-paper"></div>
+      <!-- Top flap -->
+      <div class="env-flap">
+        <div class="env-flap-inner"></div>
+      </div>
+      <!-- Wax seal -->
+      <div class="env-seal">♥</div>
+    </div>
   </div>
-  <div id="letter-fade"></div>
+</div>
+
+<!-- LETTER MODAL -->
+<div id="letter-modal">
+  <div id="letter-card">
+    <div class="letter-header">
+      <div class="letter-date" id="letter-date-el">May 31, 2026</div>
+    </div>
+    <div class="letter-greeting">Dear My Lady,</div>
+    <div id="letter-body-scroll">
+      <div id="letter-body-text"></div>
+    </div>
+    <div class="letter-footer">
+      <div class="letter-signoff">
+        With love,<br>
+        <span class="letter-name">your mahal</span>
+      </div>
+      <button id="letter-next-btn" onclick="onLetterNext()">NEXT ›</button>
+    </div>
+  </div>
+</div>
+
+<!-- BUTTERFLY (flies around letter) -->
+<div id="butterfly">
+  <svg viewBox="0 0 100 80" width="76" height="61" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+    <defs>
+      <linearGradient id="bfPL" x1="100%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%"   stop-color="#d8b4fe"/>
+        <stop offset="45%"  stop-color="#9333ea"/>
+        <stop offset="100%" stop-color="#6d28d9"/>
+      </linearGradient>
+      <linearGradient id="bfPR" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%"   stop-color="#d8b4fe"/>
+        <stop offset="45%"  stop-color="#9333ea"/>
+        <stop offset="100%" stop-color="#6d28d9"/>
+      </linearGradient>
+      <linearGradient id="bfBL" x1="100%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%"   stop-color="#bae6fd"/>
+        <stop offset="100%" stop-color="#3b82f6"/>
+      </linearGradient>
+      <linearGradient id="bfBR" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%"   stop-color="#bae6fd"/>
+        <stop offset="100%" stop-color="#3b82f6"/>
+      </linearGradient>
+      <filter id="bfGlow" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <!-- Upper left wing -->
+    <path class="bf-wl" filter="url(#bfGlow)"
+      d="M50 36 C42 12, 6 8, 5 30 C3 50, 28 57, 50 42 Z"
+      fill="url(#bfPL)" opacity="0.93"/>
+    <!-- Upper right wing -->
+    <path class="bf-wr" filter="url(#bfGlow)"
+      d="M50 36 C58 12, 94 8, 95 30 C97 50, 72 57, 50 42 Z"
+      fill="url(#bfPR)" opacity="0.93"/>
+    <!-- Lower left wing -->
+    <path class="bf-wll"
+      d="M50 44 C36 41, 16 47, 18 63 C20 74, 42 74, 50 57 Z"
+      fill="url(#bfBL)" opacity="0.88"/>
+    <!-- Lower right wing -->
+    <path class="bf-wrl"
+      d="M50 44 C64 41, 84 47, 82 63 C80 74, 58 74, 50 57 Z"
+      fill="url(#bfBR)" opacity="0.88"/>
+    <!-- Shimmer highlights -->
+    <path d="M50 36 C44 18, 16 14, 10 28" stroke="rgba(255,255,255,0.38)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path d="M50 36 C56 18, 84 14, 90 28" stroke="rgba(255,255,255,0.38)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <!-- Spots -->
+    <circle cx="28" cy="28" r="4.5" fill="rgba(255,255,255,0.28)"/>
+    <circle cx="72" cy="28" r="4.5" fill="rgba(255,255,255,0.28)"/>
+    <circle cx="28" cy="58" r="3"   fill="rgba(186,230,253,0.38)"/>
+    <circle cx="72" cy="58" r="3"   fill="rgba(186,230,253,0.38)"/>
+    <!-- Body -->
+    <ellipse cx="50" cy="45" rx="3.5" ry="14" fill="#4c1d95"/>
+    <!-- Head -->
+    <circle cx="50" cy="30" r="3.8" fill="#5b21b6"/>
+    <!-- Antennae -->
+    <path d="M48 27 Q42 18 38 12" stroke="#7c3aed" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M52 27 Q58 18 62 12" stroke="#7c3aed" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <circle cx="38" cy="11" r="2.8" fill="#a855f7"/>
+    <circle cx="62" cy="11" r="2.8" fill="#a855f7"/>
+  </svg>
 </div>
 
 <!-- MUSIC TOGGLE -->
@@ -1102,6 +1337,7 @@ function showEndOverlay() {
   endOverlayShown = true;
   document.getElementById('end-overlay').classList.add('show');
 }
+
 function closeEndOverlay() {
   document.getElementById('end-overlay').classList.remove('show');
 }
@@ -1286,7 +1522,6 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
     if(countdownAlpha<=0)return;
     const {days,hours,minutes,seconds}=getElapsed();
     p2Ctx.save();p2Ctx.globalAlpha=countdownAlpha;
-    // Position countdown at bottom-left, below ground line
     const leftX=W*0.04;
     const baseY=groundY;
     const availW=W*0.55;
@@ -1307,142 +1542,8 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
   }
 
   /* ══════════════════════════════════════════
-     HTML LETTER OVERLAY — left side, scrollable, transparent bg
+     (letter replaced by envelope system — see global showEnvelope)
   ══════════════════════════════════════════ */
-  const LETTER_LINES = [
-    "Eley,",
-    "",
-    "Three years ago you",
-    "walked into my world",
-    "and never left.",
-    "",
-    "Every single day",
-    "with you feels like",
-    "the very best gift.",
-    "",
-    "Thank you for",
-    "loving me back. 🤍",
-    "",
-    "Always yours,",
-    "— your mahal",
-  ];
-
-  let letterVisibleWords = 0;
-  let letterTyping = false;
-  let letterWordList = [];
-
-  function buildLetterWordList() {
-    letterWordList = [];
-    LETTER_LINES.forEach((line, li) => {
-      if (line === '') {
-        letterWordList.push({ text: '', isBreak: true, lineIndex: li });
-      } else {
-        const words = line.split(' ');
-        words.forEach((w, wi) => {
-          letterWordList.push({ text: w + (wi < words.length - 1 ? '\u00A0' : ''), isBreak: false, lineIndex: li, isFirst: wi === 0 });
-        });
-        letterWordList.push({ isNewline: true, lineIndex: li });
-      }
-    });
-  }
-
-function positionLetterOverlay() {
-  const W2 = window.innerWidth;
-  const H2 = window.innerHeight;
-
-  const panelRight = rootX + slideOffsetX - W2 * 0.03;
-  const panelLeft  = W2 * 0.03;
-  const panelW     = Math.max(60, panelRight - panelLeft);
-
-  const groundYpx  = H2 * 0.82;
-  const panelTop   = H2 * 0.07;
-  const panelBottom = groundYpx - H2 * 0.16;
-  const panelH     = Math.max(80, panelBottom - panelTop);
-  const fontSize   = Math.max(9, panelW * 0.092);
-
-  const overlay = document.getElementById('letter-overlay');
-  const scroll  = document.getElementById('letter-scroll');
-  const content = document.getElementById('letter-content');
-
-  overlay.style.left       = panelLeft + 'px';
-  overlay.style.top        = panelTop  + 'px';
-  overlay.style.width      = panelW    + 'px';
-  overlay.style.height     = panelH    + 'px';
-  overlay.style.transition = 'opacity 1.2s ease';
-
-  scroll.style.width    = '100%';
-  scroll.style.height   = '100%';
-  scroll.style.position = 'relative';
-
-  content.style.fontSize   = fontSize + 'px';
-  content.style.lineHeight = '1.8';
-  content.style.padding    = '0 4px 40px 0';
-}
-
-  function renderLetterHTML() {
-    const content = document.getElementById('letter-content');
-    let html = '';
-    let curLine = -1;
-
-    letterWordList.slice(0, letterVisibleWords).forEach((w, i) => {
-      if (w.isNewline) {
-        html += '<br>';
-        return;
-      }
-      if (w.isBreak) {
-        html += '<span style="display:block;height:0.5em;"></span>';
-        return;
-      }
-      const isGreeting  = w.lineIndex === 0;
-      const isSignoff   = w.lineIndex >= LETTER_LINES.length - 2;
-      const color = (isGreeting || isSignoff)
-        ? 'rgba(120,48,60,0.95)'
-        : 'rgba(70,40,48,0.82)';
-      html += `<span style="color:${color};">${w.text} </span>`;
-    });
-
-    // Blinking cursor
-    if (letterTyping && letterVisibleWords < letterWordList.length) {
-      html += '<span class="letter-cursor" style="display:inline-block;width:1.5px;height:1em;background:rgba(120,48,60,0.7);vertical-align:text-bottom;animation:twBlink .7s step-end infinite;"></span>';
-    }
-
-    content.innerHTML = html;
-
-    // Auto-scroll to bottom as text appears
-    const scroll = document.getElementById('letter-scroll');
-    scroll.scrollTop = scroll.scrollHeight;
-  }
-
-  function startLetterTyping() {
-    buildLetterWordList();
-    letterVisibleWords = 0;
-    letterTyping = true;
-    function typeNext() {
-      if (!letterTyping) return;
-      if (letterVisibleWords < letterWordList.length) {
-        letterVisibleWords++;
-        renderLetterHTML();
-        const w = letterWordList[letterVisibleWords - 1];
-        const delay = w?.isBreak ? 120 : 85 + Math.random() * 50;
-        setTimeout(typeNext, delay);
-      } else {
-        letterTyping = false;
-        renderLetterHTML();
-      }
-    }
-    typeNext();
-  }
-
-function showLetterOverlay(alpha) {
-  const overlay = document.getElementById('letter-overlay');
-  overlay.style.cssText += `
-    opacity: ${alpha} !important;
-    pointer-events: ${alpha > 0.5 ? 'auto' : 'none'};
-    background: rgba(255,0,0,0.2) !important;
-    border: 2px solid red !important;
-    z-index: 9999 !important;
-  `;
-}
 
   function redrawTree(){
     p2Ctx.save();p2Ctx.translate(slideOffsetX,0);
@@ -1463,15 +1564,14 @@ function showLetterOverlay(alpha) {
     drawGroundLine();
     redrawTreeAndHearts();
     drawCountdown();
-    // letter is handled by HTML overlay - no canvas drawing needed
   }
 
   /* BLOOM PHASE */
-  const allHearts =  [...hearts].sort(()=>Math.random()-0.5);
-  const BLOOM_DUR =  2800;
-  const STAGGER   =  BLOOM_DUR*0.72;
-  let   bloomStart=  null;
-  const birthTimes=  allHearts.map((_,i)=>(i/allHearts.length)*STAGGER);
+  const allHearts  = [...hearts].sort(()=>Math.random()-0.5);
+  const BLOOM_DUR  = 2800;
+  const STAGGER    = BLOOM_DUR*0.72;
+  let   bloomStart = null;
+  const birthTimes = allHearts.map((_,i)=>(i/allHearts.length)*STAGGER);
 
   function bloomLoop(ts){
     if(!bloomStart)bloomStart=ts;
@@ -1489,46 +1589,41 @@ function showLetterOverlay(alpha) {
       drawHeart(hp.x+(Math.random()-0.5)*drift,hp.y+(Math.random()-0.5)*drift,hp.size*sc,hp.rot,hp.col,hp.alph*Math.min(1,pop*2));
       p2Ctx.restore();
     }
-    if(!allDone){requestAnimationFrame(bloomLoop);}
-    else{
+    if(!allDone){ requestAnimationFrame(bloomLoop); }
+    else {
       fullRedraw();
-      window._bloomHearts=hearts;
-
-      // Show replay button
+      window._bloomHearts = hearts;
       document.getElementById('replay-btn').style.display = 'flex';
 
-      // SLIDE: tree moves RIGHT, letter appears LEFT
-      const targetSlideX = W * 0.22;  // positive = tree shifts right
-      const SLIDE_DUR = 1400;
-      let slideStart2 = null;
-      function easeOutCubic(t){return 1-Math.pow(1-t,3);}
+      const targetSlideX = W * 0.22;
+      const SLIDE_DUR    = 1400;
+      let   slideStart2  = null;
+      function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
 
-      // Position the letter overlay before revealing
-      positionLetterOverlay();
+      /* Pre-apply envelope sizing before slide */
+      slideOffsetX = 0;
 
-function slideLoop(ts){
-  if(!slideStart2)slideStart2=ts;
-  const t=Math.min(1,(ts-slideStart2)/SLIDE_DUR);
-  const e=easeOutCubic(t);
-  slideOffsetX = targetSlideX * e;
-  countdownAlpha = e;
+      function slideLoop(ts){
+        if(!slideStart2) slideStart2=ts;
+        const t = Math.min(1,(ts-slideStart2)/SLIDE_DUR);
+        const e = easeOutCubic(t);
+        slideOffsetX   = targetSlideX * e;
+        countdownAlpha = e;
+        fullRedraw();
 
-  positionLetterOverlay();   // ← DAGDAG dito, every frame
-  showLetterOverlay(e);
-
-  fullRedraw();
-  if(t<1){
-    requestAnimationFrame(slideLoop);
-  } else {
-    slideOffsetX = targetSlideX;
-    countdownAlpha = 1;
-    positionLetterOverlay();
-    showLetterOverlay(1);
-    startLetterTyping();
-    startFallLoop();
-    setTimeout(showEndOverlay, 24000);
-  }
-}
+        if(t<1){
+          requestAnimationFrame(slideLoop);
+        } else {
+          slideOffsetX   = targetSlideX;
+          countdownAlpha = 1;
+          fullRedraw();
+          startFallLoop();
+          /* Show envelope in the left panel that opened up */
+          const panelCX = (rootX + slideOffsetX - TREE_H * 0.50) / 2;
+          const panelCY = H * 0.40;
+          showEnvelope(panelCX, panelCY);
+        }
+      }
       setTimeout(()=>requestAnimationFrame(slideLoop), 600);
     }
   }
@@ -1567,6 +1662,166 @@ function slideLoop(ts){
   }
 
   requestAnimationFrame(bloomLoop);
+}
+
+/* ══════════════════════════════════════════
+   ENVELOPE SYSTEM — global functions
+══════════════════════════════════════════ */
+let _envOpened = false;
+let _bfRaf     = null;
+let _bfPrevX   = 0;
+
+function showEnvelope(panelCX, panelCY) {
+  const W2   = window.innerWidth;
+  const H2   = window.innerHeight;
+  const wrap = document.getElementById('envelope-wrap');
+  const body = wrap.querySelector('.env-body');
+  const flap = wrap.querySelector('.env-flap');
+  const flapInner = wrap.querySelector('.env-flap-inner');
+  const paper = document.getElementById('env-paper');
+
+  // Responsive size
+  const envW = Math.min(210, W2 * 0.34);
+  const envH = Math.round(envW * 0.70);
+
+  body.style.width  = envW + 'px';
+  body.style.height = envH + 'px';
+  paper.style.height = Math.round(envH * 0.56) + 'px';
+  flap.style.width   = envW + 'px';
+  flapInner.style.height = Math.round(envH * 0.52) + 'px';
+
+  // Center envelope in left panel
+  wrap.style.left = Math.round(panelCX - envW / 2) + 'px';
+  wrap.style.top  = Math.round(panelCY - envH / 2 - 20) + 'px';
+
+  // Slight delay so slide animation finishes first
+  setTimeout(() => wrap.classList.add('show'), 200);
+}
+
+function openEnvelope() {
+  if (_envOpened) return;
+  _envOpened = true;
+  const env = document.getElementById('envelope');
+  env.classList.add('opening');
+
+  // Paper rises 380ms after flap starts
+  setTimeout(() => document.getElementById('env-paper').classList.add('rising'), 380);
+
+  // Fade envelope out
+  setTimeout(() => document.getElementById('envelope-wrap').classList.add('fade-out'), 950);
+
+  // Show letter modal
+  setTimeout(() => _showLetterModal(), 1180);
+}
+
+function _showLetterModal() {
+  const W2   = window.innerWidth;
+  const H2   = window.innerHeight;
+  const card = document.getElementById('letter-card');
+  const cardW = Math.min(W2 * 0.90, 490);
+  const cardH = Math.min(H2 * 0.84, 640);
+  card.style.width  = cardW + 'px';
+  card.style.height = cardH + 'px';
+
+  // Hide music/replay while letter is showing
+  document.getElementById('music-btn').style.opacity  = '0';
+  document.getElementById('music-btn').style.pointerEvents = 'none';
+  document.getElementById('replay-btn').style.opacity = '0';
+  document.getElementById('replay-btn').style.pointerEvents = 'none';
+
+  document.getElementById('letter-modal').classList.add('show');
+
+  // Show and animate butterfly
+  const bf = document.getElementById('butterfly');
+  bf.style.display = 'block';
+  _bfPrevX = W2 / 2;
+  _animateButterfly();
+
+  // Typewrite the letter body
+  _typewriteLetter();
+}
+
+function onLetterNext() {
+  // Stop butterfly
+  if (_bfRaf) { cancelAnimationFrame(_bfRaf); _bfRaf = null; }
+  document.getElementById('butterfly').style.display = 'none';
+
+  // Close letter modal
+  const modal = document.getElementById('letter-modal');
+  modal.classList.add('closing');
+  modal.classList.remove('show');
+
+  // Restore music/replay buttons
+  document.getElementById('music-btn').style.opacity  = '1';
+  document.getElementById('music-btn').style.pointerEvents = 'auto';
+  document.getElementById('replay-btn').style.opacity = '1';
+  document.getElementById('replay-btn').style.pointerEvents = 'auto';
+
+  // Show the happy anniversary message
+  setTimeout(showEndOverlay, 680);
+}
+
+/* ── BUTTERFLY ANIMATION ── */
+function _animateButterfly() {
+  const card = document.getElementById('letter-card');
+  const bf   = document.getElementById('butterfly');
+  const bfW  = 76, bfH = 61;
+  let   t    = 0;
+
+  function loop() {
+    t += 0.007;
+    const rect = card.getBoundingClientRect();
+    if (!rect.width) { _bfRaf = requestAnimationFrame(loop); return; }
+
+    // Lissajous figure — stays comfortably inside card
+    const margin = 38;
+    const cx = rect.left + rect.width  * 0.50;
+    const cy = rect.top  + rect.height * 0.42;
+    const rx = rect.width  * 0.40 - margin;
+    const ry = rect.height * 0.34 - margin;
+
+    const x = cx + rx * Math.sin(t * 1.10);
+    const y = cy + ry * Math.sin(t * 0.68) * Math.cos(t * 0.34);
+
+    const dx    = x - _bfPrevX;
+    const flipX = dx < 0 ? -1 : 1;
+
+    bf.style.left      = (x - bfW / 2) + 'px';
+    bf.style.top       = (y - bfH / 2) + 'px';
+    bf.style.transform = `scaleX(${flipX})`;
+
+    _bfPrevX = x;
+    _bfRaf   = requestAnimationFrame(loop);
+  }
+  _bfRaf = requestAnimationFrame(loop);
+}
+
+/* ── LETTER TYPEWRITE ── */
+const LETTER_BODY = `Thank you for loving me, for staying by my side, and for choosing me every single day. I know I'm not perfect, but I promise to always try my best to make you feel loved, valued, and appreciated — because you deserve nothing less.
+
+I'm so excited for all the monthsaries and memories we still have ahead of us. No matter how much time passes, I hope we never lose this kind of love — the kind that feels warm, real, and meant to last.
+
+I love you more than words can hold.`;
+
+function _typewriteLetter() {
+  const el = document.getElementById('letter-body-text');
+  const scroll = document.getElementById('letter-body-scroll');
+  let i = 0;
+  const text = LETTER_BODY;
+
+  function tick() {
+    if (i <= text.length) {
+      // Show blinking cursor while typing
+      el.innerHTML = text.slice(0, i).replace(/\n/g, '<br>') +
+        (i < text.length
+          ? '<span style="display:inline-block;width:1.5px;height:1em;background:rgba(85,48,32,.65);vertical-align:text-bottom;animation:twBlink .7s step-end infinite;"></span>'
+          : '');
+      scroll.scrollTop = scroll.scrollHeight;
+      i++;
+      setTimeout(tick, i < 3 ? 180 : 24 + Math.random() * 18);
+    }
+  }
+  tick();
 }
 </script>
 </body>
