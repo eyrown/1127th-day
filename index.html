@@ -1540,7 +1540,7 @@ const BF = (() => {
   let el, canvas, renderer, scene, camera;
   let wingL, wingR, wingLower_L, wingLower_R, body, head;
   let legGroup;
-  let flapAngle = 0, flapSpeed = 0.12, isResting = false;
+  let flapAngle = 0, flapSpeed = 0.18, isResting = false;
   let bankAngle = 0, targetBank = 0;
   let rafId = null, flyRafId = null;
   let posX = 0, posY = 0;
@@ -1753,11 +1753,12 @@ const BF = (() => {
     } else {
       // Full flying flap
       flapAngle += flapSpeed;
-      const flap = Math.sin(flapAngle) * 1.05;
+      const flap = Math.sin(flapAngle) * 1.25;
+      const flapLower = Math.sin(flapAngle + 0.3) * 1.10;
       wingL.rotation.y       =  flap;
       wingR.rotation.y       = -flap;
-      wingLower_L.rotation.y =  flap * 0.80;
-      wingLower_R.rotation.y = -flap * 0.80;
+      wingLower_L.rotation.y =  flapLower * 0.85;
+      wingLower_R.rotation.y = -flapLower * 0.85;
     }
 
     // Banking during flight
@@ -1813,7 +1814,7 @@ const BF = (() => {
         if (!start) start = ts;
         const t = Math.min(1, (ts - start) / duration);
         const e = 1 - Math.pow(1 - t, 3);
-        const wobble = Math.sin(t * Math.PI * 4) * 18 * Math.sin(t * Math.PI);
+        const wobble = Math.sin(t * Math.PI * 6) * 28 * Math.sin(t * Math.PI);
         this.x = startX + dx * e;
         this.y = startY + dy * e + wobble;
         this.el.style.left = this.x + 'px';
@@ -1908,8 +1909,8 @@ function showEnvelope(panelCX, panelCY) {
       BF.el.style.left = BF.x + 'px';
       BF.el.style.top  = BF.y + 'px';
       // Land on top-right corner of envelope
-      const landX = envLeft + envW - 30;
-      const landY = envTop  - 10;
+      const landX = envLeft + envW - 22;
+      const landY = envTop  + 8;
       BF.flyTo(landX, landY, 1400, null);
     }, 600);
   }, 200);
@@ -1956,8 +1957,8 @@ setTimeout(() => {
       const rect = card.getBoundingClientRect();
       const nextBtn = document.getElementById('letter-next-btn');
       const btnRect = nextBtn.getBoundingClientRect();
-      const landX = btnRect.left - 28;
-      const landY = btnRect.top  - 28;
+      const landX = btnRect.left - 12;
+      const landY = btnRect.top  - 12;
       BF.flyAround(rect, 1.5, 3200, landX, landY, null);
     } else {
       // Re-open — just rest on NEXT button directly, no loop
@@ -2010,8 +2011,8 @@ function closeEndOverlay() {
   const H = window.innerHeight;
 
   // Land inside the heart canopy — top area of the heart
-  const tx = W * 0.68;
-  const ty = H * 0.40;
+  const tx = W * 0.70;
+  const ty = H * 0.36;
 
   BF.flyTo(tx, ty, 1800, null);
 }
