@@ -1692,7 +1692,7 @@ function showEnvelope(panelCX, panelCY) {
 
   // Center envelope in left panel
   wrap.style.left = Math.round(panelCX - envW / 2) + 'px';
-  wrap.style.top  = Math.round(panelCY - envH / 2 - 20) + 'px';
+  wrap.style.top  = Math.round(panelCY - envH / 2 + 80) + 'px';
 
   // Slight delay so slide animation finishes first
   setTimeout(() => wrap.classList.add('show'), 200);
