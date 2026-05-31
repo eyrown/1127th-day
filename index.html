@@ -843,6 +843,11 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   ↺ Replay
 </button>
 
+<!-- BACKGROUND MUSIC -->
+<audio id="bg-music" loop preload="auto">
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
 <!-- END MESSAGE OVERLAY -->
 <div id="end-overlay">
   <p class="end-msg-text">Happy <em>1127th Day</em><br>with you, Eley.</p>
@@ -1139,6 +1144,7 @@ function easeOutQuart(t){return 1-Math.pow(1-t,4);}
 function easeInQuart(t){return t*t*t*t;}
 
 function heartClicked(){
+  document.getElementById('bg-music').play();
   const group=document.getElementById('heart-group');
   const heartBtn=document.getElementById('heart-btn');
   const wrap=document.getElementById('heart-btn-wrap');
@@ -1232,99 +1238,29 @@ function runSeedAnimation(cx,startY){
 }
 
 /* ── INIT FINAL PAGE ── */
+
 function initFinalPage(){
   resizeFinal();
   requestAnimationFrame(animDust);
   const mb = document.getElementById('music-btn');
   mb.style.display = 'flex';
-  initMusic();
-}
-
-/* ── MUSIC ── */
-let musicPlaying = false, musicLoop = null, musicGain = null;
-let musicAudioCtx = null;
-
-function initMusic() {
-  setTimeout(() => {
-    startMusic();
-    document.getElementById('music-btn').classList.add('playing');
-    document.getElementById('music-label').textContent = 'Pause';
-    musicPlaying = true;
-  }, 800);
-}
-
-function startMusic() {
-  if (!musicAudioCtx) musicAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  musicGain = musicAudioCtx.createGain();
-  musicGain.gain.setValueAtTime(0, musicAudioCtx.currentTime);
-  musicGain.gain.linearRampToValueAtTime(0.13, musicAudioCtx.currentTime + 2);
-  musicGain.connect(musicAudioCtx.destination);
-  const convolver = musicAudioCtx.createConvolver();
-  const reverbGain = musicAudioCtx.createGain();
-  reverbGain.gain.value = 0.35;
-  musicGain.connect(reverbGain);
-  reverbGain.connect(musicAudioCtx.destination);
-  const rate = musicAudioCtx.sampleRate;
-  const len  = rate * 2;
-  const buf  = musicAudioCtx.createBuffer(2, len, rate);
-  for (let c = 0; c < 2; c++) {
-    const d = buf.getChannelData(c);
-    for (let i = 0; i < len; i++) d[i] = (Math.random()*2-1) * Math.pow(1-i/len, 2.5);
-  }
-  convolver.buffer = buf;
-  reverbGain.connect(convolver);
-  convolver.connect(musicAudioCtx.destination);
-  const notes = [261.63,293.66,329.63,392.00,440.00,523.25,392.00,329.63];
-  const bass  = [130.81,146.83,164.81,196.00];
-  let beat = 0;
-  const BPM = 72;
-  const beatMs = (60/BPM)*1000;
-  function scheduleBeat() {
-    if (!musicPlaying) return;
-    const ctx = musicAudioCtx;
-    const t   = ctx.currentTime;
-    if (Math.random() > 0.25) {
-      const freq = notes[Math.floor(Math.random()*notes.length)] * (Math.random()>0.7?2:1);
-      const osc  = ctx.createOscillator();
-      const env  = ctx.createGain();
-      osc.type = 'sine'; osc.frequency.value = freq;
-      osc.connect(env); env.connect(musicGain);
-      const vel = 0.04 + Math.random()*0.05;
-      env.gain.setValueAtTime(0,t);env.gain.linearRampToValueAtTime(vel,t+0.02);env.gain.exponentialRampToValueAtTime(0.001,t+0.55+Math.random()*0.4);
-      osc.start(t);osc.stop(t+1.2);
-    }
-    if (beat%4===0) {
-      const bfreq = bass[Math.floor(Math.random()*bass.length)];
-      const bosc  = ctx.createOscillator();
-      const benv  = ctx.createGain();
-      bosc.type = 'triangle'; bosc.frequency.value = bfreq;
-      bosc.connect(benv); benv.connect(musicGain);
-      benv.gain.setValueAtTime(0,t);benv.gain.linearRampToValueAtTime(0.06,t+0.04);benv.gain.exponentialRampToValueAtTime(0.001,t+0.9);
-      bosc.start(t);bosc.stop(t+1.2);
-    }
-    beat++;
-    musicLoop = setTimeout(scheduleBeat, beatMs*(0.8+Math.random()*0.5));
-  }
-  scheduleBeat();
-}
-
-function stopMusic() {
-  clearTimeout(musicLoop);
-  if (musicGain) {
-    musicGain.gain.linearRampToValueAtTime(0,(musicAudioCtx?.currentTime||0)+0.5);
-  }
 }
 
 function toggleMusic() {
   const btn=document.getElementById('music-btn');
   const label=document.getElementById('music-label');
   const note=document.getElementById('music-note');
-  if (musicPlaying) {
-    stopMusic(); musicPlaying=false;
-    btn.classList.remove('playing'); label.textContent='Music'; note.textContent='♪';
+  const music=document.getElementById('bg-music');
+  if (!music.paused) {
+    music.pause();
+    btn.classList.remove('playing');
+    label.textContent='Music';
+    note.textContent='♪';
   } else {
-    musicPlaying=true; startMusic();
-    btn.classList.add('playing'); label.textContent='Pause'; note.textContent='♫';
+    music.play();
+    btn.classList.add('playing');
+    label.textContent='Pause';
+    note.textContent='♫';
   }
 }
 
