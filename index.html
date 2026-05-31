@@ -1202,7 +1202,6 @@ function replayAll() { location.reload(); }
 /* ── END OVERLAY ── */
 let endOverlayShown = false;
 function showEndOverlay() {
-  if (endOverlayShown) return;
   endOverlayShown = true;
   document.getElementById('end-overlay').classList.add('show');
 }
@@ -2016,6 +2015,8 @@ function closeEndOverlay() {
   const tx = W * 0.70;
   const ty = H * 0.36;
 
+    // Always fly to tree regardless of how many times called
+  BF.show();
   BF.flyTo(tx, ty, 1800, null);
 }
 
