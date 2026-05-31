@@ -495,24 +495,77 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 #letter-next-btn:active { transform:scale(0.95); }
 
 /* ══════════════════════════════════════════
-   BUTTERFLY
+   BUTTERFLY 3D
 ══════════════════════════════════════════ */
 #butterfly {
   position:fixed; z-index:325; pointer-events:none;
   display:none; will-change:transform,left,top;
+  transform-style:preserve-3d;
 }
-@keyframes wingFlapL {
-  0%,100% { transform:scaleX(1); }
-  50%      { transform:scaleX(0.04); }
+.bf-body {
+  position:relative; width:76px; height:61px;
 }
-@keyframes wingFlapR {
-  0%,100% { transform:scaleX(1); }
-  50%      { transform:scaleX(0.04); }
+.bf-wing {
+  position:absolute; top:0;
+  width:38px; height:61px;
+  transform-style:preserve-3d;
 }
-.bf-wl  { transform-box:fill-box; transform-origin:100% 50%; animation:wingFlapL 0.50s ease-in-out infinite; }
-.bf-wr  { transform-box:fill-box; transform-origin:0%   50%; animation:wingFlapR 0.50s ease-in-out infinite; }
-.bf-wll { transform-box:fill-box; transform-origin:100% 50%; animation:wingFlapL 0.50s ease-in-out infinite 0.04s; }
-.bf-wrl { transform-box:fill-box; transform-origin:0%   50%; animation:wingFlapR 0.50s ease-in-out infinite 0.04s; }
+.bf-wing-left {
+  left:0; transform-origin:right center;
+  animation:wingFlapL3D 0.55s ease-in-out infinite;
+}
+.bf-wing-right {
+  right:0; transform-origin:left center;
+  animation:wingFlapR3D 0.55s ease-in-out infinite;
+}
+.bf-wing-left.resting {
+  animation:wingRestL 3s ease-in-out infinite;
+}
+.bf-wing-right.resting {
+  animation:wingRestR 3s ease-in-out infinite;
+}
+@keyframes wingFlapL3D {
+  0%,100%{ transform:rotateY(0deg); }
+  50%    { transform:rotateY(75deg); }
+}
+@keyframes wingFlapR3D {
+  0%,100%{ transform:rotateY(0deg); }
+  50%    { transform:rotateY(-75deg); }
+}
+@keyframes wingRestL {
+  0%,100%{ transform:rotateY(0deg); }
+  50%    { transform:rotateY(22deg); }
+}
+@keyframes wingRestR {
+  0%,100%{ transform:rotateY(0deg); }
+  50%    { transform:rotateY(-22deg); }
+}
+.bf-center {
+  position:absolute; left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  width:8px; height:40px;
+  background:linear-gradient(180deg,#4c1d95,#5b21b6);
+  border-radius:4px; z-index:10;
+}
+.bf-head {
+  position:absolute; left:50%; top:18%;
+  transform:translateX(-50%);
+  width:10px; height:10px; border-radius:50%;
+  background:#5b21b6; z-index:11;
+}
+.bf-antenna-left, .bf-antenna-right {
+  position:absolute; top:10%; z-index:11;
+  width:2px; height:16px;
+  background:#7c3aed; border-radius:2px;
+}
+.bf-antenna-left  { left:calc(50% - 5px); transform:rotate(-25deg); transform-origin:bottom center; }
+.bf-antenna-right { left:calc(50% + 3px); transform:rotate(25deg);  transform-origin:bottom center; }
+.bf-antenna-left::after, .bf-antenna-right::after {
+  content:''; position:absolute; top:-4px; left:50%;
+  transform:translateX(-50%);
+  width:5px; height:5px; border-radius:50%;
+  background:#a855f7;
+}
 </style>
 </head>
 <body>
@@ -769,67 +822,68 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   </div>
 </div>
 
-<!-- BUTTERFLY (flies around letter) -->
+<!-- BUTTERFLY 3D -->
 <div id="butterfly">
-  <svg viewBox="0 0 100 80" width="76" height="61" xmlns="http://www.w3.org/2000/svg" overflow="visible">
-    <defs>
-      <linearGradient id="bfPL" x1="100%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%"   stop-color="#d8b4fe"/>
-        <stop offset="45%"  stop-color="#9333ea"/>
-        <stop offset="100%" stop-color="#6d28d9"/>
-      </linearGradient>
-      <linearGradient id="bfPR" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%"   stop-color="#d8b4fe"/>
-        <stop offset="45%"  stop-color="#9333ea"/>
-        <stop offset="100%" stop-color="#6d28d9"/>
-      </linearGradient>
-      <linearGradient id="bfBL" x1="100%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%"   stop-color="#bae6fd"/>
-        <stop offset="100%" stop-color="#3b82f6"/>
-      </linearGradient>
-      <linearGradient id="bfBR" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%"   stop-color="#bae6fd"/>
-        <stop offset="100%" stop-color="#3b82f6"/>
-      </linearGradient>
-      <filter id="bfGlow" x="-30%" y="-30%" width="160%" height="160%">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b"/>
-        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter>
-    </defs>
-    <!-- Upper left wing -->
-    <path class="bf-wl" filter="url(#bfGlow)"
-      d="M50 36 C42 12, 6 8, 5 30 C3 50, 28 57, 50 42 Z"
-      fill="url(#bfPL)" opacity="0.93"/>
-    <!-- Upper right wing -->
-    <path class="bf-wr" filter="url(#bfGlow)"
-      d="M50 36 C58 12, 94 8, 95 30 C97 50, 72 57, 50 42 Z"
-      fill="url(#bfPR)" opacity="0.93"/>
-    <!-- Lower left wing -->
-    <path class="bf-wll"
-      d="M50 44 C36 41, 16 47, 18 63 C20 74, 42 74, 50 57 Z"
-      fill="url(#bfBL)" opacity="0.88"/>
-    <!-- Lower right wing -->
-    <path class="bf-wrl"
-      d="M50 44 C64 41, 84 47, 82 63 C80 74, 58 74, 50 57 Z"
-      fill="url(#bfBR)" opacity="0.88"/>
-    <!-- Shimmer highlights -->
-    <path d="M50 36 C44 18, 16 14, 10 28" stroke="rgba(255,255,255,0.38)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-    <path d="M50 36 C56 18, 84 14, 90 28" stroke="rgba(255,255,255,0.38)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-    <!-- Spots -->
-    <circle cx="28" cy="28" r="4.5" fill="rgba(255,255,255,0.28)"/>
-    <circle cx="72" cy="28" r="4.5" fill="rgba(255,255,255,0.28)"/>
-    <circle cx="28" cy="58" r="3"   fill="rgba(186,230,253,0.38)"/>
-    <circle cx="72" cy="58" r="3"   fill="rgba(186,230,253,0.38)"/>
-    <!-- Body -->
-    <ellipse cx="50" cy="45" rx="3.5" ry="14" fill="#4c1d95"/>
-    <!-- Head -->
-    <circle cx="50" cy="30" r="3.8" fill="#5b21b6"/>
-    <!-- Antennae -->
-    <path d="M48 27 Q42 18 38 12" stroke="#7c3aed" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-    <path d="M52 27 Q58 18 62 12" stroke="#7c3aed" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-    <circle cx="38" cy="11" r="2.8" fill="#a855f7"/>
-    <circle cx="62" cy="11" r="2.8" fill="#a855f7"/>
-  </svg>
+  <div class="bf-body">
+    <div class="bf-wing bf-wing-left">
+      <svg viewBox="0 0 38 61" width="38" height="61" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bfPL" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%"   stop-color="#d8b4fe"/>
+            <stop offset="45%"  stop-color="#9333ea"/>
+            <stop offset="100%" stop-color="#6d28d9"/>
+          </linearGradient>
+          <linearGradient id="bfBL" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%"   stop-color="#bae6fd"/>
+            <stop offset="100%" stop-color="#3b82f6"/>
+          </linearGradient>
+          <filter id="bfGlowL" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <path filter="url(#bfGlowL)"
+          d="M38 30 C32 8, 4 4, 2 22 C0 38, 20 46, 38 34 Z"
+          fill="url(#bfPL)" opacity="0.93"/>
+        <path d="M38 36 C24 34, 8 38, 10 52 C12 62, 32 60, 38 46 Z"
+          fill="url(#bfBL)" opacity="0.88"/>
+        <path d="M38 30 C32 10, 8 8, 4 20" stroke="rgba(255,255,255,0.35)" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        <circle cx="14" cy="18" r="4" fill="rgba(255,255,255,0.25)"/>
+        <circle cx="16" cy="46" r="2.5" fill="rgba(186,230,253,0.35)"/>
+      </svg>
+    </div>
+    <div class="bf-wing bf-wing-right">
+      <svg viewBox="0 0 38 61" width="38" height="61" xmlns="http://www.w3.org/2000/svg" style="transform:scaleX(-1)">
+        <defs>
+          <linearGradient id="bfPR" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%"   stop-color="#d8b4fe"/>
+            <stop offset="45%"  stop-color="#9333ea"/>
+            <stop offset="100%" stop-color="#6d28d9"/>
+          </linearGradient>
+          <linearGradient id="bfBR" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%"   stop-color="#bae6fd"/>
+            <stop offset="100%" stop-color="#3b82f6"/>
+          </linearGradient>
+          <filter id="bfGlowR" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <path filter="url(#bfGlowR)"
+          d="M38 30 C32 8, 4 4, 2 22 C0 38, 20 46, 38 34 Z"
+          fill="url(#bfPR)" opacity="0.93"/>
+        <path d="M38 36 C24 34, 8 38, 10 52 C12 62, 32 60, 38 46 Z"
+          fill="url(#bfBR)" opacity="0.88"/>
+        <path d="M38 30 C32 10, 8 8, 4 20" stroke="rgba(255,255,255,0.35)" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        <circle cx="14" cy="18" r="4" fill="rgba(255,255,255,0.25)"/>
+        <circle cx="16" cy="46" r="2.5" fill="rgba(186,230,253,0.35)"/>
+      </svg>
+    </div>
+    <div class="bf-head"></div>
+    <div class="bf-center"></div>
+    <div class="bf-antenna-left"></div>
+    <div class="bf-antenna-right"></div>
+  </div>
 </div>
 
 <!-- MUSIC TOGGLE -->
@@ -1601,37 +1655,144 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
 }
 
 /* ══════════════════════════════════════════
+   BUTTERFLY CONTROLLER
+══════════════════════════════════════════ */
+const BF = {
+  el: null, raf: null,
+  x: 0, y: 0, tx: 0, ty: 0,
+  flying: false, resting: false,
+  init() { this.el = document.getElementById('butterfly'); },
+
+  show() { this.el.style.display = 'block'; },
+  hide() { this.el.style.display = 'none'; this.stopFly(); },
+
+  setResting(v) {
+    const wl = this.el.querySelector('.bf-wing-left');
+    const wr = this.el.querySelector('.bf-wing-right');
+    if (v) { wl.classList.add('resting'); wr.classList.add('resting'); }
+    else   { wl.classList.remove('resting'); wr.classList.remove('resting'); }
+    this.resting = v;
+  },
+
+  place(x, y) {
+    this.x = x; this.y = y;
+    this.el.style.left = x + 'px';
+    this.el.style.top  = y + 'px';
+  },
+
+  stopFly() {
+    if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; }
+    this.flying = false;
+  },
+
+  // Fly from current position to (tx,ty), then call onDone
+  flyTo(tx, ty, duration, onDone) {
+    this.stopFly();
+    this.setResting(false);
+    this.show();
+    const startX = this.x, startY = this.y;
+    const dx = tx - startX, dy = ty - startY;
+    let start = null;
+    const loop = (ts) => {
+      if (!start) start = ts;
+      const t = Math.min(1, (ts - start) / duration);
+      const e = 1 - Math.pow(1 - t, 3);
+      // slight sine wobble for natural flight
+      const wobble = Math.sin(t * Math.PI * 4) * 18 * Math.sin(t * Math.PI);
+      this.x = startX + dx * e;
+      this.y = startY + dy * e + wobble;
+      this.el.style.left = this.x + 'px';
+      this.el.style.top  = this.y + 'px';
+      if (t < 1) { this.raf = requestAnimationFrame(loop); }
+      else {
+        this.x = tx; this.y = ty;
+        this.el.style.left = tx + 'px';
+        this.el.style.top  = ty + 'px';
+        this.setResting(true);
+        if (onDone) onDone();
+      }
+    };
+    this.raf = requestAnimationFrame(loop);
+  },
+
+  // Fly a looping path around a rect, then land at (lx,ly)
+  flyAround(rect, laps, duration, lx, ly, onDone) {
+    this.stopFly();
+    this.setResting(false);
+    this.show();
+    const cx = rect.left + rect.width  * 0.5;
+    const cy = rect.top  + rect.height * 0.5;
+    const rx = rect.width  * 0.52 + 28;
+    const ry = rect.height * 0.42 + 18;
+    let start = null;
+    const totalAngle = Math.PI * 2 * laps;
+    const loop = (ts) => {
+      if (!start) start = ts;
+      const t = Math.min(1, (ts - start) / duration);
+      const angle = totalAngle * t;
+      // spiral inward toward lx,ly at end
+      const blend = Math.pow(t, 2.5);
+      const ox = cx + Math.cos(angle) * rx * (1 - blend);
+      const oy = cy + Math.sin(angle) * ry * (1 - blend);
+      this.x = ox * (1 - blend) + lx * blend;
+      this.y = oy * (1 - blend) + ly * blend;
+      this.el.style.left = this.x + 'px';
+      this.el.style.top  = this.y + 'px';
+      if (t < 1) { this.raf = requestAnimationFrame(loop); }
+      else {
+        this.x = lx; this.y = ly;
+        this.el.style.left = lx + 'px';
+        this.el.style.top  = ly + 'px';
+        this.setResting(true);
+        if (onDone) onDone();
+      }
+    };
+    this.raf = requestAnimationFrame(loop);
+  }
+};
+
+/* ══════════════════════════════════════════
    ENVELOPE SYSTEM — global functions
 ══════════════════════════════════════════ */
 let _envOpened = false;
-let _bfRaf     = null;
-let _bfPrevX   = 0;
 
 function showEnvelope(panelCX, panelCY) {
-  const W2   = window.innerWidth;
-  const H2   = window.innerHeight;
+  const W2 = window.innerWidth;
   const wrap = document.getElementById('envelope-wrap');
   const body = wrap.querySelector('.env-body');
   const flap = wrap.querySelector('.env-flap');
   const flapInner = wrap.querySelector('.env-flap-inner');
   const paper = document.getElementById('env-paper');
 
-  // Responsive size
   const envW = Math.min(210, W2 * 0.34);
   const envH = Math.round(envW * 0.70);
 
-  body.style.width  = envW + 'px';
-  body.style.height = envH + 'px';
+  body.style.width   = envW + 'px';
+  body.style.height  = envH + 'px';
   paper.style.height = Math.round(envH * 0.56) + 'px';
   flap.style.width   = envW + 'px';
   flapInner.style.height = Math.round(envH * 0.52) + 'px';
 
-  // Center envelope in left panel
-  wrap.style.left = Math.round(panelCX - envW / 2) + 'px';
-  wrap.style.top  = Math.round(panelCY - envH / 2 + 80) + 'px';
+  const envLeft = Math.round(panelCX - envW / 2);
+  const envTop  = Math.round(panelCY - envH / 2 + 80);
+  wrap.style.left = envLeft + 'px';
+  wrap.style.top  = envTop  + 'px';
 
-  // Slight delay so slide animation finishes first
-  setTimeout(() => wrap.classList.add('show'), 200);
+  setTimeout(() => {
+    wrap.classList.add('show');
+    // Butterfly flies in from left after envelope appears
+    setTimeout(() => {
+      BF.init();
+      BF.x = -80;
+      BF.y = envTop + envH * 0.2;
+      BF.el.style.left = BF.x + 'px';
+      BF.el.style.top  = BF.y + 'px';
+      // Land on top-right corner of envelope
+      const landX = envLeft + envW - 30;
+      const landY = envTop  - 10;
+      BF.flyTo(landX, landY, 1400, null);
+    }, 600);
+  }, 200);
 }
 
 function openEnvelope() {
@@ -1643,102 +1804,113 @@ function openEnvelope() {
   const env = document.getElementById('envelope');
   env.classList.add('opening');
 
-  // Paper rises 380ms after flap starts
+  // Butterfly leaves envelope, flies around outside area
+  BF.setResting(false);
+
   setTimeout(() => document.getElementById('env-paper').classList.add('rising'), 380);
-
-  // Fade envelope out
   setTimeout(() => document.getElementById('envelope-wrap').classList.add('fade-out'), 950);
-
-  // Show letter modal
   setTimeout(() => _showLetterModal(), 1180);
 }
 
 function _showLetterModal() {
-  const W2   = window.innerWidth;
-  const H2   = window.innerHeight;
+  const W2 = window.innerWidth;
+  const H2 = window.innerHeight;
   const card = document.getElementById('letter-card');
   const cardW = Math.min(W2 * 0.90, 490);
   const cardH = Math.min(H2 * 0.84, 640);
   card.style.width  = cardW + 'px';
   card.style.height = cardH + 'px';
 
-  // Hide music/replay while letter is showing
-  document.getElementById('music-btn').style.opacity  = '0';
+  document.getElementById('music-btn').style.opacity = '0';
   document.getElementById('music-btn').style.pointerEvents = 'none';
   document.getElementById('replay-btn').style.opacity = '0';
   document.getElementById('replay-btn').style.pointerEvents = 'none';
 
   document.getElementById('letter-modal').classList.add('show');
 
-  // Show and animate butterfly
-  const bf = document.getElementById('butterfly');
-  bf.style.display = 'block';
-  _bfPrevX = W2 / 2;
-  _animateButterfly();
+  // Fly butterfly around letter then rest on tulip corner
+ setTimeout(() => {
+    const rect = card.getBoundingClientRect();
+    // Rest on tulip at bottom-right corner outside letter
+    const tulipX = rect.right - 20;
+    const tulipY = rect.bottom - 95;
+    BF.flyAround(rect, 1.5, 3200, tulipX, tulipY, null);
+  }, 400);
 
-  // Typewrite the letter body
   _typewriteLetter();
 }
 
 function onLetterNext() {
-  // Stop butterfly
-  if (_bfRaf) { cancelAnimationFrame(_bfRaf); _bfRaf = null; }
-  document.getElementById('butterfly').style.display = 'none';
+  BF.setResting(false);
 
-  // Close letter modal
   const modal = document.getElementById('letter-modal');
   modal.classList.add('closing');
   modal.classList.remove('show');
 
-  // Restore music/replay buttons
-  document.getElementById('music-btn').style.opacity  = '1';
+  document.getElementById('music-btn').style.opacity = '1';
   document.getElementById('music-btn').style.pointerEvents = 'auto';
   document.getElementById('replay-btn').style.opacity = '1';
   document.getElementById('replay-btn').style.pointerEvents = 'auto';
 
-  // Bring envelope back
   _envOpened = false;
   document.getElementById('envelope').classList.remove('opening');
   document.getElementById('envelope-wrap').classList.remove('fade-out');
   document.getElementById('env-paper').classList.remove('rising');
 
-  // Show the happy anniversary message
-  setTimeout(showEndOverlay, 680);
+  // Fly butterfly to "add to your core memory" button
+  setTimeout(() => {
+    const btn = document.getElementById('end-overlay-close');
+    // Show overlay first then fly to button
+    showEndOverlay();
+    setTimeout(() => {
+      const rect = btn.getBoundingClientRect();
+      const tx = rect.left + rect.width * 0.5 - 38;
+      const ty = rect.top  - 50;
+      BF.flyTo(tx, ty, 1600, null);
+    }, 1200);
+  }, 680);
 }
 
-/* ── BUTTERFLY ANIMATION ── */
-function _animateButterfly() {
-  const card = document.getElementById('letter-card');
-  const bf   = document.getElementById('butterfly');
-  const bfW  = 76, bfH = 61;
-  let   t    = 0;
+function closeEndOverlay() {
+  document.getElementById('end-overlay').classList.remove('show');
 
-  function loop() {
-    t += 0.007;
-    const rect = card.getBoundingClientRect();
-    if (!rect.width) { _bfRaf = requestAnimationFrame(loop); return; }
+  // Get tree position from canvas center top
+  const canvas = document.getElementById('phase2-canvas');
+  const W = canvas.width || window.innerWidth;
+  const H = canvas.height || window.innerHeight;
 
-    // Lissajous figure — stays comfortably inside card
-    const margin = 38;
-    const cx = rect.left + rect.width  * 0.50;
-    const cy = rect.top  + rect.height * 0.42;
-    const rx = rect.width  * 0.40 - margin;
-    const ry = rect.height * 0.34 - margin;
+  // Tree top is roughly center-x, 18% from top
+  const tx = W * 0.50 - 38;
+  const ty = H * 0.18;
 
-    const x = cx + rx * Math.sin(t * 1.10);
-    const y = cy + ry * Math.sin(t * 0.68) * Math.cos(t * 0.34);
+  BF.flyTo(tx, ty, 1800, null);
+}
 
-    const dx    = x - _bfPrevX;
-    const flipX = dx < 0 ? -1 : 1;
-
-    bf.style.left      = (x - bfW / 2) + 'px';
-    bf.style.top       = (y - bfH / 2) + 'px';
-    bf.style.transform = `scaleX(${flipX})`;
-
-    _bfPrevX = x;
-    _bfRaf   = requestAnimationFrame(loop);
-  }
-  _bfRaf = requestAnimationFrame(loop);
+/* ── TULIP CORNER DECORATION on letter ── */
+function _drawLetterTulip() {
+  const existing = document.getElementById('letter-tulip-deco');
+  if (existing) return;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('id', 'letter-tulip-deco');
+  svg.setAttribute('viewBox', '0 0 70 110');
+  svg.setAttribute('width', '70');
+  svg.setAttribute('height', '110');
+  svg.style.cssText = 'position:absolute;bottom:-18px;right:-18px;opacity:1;pointer-events:none;z-index:20;filter:drop-shadow(0 2px 8px rgba(126,200,240,0.45));';
+  svg.innerHTML = `
+    <line x1="35" y1="108" x2="35" y2="48" stroke="#5ab8e8" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M33 72 Q18 62 14 46 Q26 52 33 72Z" fill="#7ecef0" opacity="1"/>
+    <path d="M33 72 Q18 62 14 46 Q26 52 33 72Z" stroke="#5ab8e8" stroke-width="0.8" fill="none"/>
+    <path d="M37 64 Q52 53 56 38 Q44 45 37 64Z" fill="#7ecef0" opacity="1"/>
+    <path d="M37 64 Q52 53 56 38 Q44 45 37 64Z" stroke="#5ab8e8" stroke-width="0.8" fill="none"/>
+    <ellipse cx="24" cy="22" rx="10" ry="17" fill="#90d8f8" transform="rotate(-14 24 22)" stroke="#6ac4ec" stroke-width="1.2"/>
+    <ellipse cx="46" cy="22" rx="10" ry="17" fill="#90d8f8" transform="rotate(14 46 22)" stroke="#6ac4ec" stroke-width="1.2"/>
+    <ellipse cx="35" cy="17" rx="11" ry="20" fill="#c0eeff" stroke="#88d0f4" stroke-width="1.2"/>
+    <ellipse cx="31" cy="10" rx="4" ry="9" fill="rgba(255,255,255,0.38)" transform="rotate(-6 31 10)"/>
+    <ellipse cx="39" cy="9" rx="3" ry="7" fill="rgba(255,255,255,0.25)" transform="rotate(5 39 9)"/>
+    <line x1="35" y1="37" x2="33" y2="22" stroke="rgba(126,200,240,0.5)" stroke-width="1" stroke-linecap="round"/>
+    <line x1="35" y1="37" x2="37" y2="24" stroke="rgba(126,200,240,0.5)" stroke-width="1" stroke-linecap="round"/>
+  `;
+  document.getElementById('letter-card').appendChild(svg);
 }
 
 /* ── LETTER TYPEWRITE ── */
@@ -1749,14 +1921,13 @@ I'm so excited for all the monthsaries and memories we still have ahead of us. N
 I love you more than words can hold.`;
 
 function _typewriteLetter() {
+  _drawLetterTulip();
   const el = document.getElementById('letter-body-text');
   const scroll = document.getElementById('letter-body-scroll');
   let i = 0;
   const text = LETTER_BODY;
-
   function tick() {
     if (i <= text.length) {
-      // Show blinking cursor while typing
       el.innerHTML = text.slice(0, i).replace(/\n/g, '<br>') +
         (i < text.length
           ? '<span style="display:inline-block;width:1.5px;height:1em;background:rgba(85,48,32,.65);vertical-align:text-bottom;animation:twBlink .7s step-end infinite;"></span>'
