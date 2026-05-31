@@ -500,74 +500,10 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 ══════════════════════════════════════════ */
 #butterfly {
   position:fixed; z-index:325; pointer-events:none;
-  display:none; will-change:transform,left,top;
-  transform-style:preserve-3d;
-  transform: scale(0.52);
+  display:none; will-change:left,top;
+  width:44px; height:36px;
 }
-.bf-body {
-  position:relative; width:76px; height:61px;
-}
-.bf-wing {
-  position:absolute; top:0;
-  width:38px; height:61px;
-  transform-style:preserve-3d;
-}
-.bf-wing-left {
-  left:0; transform-origin:right center;
-  animation:wingFlapL3D 0.55s ease-in-out infinite;
-}
-.bf-wing-right {
-  right:0; transform-origin:left center;
-  animation:wingFlapR3D 0.55s ease-in-out infinite;
-}
-.bf-wing-left.resting {
-  animation:wingRestL 3s ease-in-out infinite;
-}
-.bf-wing-right.resting {
-  animation:wingRestR 3s ease-in-out infinite;
-}
-@keyframes wingFlapL3D {
-  0%,100%{ transform:rotateY(0deg); }
-  50%    { transform:rotateY(75deg); }
-}
-@keyframes wingFlapR3D {
-  0%,100%{ transform:rotateY(0deg); }
-  50%    { transform:rotateY(-75deg); }
-}
-@keyframes wingRestL {
-  0%,100%{ transform:rotateY(0deg); }
-  50%    { transform:rotateY(22deg); }
-}
-@keyframes wingRestR {
-  0%,100%{ transform:rotateY(0deg); }
-  50%    { transform:rotateY(-22deg); }
-}
-.bf-center {
-  position:absolute; left:50%; top:50%;
-  transform:translate(-50%,-50%);
-  width:8px; height:40px;
-  background:linear-gradient(180deg,#4c1d95,#5b21b6);
-  border-radius:4px; z-index:10;
-}
-.bf-head {
-  position:absolute; left:50%; top:18%;
-  transform:translateX(-50%);
-  width:10px; height:10px; border-radius:50%;
-  background:#5b21b6; z-index:11;
-}
-.bf-antenna-left, .bf-antenna-right {
-  position:absolute; top:10%; z-index:11;
-  width:2px; height:16px;
-  background:#7c3aed; border-radius:2px;
-}
-.bf-antenna-left  { left:calc(50% - 5px); transform:rotate(-25deg); transform-origin:bottom center; }
-.bf-antenna-right { left:calc(50% + 3px); transform:rotate(25deg);  transform-origin:bottom center; }
-.bf-antenna-left::after, .bf-antenna-right::after {
-  content:''; position:absolute; top:-4px; left:50%;
-  transform:translateX(-50%);
-  width:5px; height:5px; border-radius:50%;
-  background:#a855f7;
-}
+#bf-canvas { background:transparent; }
 </style>
 </head>
 <body>
@@ -826,117 +762,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 
 <!-- BUTTERFLY 3D -->
 <div id="butterfly">
-  <div class="bf-body">
-    <div class="bf-wing bf-wing-left">
-      <svg viewBox="0 0 44 72" width="44" height="72" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="bfPL" x1="100%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%"   stop-color="#c8f0ff"/>
-            <stop offset="30%"  stop-color="#60c8f0"/>
-            <stop offset="65%"  stop-color="#7b4fd4"/>
-            <stop offset="100%" stop-color="#4a1fa8"/>
-          </linearGradient>
-          <linearGradient id="bfBL" x1="80%" y1="0%" x2="20%" y2="100%">
-            <stop offset="0%"   stop-color="#9060d8"/>
-            <stop offset="100%" stop-color="#3a18a0"/>
-          </linearGradient>
-          <filter id="bfGlowL" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <!-- Upper wing — Morpho shape -->
-        <path filter="url(#bfGlowL)"
-          d="M42 34 C38 6, 18 1, 4 8 C-2 14, 0 26, 8 32 C16 38, 30 38, 42 34 Z"
-          fill="url(#bfPL)" opacity="0.96"/>
-        <!-- Wing edge darkening -->
-        <path d="M42 34 C38 6, 18 1, 4 8 C-2 14, 0 26, 8 32 C16 38, 30 38, 42 34 Z"
-          fill="none" stroke="#3a18a0" stroke-width="1.8" opacity="0.5"/>
-        <!-- Lower wing -->
-        <path d="M42 38 C30 40, 10 44, 6 56 C2 66, 16 72, 30 66 C40 60, 44 50, 42 38 Z"
-          fill="url(#bfBL)" opacity="0.90"/>
-        <path d="M42 38 C30 40, 10 44, 6 56 C2 66, 16 72, 30 66 C40 60, 44 50, 42 38 Z"
-          fill="none" stroke="#2a1080" stroke-width="1.5" opacity="0.45"/>
-        <!-- Veins upper wing -->
-        <path d="M42 34 C34 28, 20 18, 8 14" stroke="rgba(180,230,255,0.45)" stroke-width="1.0" fill="none"/>
-        <path d="M42 34 C32 30, 18 26, 6 24" stroke="rgba(180,230,255,0.35)" stroke-width="0.8" fill="none"/>
-        <path d="M42 34 C34 34, 20 34, 8 32" stroke="rgba(180,230,255,0.30)" stroke-width="0.7" fill="none"/>
-        <!-- Veins lower wing -->
-        <path d="M42 40 C32 46, 18 52, 10 58" stroke="rgba(160,180,255,0.38)" stroke-width="0.8" fill="none"/>
-        <path d="M42 44 C34 50, 22 58, 16 64" stroke="rgba(160,180,255,0.28)" stroke-width="0.7" fill="none"/>
-        <!-- Iridescent shimmer -->
-        <path d="M38 10 C28 8, 14 10, 6 16" stroke="rgba(200,240,255,0.55)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-        <path d="M36 18 C26 16, 12 20, 6 26" stroke="rgba(160,220,255,0.30)" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-        <!-- White spots along edge -->
-        <circle cx="6"  cy="10" r="1.8" fill="rgba(255,255,255,0.55)"/>
-        <circle cx="4"  cy="18" r="1.5" fill="rgba(255,255,255,0.45)"/>
-        <circle cx="5"  cy="26" r="1.4" fill="rgba(255,255,255,0.40)"/>
-        <circle cx="8"  cy="54" r="1.4" fill="rgba(200,210,255,0.40)"/>
-        <circle cx="14" cy="64" r="1.2" fill="rgba(200,210,255,0.35)"/>
-      </svg>
-    </div>
-    <div class="bf-wing bf-wing-right">
-      <svg viewBox="0 0 44 72" width="44" height="72" xmlns="http://www.w3.org/2000/svg" style="transform:scaleX(-1)">
-        <defs>
-          <linearGradient id="bfPR" x1="100%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%"   stop-color="#c8f0ff"/>
-            <stop offset="30%"  stop-color="#60c8f0"/>
-            <stop offset="65%"  stop-color="#7b4fd4"/>
-            <stop offset="100%" stop-color="#4a1fa8"/>
-          </linearGradient>
-          <linearGradient id="bfBR" x1="80%" y1="0%" x2="20%" y2="100%">
-            <stop offset="0%"   stop-color="#9060d8"/>
-            <stop offset="100%" stop-color="#3a18a0"/>
-          </linearGradient>
-          <filter id="bfGlowR" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <path filter="url(#bfGlowR)"
-          d="M42 34 C38 6, 18 1, 4 8 C-2 14, 0 26, 8 32 C16 38, 30 38, 42 34 Z"
-          fill="url(#bfPR)" opacity="0.96"/>
-        <path d="M42 34 C38 6, 18 1, 4 8 C-2 14, 0 26, 8 32 C16 38, 30 38, 42 34 Z"
-          fill="none" stroke="#3a18a0" stroke-width="1.8" opacity="0.5"/>
-        <path d="M42 38 C30 40, 10 44, 6 56 C2 66, 16 72, 30 66 C40 60, 44 50, 42 38 Z"
-          fill="url(#bfBR)" opacity="0.90"/>
-        <path d="M42 38 C30 40, 10 44, 6 56 C2 66, 16 72, 30 66 C40 60, 44 50, 42 38 Z"
-          fill="none" stroke="#2a1080" stroke-width="1.5" opacity="0.45"/>
-        <path d="M42 34 C34 28, 20 18, 8 14" stroke="rgba(180,230,255,0.45)" stroke-width="1.0" fill="none"/>
-        <path d="M42 34 C32 30, 18 26, 6 24" stroke="rgba(180,230,255,0.35)" stroke-width="0.8" fill="none"/>
-        <path d="M42 34 C34 34, 20 34, 8 32" stroke="rgba(180,230,255,0.30)" stroke-width="0.7" fill="none"/>
-        <path d="M42 40 C32 46, 18 52, 10 58" stroke="rgba(160,180,255,0.38)" stroke-width="0.8" fill="none"/>
-        <path d="M42 44 C34 50, 22 58, 16 64" stroke="rgba(160,180,255,0.28)" stroke-width="0.7" fill="none"/>
-        <path d="M38 10 C28 8, 14 10, 6 16" stroke="rgba(200,240,255,0.55)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-        <path d="M36 18 C26 16, 12 20, 6 26" stroke="rgba(160,220,255,0.30)" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-        <circle cx="6"  cy="10" r="1.8" fill="rgba(255,255,255,0.55)"/>
-        <circle cx="4"  cy="18" r="1.5" fill="rgba(255,255,255,0.45)"/>
-        <circle cx="5"  cy="26" r="1.4" fill="rgba(255,255,255,0.40)"/>
-        <circle cx="8"  cy="54" r="1.4" fill="rgba(200,210,255,0.40)"/>
-        <circle cx="14" cy="64" r="1.2" fill="rgba(200,210,255,0.35)"/>
-      </svg>
-    </div>
-    <!-- Body -->
-    <div class="bf-center"></div>
-    <!-- Head -->
-    <div class="bf-head"></div>
-    <!-- Antennae -->
-    <div class="bf-antenna-left"></div>
-    <div class="bf-antenna-right"></div>
-    <!-- Legs (visible when resting) -->
-    <svg id="bf-legs" viewBox="0 0 40 20" width="40" height="20"
-      xmlns="http://www.w3.org/2000/svg"
-      style="position:absolute;left:50%;top:62%;transform:translateX(-50%);opacity:0;transition:opacity 0.4s ease;pointer-events:none;">
-      <!-- Left legs -->
-      <path d="M18 2 Q10 6, 4 4"   stroke="#3a1a6a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-      <path d="M18 6 Q9 12, 2 12"  stroke="#3a1a6a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-      <path d="M18 10 Q10 16, 3 18" stroke="#3a1a6a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-      <!-- Right legs -->
-      <path d="M22 2 Q30 6, 36 4"   stroke="#3a1a6a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-      <path d="M22 6 Q31 12, 38 12"  stroke="#3a1a6a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-      <path d="M22 10 Q30 16, 37 18" stroke="#3a1a6a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-    </svg>
-  </div>
+  <canvas id="bf-canvas" width="44" height="36" style="display:block;"></canvas>
 </div>
 
 <!-- MUSIC TOGGLE -->
@@ -1707,110 +1533,342 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
   requestAnimationFrame(bloomLoop);
 }
 
-/* ══════════════════════════════════════════
-   BUTTERFLY CONTROLLER
+  /* ══════════════════════════════════════════
+   THREE.JS BUTTERFLY
 ══════════════════════════════════════════ */
-const BF = {
-  el: null, raf: null,
-  x: 0, y: 0, tx: 0, ty: 0,
-  flying: false, resting: false,
-  init() { this.el = document.getElementById('butterfly'); },
+const BF = (() => {
+  let el, canvas, renderer, scene, camera;
+  let wingL, wingR, wingLower_L, wingLower_R, body, head;
+  let legGroup;
+  let flapAngle = 0, flapSpeed = 0.12, isResting = false;
+  let bankAngle = 0, targetBank = 0;
+  let rafId = null, flyRafId = null;
+  let posX = 0, posY = 0;
+  let prevX = 0;
+  let initialized = false;
 
-  show() { this.el.style.display = 'block'; },
-  hide() { this.el.style.display = 'none'; this.stopFly(); },
+  function init() {
+    if (initialized) return;
+    initialized = true;
+    el     = document.getElementById('butterfly');
+    canvas = document.getElementById('bf-canvas');
 
-  setResting(v) {
-    const wl   = this.el.querySelector('.bf-wing-left');
-    const wr   = this.el.querySelector('.bf-wing-right');
-    const legs = this.el.querySelector('#bf-legs');
-    if (v) {
-      wl.classList.add('resting');
-      wr.classList.add('resting');
-      if (legs) legs.style.opacity = '1';
-    } else {
-      wl.classList.remove('resting');
-      wr.classList.remove('resting');
-      if (legs) legs.style.opacity = '0';
-    }
-    this.resting = v;
-  },
+    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(44, 36);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0);
 
-  place(x, y) {
-    this.x = x; this.y = y;
-    this.el.style.left = x + 'px';
-    this.el.style.top  = y + 'px';
-  },
+    scene  = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(45, 44 / 36, 0.1, 100);
+    camera.position.set(0, 0.2, 4.5);
 
-  stopFly() {
-    if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; }
-    this.flying = false;
-  },
+    // Lighting
+    const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambient);
+    const dirLight = new THREE.DirectionalLight(0xc8f0ff, 1.2);
+    dirLight.position.set(2, 3, 4);
+    scene.add(dirLight);
+    const rimLight = new THREE.DirectionalLight(0x9060ff, 0.6);
+    rimLight.position.set(-2, -1, 2);
+    scene.add(rimLight);
 
-  // Fly from current position to (tx,ty), then call onDone
-  flyTo(tx, ty, duration, onDone) {
-    this.stopFly();
-    this.setResting(false);
-    this.show();
-    const startX = this.x, startY = this.y;
-    const dx = tx - startX, dy = ty - startY;
-    let start = null;
-    const loop = (ts) => {
-      if (!start) start = ts;
-      const t = Math.min(1, (ts - start) / duration);
-      const e = 1 - Math.pow(1 - t, 3);
-      // slight sine wobble for natural flight
-      const wobble = Math.sin(t * Math.PI * 4) * 18 * Math.sin(t * Math.PI);
-      this.x = startX + dx * e;
-      this.y = startY + dy * e + wobble;
-      this.el.style.left = this.x + 'px';
-      this.el.style.top  = this.y + 'px';
-      if (t < 1) { this.raf = requestAnimationFrame(loop); }
-      else {
-        this.x = tx; this.y = ty;
-        this.el.style.left = tx + 'px';
-        this.el.style.top  = ty + 'px';
-        this.setResting(true);
-        if (onDone) onDone();
-      }
-    };
-    this.raf = requestAnimationFrame(loop);
-  },
-
-  // Fly a looping path around a rect, then land at (lx,ly)
-  flyAround(rect, laps, duration, lx, ly, onDone) {
-    this.stopFly();
-    this.setResting(false);
-    this.show();
-    const cx = rect.left + rect.width  * 0.5;
-    const cy = rect.top  + rect.height * 0.5;
-    const rx = rect.width  * 0.52 + 28;
-    const ry = rect.height * 0.42 + 18;
-    let start = null;
-    const totalAngle = Math.PI * 2 * laps;
-    const loop = (ts) => {
-      if (!start) start = ts;
-      const t = Math.min(1, (ts - start) / duration);
-      const angle = totalAngle * t;
-      // spiral inward toward lx,ly at end
-      const blend = Math.pow(t, 2.5);
-      const ox = cx + Math.cos(angle) * rx * (1 - blend);
-      const oy = cy + Math.sin(angle) * ry * (1 - blend);
-      this.x = ox * (1 - blend) + lx * blend;
-      this.y = oy * (1 - blend) + ly * blend;
-      this.el.style.left = this.x + 'px';
-      this.el.style.top  = this.y + 'px';
-      if (t < 1) { this.raf = requestAnimationFrame(loop); }
-      else {
-        this.x = lx; this.y = ly;
-        this.el.style.left = lx + 'px';
-        this.el.style.top  = ly + 'px';
-        this.setResting(true);
-        if (onDone) onDone();
-      }
-    };
-    this.raf = requestAnimationFrame(loop);
+    _buildButterfly();
+    _renderLoop();
   }
-};
+
+  function _buildButterfly() {
+    // Wing materials
+    const matUpper = new THREE.MeshPhongMaterial({
+      color: 0x60c8f0, emissive: 0x2040a0, emissiveIntensity: 0.3,
+      specular: 0xffffff, shininess: 80,
+      side: THREE.DoubleSide, transparent: true, opacity: 0.94
+    });
+    const matLower = new THREE.MeshPhongMaterial({
+      color: 0x7040d0, emissive: 0x301880, emissiveIntensity: 0.3,
+      specular: 0xc0c0ff, shininess: 60,
+      side: THREE.DoubleSide, transparent: true, opacity: 0.88
+    });
+
+    // Upper wing shape — Morpho-like
+    const upperShape = new THREE.Shape();
+    upperShape.moveTo(0, 0);
+    upperShape.bezierCurveTo(-0.1, 0.5, -0.8, 1.4, -1.0, 1.8);
+    upperShape.bezierCurveTo(-1.3, 2.2, -1.6, 2.0, -1.5, 1.5);
+    upperShape.bezierCurveTo(-1.8, 1.2, -2.0, 0.6, -1.8, 0.2);
+    upperShape.bezierCurveTo(-1.6,-0.2, -0.8,-0.1,  0,   0);
+
+    // Lower wing shape
+    const lowerShape = new THREE.Shape();
+    lowerShape.moveTo(0, 0);
+    lowerShape.bezierCurveTo(-0.1,-0.3, -0.6,-0.8, -1.1,-1.0);
+    lowerShape.bezierCurveTo(-1.5,-1.2, -1.7,-0.9, -1.6,-0.5);
+    lowerShape.bezierCurveTo(-1.5,-0.1, -0.8, 0.1,  0,   0);
+
+    const geoUpper = new THREE.ShapeGeometry(upperShape);
+    const geoLower = new THREE.ShapeGeometry(lowerShape);
+
+    // Left wings
+    wingL       = new THREE.Mesh(geoUpper, matUpper);
+    wingLower_L = new THREE.Mesh(geoLower, matLower);
+
+    // Right wings (mirror)
+    const matUpperR = matUpper.clone();
+    const matLowerR = matLower.clone();
+    wingR       = new THREE.Mesh(geoUpper, matUpperR);
+    wingLower_R = new THREE.Mesh(geoLower, matLowerR);
+    wingR.scale.x       = -1;
+    wingLower_R.scale.x = -1;
+
+    // Wing veins
+    _addVeins(wingL,       false);
+    _addVeins(wingR,       true);
+    _addVeins(wingLower_L, false);
+    _addVeins(wingLower_R, true);
+
+    // White edge spots
+    _addSpots(wingL, false);
+    _addSpots(wingR, true);
+
+    scene.add(wingL);
+    scene.add(wingR);
+    scene.add(wingLower_L);
+    scene.add(wingLower_R);
+
+    // Body
+    const bodyGeo = new THREE.CylinderGeometry(0.06, 0.05, 1.2, 10);
+    const bodyMat = new THREE.MeshPhongMaterial({ color: 0x2a0a50, shininess: 40 });
+    body = new THREE.Mesh(bodyGeo, bodyMat);
+    body.rotation.x = Math.PI / 2;
+    body.position.set(0, 0, 0.05);
+    scene.add(body);
+
+    // Head
+    const headGeo = new THREE.SphereGeometry(0.10, 10, 10);
+    const headMat = new THREE.MeshPhongMaterial({ color: 0x3a1060, shininess: 50 });
+    head = new THREE.Mesh(headGeo, headMat);
+    head.position.set(0, 0.62, 0.05);
+    scene.add(head);
+
+    // Antennae
+    _addAntenna(-0.06, 0.62,  0.30, 1.15);
+    _addAntenna( 0.06, 0.62,  0.24, 1.15);
+
+    // Legs
+    legGroup = new THREE.Group();
+    _addLegs();
+    legGroup.visible = false;
+    scene.add(legGroup);
+  }
+
+  function _addVeins(wing, mirrored) {
+    const mat = new THREE.LineBasicMaterial({
+      color: 0xaaddff, transparent: true, opacity: 0.38
+    });
+    const points1 = [
+      new THREE.Vector3(0, 0, 0.01),
+      new THREE.Vector3(mirrored ? 1.4 : -1.4, 1.2, 0.01)
+    ];
+    const points2 = [
+      new THREE.Vector3(0, 0, 0.01),
+      new THREE.Vector3(mirrored ? 1.6 : -1.6, 0.6, 0.01)
+    ];
+    const points3 = [
+      new THREE.Vector3(0, 0, 0.01),
+      new THREE.Vector3(mirrored ? 1.5 : -1.5, 0.0, 0.01)
+    ];
+    [points1, points2, points3].forEach(pts => {
+      const geo  = new THREE.BufferGeometry().setFromPoints(pts);
+      const line = new THREE.Line(geo, mat);
+      wing.add(line);
+    });
+  }
+
+  function _addSpots(wing, mirrored) {
+    const mat = new THREE.MeshBasicMaterial({
+      color: 0xffffff, transparent: true, opacity: 0.55
+    });
+    const positions = mirrored
+      ? [[0.2, 1.7],[0.15, 1.3],[0.12, 0.9],[1.3, 1.85],[1.1, 1.75]]
+      : [[-0.2, 1.7],[-0.15, 1.3],[-0.12, 0.9],[-1.3, 1.85],[-1.1, 1.75]];
+    positions.forEach(([x, y]) => {
+      const geo  = new THREE.CircleGeometry(0.07, 8);
+      const spot = new THREE.Mesh(geo, mat);
+      spot.position.set(x, y, 0.02);
+      wing.add(spot);
+    });
+  }
+
+  function _addAntenna(bx, by, tx, ty) {
+    const mat = new THREE.LineBasicMaterial({ color: 0x4a1a80 });
+    const pts = [
+      new THREE.Vector3(bx, by, 0.05),
+      new THREE.Vector3(tx * (bx < 0 ? -1 : 1), ty, 0.05)
+    ];
+    const geo  = new THREE.BufferGeometry().setFromPoints(pts);
+    const line = new THREE.Line(geo, mat);
+    scene.add(line);
+    // Tip ball
+    const tipGeo = new THREE.SphereGeometry(0.055, 8, 8);
+    const tipMat = new THREE.MeshPhongMaterial({ color: 0x8030c0 });
+    const tip    = new THREE.Mesh(tipGeo, tipMat);
+    tip.position.set(tx * (bx < 0 ? -1 : 1), ty, 0.05);
+    scene.add(tip);
+  }
+
+  function _addLegs() {
+    const mat = new THREE.LineBasicMaterial({ color: 0x2a0a50 });
+    const legDefs = [
+      // [startX, startY, endX, endY]
+      [-0.08, 0.1,  -0.55,  0.35],
+      [-0.08, 0.0,  -0.58,  0.02],
+      [-0.08,-0.1,  -0.52, -0.28],
+      [ 0.08, 0.1,   0.55,  0.35],
+      [ 0.08, 0.0,   0.58,  0.02],
+      [ 0.08,-0.1,   0.52, -0.28],
+    ];
+    legDefs.forEach(([sx, sy, ex, ey]) => {
+      const pts = [
+        new THREE.Vector3(sx, sy, 0.04),
+        new THREE.Vector3(ex, ey, 0.04)
+      ];
+      const geo  = new THREE.BufferGeometry().setFromPoints(pts);
+      const line = new THREE.Line(geo, mat);
+      legGroup.add(line);
+    });
+  }
+
+  function _renderLoop() {
+    rafId = requestAnimationFrame(_renderLoop);
+
+    if (isResting) {
+      // Gentle resting flap — wings partially open
+      flapAngle += 0.018;
+      const restFlap = Math.sin(flapAngle) * 0.18 + 0.55;
+      wingL.rotation.y       =  restFlap;
+      wingR.rotation.y       = -restFlap;
+      wingLower_L.rotation.y =  restFlap * 0.85;
+      wingLower_R.rotation.y = -restFlap * 0.85;
+      // Subtle body bob
+      if (body) body.position.y = Math.sin(flapAngle * 0.5) * 0.03;
+    } else {
+      // Full flying flap
+      flapAngle += flapSpeed;
+      const flap = Math.sin(flapAngle) * 1.05;
+      wingL.rotation.y       =  flap;
+      wingR.rotation.y       = -flap;
+      wingLower_L.rotation.y =  flap * 0.80;
+      wingLower_R.rotation.y = -flap * 0.80;
+    }
+
+    // Banking during flight
+    bankAngle += (targetBank - bankAngle) * 0.08;
+    scene.rotation.z = bankAngle;
+
+    renderer.render(scene, camera);
+  }
+
+  return {
+    el: null, x: 0, y: 0,
+    resting: false,
+
+    init() {
+      init();
+      this.el = document.getElementById('butterfly');
+    },
+
+    show() { this.el.style.display = 'block'; },
+    hide() { this.el.style.display = 'none'; this.stopFly(); },
+
+    setResting(v) {
+      isResting = v;
+      this.resting = v;
+      if (legGroup) legGroup.visible = v;
+      if (v) {
+        targetBank = 0;
+        // Tilt camera slightly for resting perspective
+        camera.position.set(0.3, 0.4, 4.2);
+      } else {
+        camera.position.set(0, 0.2, 4.5);
+      }
+    },
+
+    place(x, y) {
+      this.x = x; this.y = y;
+      this.el.style.left = x + 'px';
+      this.el.style.top  = y + 'px';
+    },
+
+    stopFly() {
+      if (flyRafId) { cancelAnimationFrame(flyRafId); flyRafId = null; }
+    },
+
+    flyTo(tx, ty, duration, onDone) {
+      this.stopFly();
+      this.setResting(false);
+      this.show();
+      const startX = this.x, startY = this.y;
+      const dx = tx - startX, dy = ty - startY;
+      let start = null;
+      const loop = (ts) => {
+        if (!start) start = ts;
+        const t = Math.min(1, (ts - start) / duration);
+        const e = 1 - Math.pow(1 - t, 3);
+        const wobble = Math.sin(t * Math.PI * 4) * 18 * Math.sin(t * Math.PI);
+        this.x = startX + dx * e;
+        this.y = startY + dy * e + wobble;
+        this.el.style.left = this.x + 'px';
+        this.el.style.top  = this.y + 'px';
+        // Banking based on horizontal movement
+        targetBank = Math.max(-0.4, Math.min(0.4, (dx > 0 ? -0.3 : 0.3) * (1 - e)));
+        prevX = this.x;
+        if (t < 1) { flyRafId = requestAnimationFrame(loop); }
+        else {
+          this.x = tx; this.y = ty;
+          this.el.style.left = tx + 'px';
+          this.el.style.top  = ty + 'px';
+          this.setResting(true);
+          if (onDone) onDone();
+        }
+      };
+      flyRafId = requestAnimationFrame(loop);
+    },
+
+    flyAround(rect, laps, duration, lx, ly, onDone) {
+      this.stopFly();
+      this.setResting(false);
+      this.show();
+      const cx = rect.left + rect.width  * 0.5;
+      const cy = rect.top  + rect.height * 0.5;
+      const rx = rect.width  * 0.52 + 28;
+      const ry = rect.height * 0.42 + 18;
+      let start = null;
+      const totalAngle = Math.PI * 2 * laps;
+      const loop = (ts) => {
+        if (!start) start = ts;
+        const t = Math.min(1, (ts - start) / duration);
+        const angle = totalAngle * t;
+        const blend = Math.pow(t, 2.5);
+        const ox = cx + Math.cos(angle) * rx * (1 - blend);
+        const oy = cy + Math.sin(angle) * ry * (1 - blend);
+        this.x = ox * (1 - blend) + lx * blend;
+        this.y = oy * (1 - blend) + ly * blend;
+        this.el.style.left = this.x + 'px';
+        this.el.style.top  = this.y + 'px';
+        // Bank based on orbit direction
+        targetBank = Math.cos(angle) * 0.35;
+        if (t < 1) { flyRafId = requestAnimationFrame(loop); }
+        else {
+          this.x = lx; this.y = ly;
+          this.el.style.left = lx + 'px';
+          this.el.style.top  = ly + 'px';
+          this.setResting(true);
+          if (onDone) onDone();
+        }
+      };
+      flyRafId = requestAnimationFrame(loop);
+    }
+  };
+})();
 
 /* ══════════════════════════════════════════
    ENVELOPE SYSTEM — global functions
