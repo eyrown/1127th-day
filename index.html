@@ -501,6 +501,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   position:fixed; z-index:325; pointer-events:none;
   display:none; will-change:transform,left,top;
   transform-style:preserve-3d;
+  transform: scale(0.52);
 }
 .bf-body {
   position:relative; width:76px; height:61px;
@@ -1755,6 +1756,7 @@ const BF = {
    ENVELOPE SYSTEM — global functions
 ══════════════════════════════════════════ */
 let _envOpened = false;
+let _letterOpenCount = 0;
 
 function showEnvelope(panelCX, panelCY) {
   const W2 = window.innerWidth;
@@ -1829,12 +1831,24 @@ function _showLetterModal() {
   document.getElementById('letter-modal').classList.add('show');
 
   // Fly butterfly around letter then rest on tulip corner
- setTimeout(() => {
-    const rect = card.getBoundingClientRect();
-    // Rest on tulip at bottom-right corner outside letter
-    const tulipX = rect.right - 20;
-    const tulipY = rect.bottom - 95;
-    BF.flyAround(rect, 1.5, 3200, tulipX, tulipY, null);
+setTimeout(() => {
+    _letterOpenCount++;
+    if (_letterOpenCount === 1) {
+      // First open — fly around letter then rest on NEXT button
+      const rect = card.getBoundingClientRect();
+      const nextBtn = document.getElementById('letter-next-btn');
+      const btnRect = nextBtn.getBoundingClientRect();
+      const landX = btnRect.left - 28;
+      const landY = btnRect.top  - 28;
+      BF.flyAround(rect, 1.5, 3200, landX, landY, null);
+    } else {
+      // Re-open — just rest on NEXT button directly, no loop
+      const nextBtn = document.getElementById('letter-next-btn');
+      const btnRect = nextBtn.getBoundingClientRect();
+      const landX = btnRect.left - 28;
+      const landY = btnRect.top  - 28;
+      BF.flyTo(landX, landY, 1000, null);
+    }
   }, 400);
 
   _typewriteLetter();
@@ -1858,30 +1872,28 @@ function onLetterNext() {
   document.getElementById('env-paper').classList.remove('rising');
 
   // Fly butterfly to "add to your core memory" button
-  setTimeout(() => {
-    const btn = document.getElementById('end-overlay-close');
-    // Show overlay first then fly to button
+setTimeout(() => {
     showEndOverlay();
     setTimeout(() => {
-      const rect = btn.getBoundingClientRect();
-      const tx = rect.left + rect.width * 0.5 - 38;
-      const ty = rect.top  - 50;
-      BF.flyTo(tx, ty, 1600, null);
-    }, 1200);
+      // Always fly to tree petals after next is clicked
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const tx = W * 0.68;
+      const ty = H * 0.38;
+      BF.flyTo(tx, ty, 1800, null);
+    }, 1400);
   }, 680);
 }
 
 function closeEndOverlay() {
   document.getElementById('end-overlay').classList.remove('show');
 
-  // Get tree position from canvas center top
-  const canvas = document.getElementById('phase2-canvas');
-  const W = canvas.width || window.innerWidth;
-  const H = canvas.height || window.innerHeight;
+  const W = window.innerWidth;
+  const H = window.innerHeight;
 
-  // Tree top is roughly center-x, 18% from top
-  const tx = W * 0.50 - 38;
-  const ty = H * 0.18;
+  // Land inside the heart canopy — top area of the heart
+  const tx = W * 0.68;
+  const ty = H * 0.40;
 
   BF.flyTo(tx, ty, 1800, null);
 }
@@ -1895,7 +1907,7 @@ function _drawLetterTulip() {
   svg.setAttribute('viewBox', '0 0 70 110');
   svg.setAttribute('width', '70');
   svg.setAttribute('height', '110');
-  svg.style.cssText = 'position:absolute;bottom:-18px;right:-18px;opacity:1;pointer-events:none;z-index:20;filter:drop-shadow(0 2px 8px rgba(126,200,240,0.45));';
+  svg.style.cssText = 'position:absolute;bottom:62px;left:8px;opacity:1;pointer-events:none;z-index:20;filter:drop-shadow(0 2px 8px rgba(126,200,240,0.45));';
   svg.innerHTML = `
     <line x1="35" y1="108" x2="35" y2="48" stroke="#5ab8e8" stroke-width="2.8" stroke-linecap="round"/>
     <path d="M33 72 Q18 62 14 46 Q26 52 33 72Z" fill="#7ecef0" opacity="1"/>
