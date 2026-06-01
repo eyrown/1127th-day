@@ -1472,28 +1472,32 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
       /* Pre-apply envelope sizing before slide */
       slideOffsetX = 0;
 
-      function slideLoop(ts){
-        if(!slideStart2) slideStart2=ts;
-        const t = Math.min(1,(ts-slideStart2)/SLIDE_DUR);
-        const e = easeOutCubic(t);
-        slideOffsetX   = targetSlideX * e;
-        countdownAlpha = e;
-        fullRedraw();
+function slideLoop(ts){
+  if(!slideStart2) slideStart2=ts;
+  const t = Math.min(1,(ts-slideStart2)/SLIDE_DUR);
+  const e = easeOutCubic(t);
+  slideOffsetX   = targetSlideX * e;
+  countdownAlpha = e;
+  fullRedraw();
 
-        if(t<1){
-          requestAnimationFrame(slideLoop);
-    } else {
-          slideOffsetX   = targetSlideX;
-          countdownAlpha = 1;
-          fullRedraw();
-          startFallLoop();
-          movePolaroidsWithSlide(targetSlideX);
-        /* Show envelope in the left panel that opened up */
-        const panelCX = (rootX + slideOffsetX - TREE_H * 0.50) / 2;
-        const panelCY = H * 0.40;
-          showEnvelope(panelCX, panelCY);
-    }
-      }
+  // Sync polaroid slide with tree every frame
+  _polaroidEls.forEach(el => {
+    const baseLeft = parseFloat(el.dataset.baseLeft);
+    el.style.left = (baseLeft + targetSlideX * e) + 'px';
+  });
+
+  if(t<1){
+    requestAnimationFrame(slideLoop);
+  } else {
+    slideOffsetX   = targetSlideX;
+    countdownAlpha = 1;
+    fullRedraw();
+    startFallLoop();
+    const panelCX = (rootX + slideOffsetX - TREE_H * 0.50) / 2;
+    const panelCY = H * 0.40;
+    showEnvelope(panelCX, panelCY);
+  }
+}
         const totalPolaroidTime = 600 + (2 * 350) + 900; // stagger delay + fade duration
       setTimeout(()=>requestAnimationFrame(slideLoop), totalPolaroidTime);
       showPolaroids(rootX, groundY, TREE_H, s);
@@ -2193,6 +2197,7 @@ function showPolaroids(rootX, groundY, TREE_H, s) {
     // Click to open lightbox
     wrap.addEventListener('click', () => openPolaroidLightbox(PHOTOS[i]));
 
+    wrap.dataset.baseLeft = pos.x - POLAROID_W/2;
     _polaroidEls.push(wrap);
   });
 }
