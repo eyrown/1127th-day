@@ -783,7 +783,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
 
 <!-- END MESSAGE OVERLAY -->
 <div id="end-overlay">
-  <p class="end-msg-text">Happy <em>1127th Day</em><br>with you, Eley.</p>
+  <p class="end-msg-text">Happy <em>1158th Day</em><br>with you, Eley.</p>
   <p class="end-msg-sub">I will keep counting our days together til eternity.</p>
   <button id="end-overlay-close" onclick="closeEndOverlay()">add to your core memory.. ↓</button>
 </div>
@@ -1303,7 +1303,7 @@ function startTreeGrowth(rootX, groundY) {
       BRANCHES.forEach(b=>{drawBranch(p2Ctx,b.x0,b.y0,b.cp1x,b.cp1y,b.cp2x,b.cp2y,b.x1,b.y1,b.w0,b.w1,1,TEAL);(b.twigs||[]).forEach(tw=>drawTwig(p2Ctx,b,tw,1));});
       setTimeout(()=>{
         if(typeof startPetalBloom==='function')
-          startPetalBloom(rootX,groundY,TREE_H,forkY,BRANCHES,p2Ctx,p2Canvas,drawLine,drawTrunk,drawBranch,drawTwig);
+          startPetalBloom(  rootX,groundY,TREE_H,forkY,BRANCHES,p2Ctx,p2Canvas,drawLine,drawTrunk,drawBranch,drawTwig);
       },500);
     }
   }
@@ -1318,6 +1318,7 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
   const W   = p2Canvas.width;
   const H   = p2Canvas.height;
   const mf  = Math.min(1, W / 560);
+  const s   = mf * 0.38;
 
   const canopyCX   = rootX;
   const cW         = TREE_H * 0.95;
@@ -1327,7 +1328,7 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
   let slideOffsetX   = 0;
   let countdownAlpha = 0;
 
-  const START_DATE = new Date('2023-08-19T00:00:00');
+  const START_DATE = new Date('2023-04-07T00:00:00+08:00');
 
   function getElapsed() {
     const diff=Math.max(0,Date.now()-START_DATE.getTime());
@@ -1337,7 +1338,7 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
     const minutes=totalMinutes%60;
     const totalHours=Math.floor(totalMinutes/60);
     const hours=totalHours%24;
-    const days=Math.floor(totalHours/24);
+    const days=Math.floor(totalHours/24) + 1;
     return {days,hours,minutes,seconds};
   }
 
@@ -1481,18 +1482,20 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
 
         if(t<1){
           requestAnimationFrame(slideLoop);
-        } else {
+    } else {
           slideOffsetX   = targetSlideX;
           countdownAlpha = 1;
           fullRedraw();
           startFallLoop();
-          /* Show envelope in the left panel that opened up */
-          const panelCX = (rootX + slideOffsetX - TREE_H * 0.50) / 2;
-          const panelCY = H * 0.40;
+          movePolaroidsWithSlide(targetSlideX);
+        /* Show envelope in the left panel that opened up */
+        const panelCX = (rootX + slideOffsetX - TREE_H * 0.50) / 2;
+        const panelCY = H * 0.40;
           showEnvelope(panelCX, panelCY);
-        }
+    }
       }
       setTimeout(()=>requestAnimationFrame(slideLoop), 600);
+      showPolaroids(rootX, groundY, TREE_H, s);
     }
   }
 
@@ -2102,6 +2105,164 @@ function _typewriteLetter() {
   }
   tick();
 }
+
+let _polaroidEls = [];
+
+function showPolaroids(rootX, groundY, TREE_H, s) {
+  _polaroidEls = [];
+
+  const PHOTOS = ['IMG_7419.jpg', 'IMG2.jpeg', 'IMG3.jpeg'];
+  const ROTATIONS = [-8, 3, -5]; // slight tilt each
+
+  // Approximate tip positions of left, center, right branches
+  const positions = [
+    { x: rootX - 138*s - 10,  y: groundY - TREE_H * 0.52 }, // left branch
+    { x: rootX + 5*s,          y: groundY - TREE_H * 0.90 }, // center (top)
+    { x: rootX + 118*s + 10,   y: groundY - TREE_H * 0.52 }, // right branch
+  ];
+
+  const STRING_LEN = 18;
+  const POLAROID_W = Math.min(72, window.innerWidth * 0.13);
+  const POLAROID_H = POLAROID_W * 1.22;
+  const IMG_PAD    = 5;
+  const BOTTOM_PAD = POLAROID_W * 0.28;
+
+  positions.forEach((pos, i) => {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = `
+      position: fixed;
+      z-index: 6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      left: ${pos.x - POLAROID_W/2}px;
+      top: ${pos.y}px;
+      opacity: 0;
+      transform: rotate(${ROTATIONS[i]}deg);
+      transition: opacity 0.9s ease;
+      cursor: pointer;
+      filter: drop-shadow(0 4px 12px rgba(80,40,20,0.22));
+    `;
+
+    // String
+    const string = document.createElement('div');
+    string.style.cssText = `
+      width: 1.5px;
+      height: ${STRING_LEN}px;
+      background: rgba(80,50,30,0.45);
+      border-radius: 2px;
+      flex-shrink: 0;
+    `;
+
+    // Polaroid frame
+    const frame = document.createElement('div');
+    frame.style.cssText = `
+      width: ${POLAROID_W}px;
+      height: ${POLAROID_H}px;
+      background: white;
+      padding: ${IMG_PAD}px ${IMG_PAD}px ${BOTTOM_PAD}px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      box-sizing: border-box;
+      border-radius: 2px;
+    `;
+
+    // Photo
+    const photo = document.createElement('img');
+    photo.src = PHOTOS[i];
+    photo.style.cssText = `
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 1px;
+    `;
+
+    frame.appendChild(photo);
+    wrap.appendChild(string);
+    wrap.appendChild(frame);
+    document.getElementById('phase2-canvas').parentElement.appendChild(wrap);
+
+    // Fade in with stagger
+    setTimeout(() => {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        wrap.style.opacity = '1';
+      }));
+    }, i * 350);
+
+    // Click to open lightbox
+    wrap.addEventListener('click', () => openPolaroidLightbox(PHOTOS[i]));
+
+    _polaroidEls.push(wrap);
+  });
+}
+
+function movePolaroidsWithSlide(offsetX) {
+  _polaroidEls.forEach(el => {
+    const currentLeft = parseFloat(el.style.left);
+    el.style.transition = 'left 1.4s cubic-bezier(.22,1,.36,1), opacity 0.9s ease';
+    el.style.left = (currentLeft + offsetX) + 'px';
+  });
+}
+
+function openPolaroidLightbox(src) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(20,10,10,0);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background 0.4s ease;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  `;
+
+  const BIG_W = Math.min(280, window.innerWidth * 0.78);
+  const BOTTOM_PAD_BIG = BIG_W * 0.22;
+
+  const frame = document.createElement('div');
+  frame.style.cssText = `
+    width: ${BIG_W}px;
+    background: white;
+    padding: 10px 10px ${BOTTOM_PAD_BIG}px;
+    box-shadow: 0 24px 72px rgba(0,0,0,0.38);
+    border-radius: 3px;
+    opacity: 0;
+    transform: scale(0.82) translateY(16px);
+    transition: opacity 0.45s ease, transform 0.45s cubic-bezier(.22,1,.36,1);
+  `;
+
+  const img = document.createElement('img');
+  img.src = src;
+  img.style.cssText = `
+    width: 100%;
+    display: block;
+    border-radius: 2px;
+    object-fit: cover;
+  `;
+
+  frame.appendChild(img);
+  overlay.appendChild(frame);
+  document.body.appendChild(overlay);
+
+  // Animate in
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    overlay.style.background = 'rgba(20,10,10,0.72)';
+    overlay.style.backdropFilter = 'blur(10px)';
+    overlay.style.webkitBackdropFilter = 'blur(10px)';
+    frame.style.opacity = '1';
+    frame.style.transform = 'scale(1) translateY(0)';
+  }));
+
+  // Click to close
+  overlay.addEventListener('click', () => {
+    frame.style.opacity = '0';
+    frame.style.transform = 'scale(0.88) translateY(10px)';
+    overlay.style.background = 'rgba(20,10,10,0)';
+    overlay.style.backdropFilter = 'blur(0px)';
+    setTimeout(() => overlay.remove(), 420);
+  });
+}
+
 </script>
 </body>
 </html>
