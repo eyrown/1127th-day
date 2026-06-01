@@ -1558,8 +1558,10 @@ const BF = (() => {
     renderer.setClearColor(0x000000, 0);
 
     scene  = new THREE.Scene();
+    scene.rotation.x = 0.25; 
     camera = new THREE.PerspectiveCamera(45, 44 / 36, 0.1, 100);
-    camera.position.set(0, 0.2, 4.5);
+    camera.position.set(0.4, 1.0, 4.0);
+    camera.lookAt(0, 0.2, 0);
 
     // Lighting
     const ambient = new THREE.AmbientLight(0xffffff, 0.7);
@@ -1576,16 +1578,30 @@ const BF = (() => {
   }
 
   function _buildButterfly() {
-    // Wing materials
-    const matUpper = new THREE.MeshPhongMaterial({
-      color: 0x60c8f0, emissive: 0x2040a0, emissiveIntensity: 0.3,
-      specular: 0xffffff, shininess: 80,
-      side: THREE.DoubleSide, transparent: true, opacity: 0.94
+    const matUpper = new THREE.MeshPhysicalMaterial({
+      color: 0x60c8f0,
+      emissive: 0x1030a0,
+      emissiveIntensity: 0.4,
+      metalness: 0.1,
+      roughness: 0.2,
+      transmission: 0.3,
+      thickness: 0.5,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.92
     });
-    const matLower = new THREE.MeshPhongMaterial({
-      color: 0x7040d0, emissive: 0x301880, emissiveIntensity: 0.3,
-      specular: 0xc0c0ff, shininess: 60,
-      side: THREE.DoubleSide, transparent: true, opacity: 0.88
+// BAGO — lower wing
+  const matLower = new THREE.MeshPhysicalMaterial({
+      color: 0x7040d0,
+      emissive: 0x2010a0,
+      emissiveIntensity: 0.35,
+      metalness: 0.1,
+      roughness: 0.25,
+      transmission: 0.25,
+      thickness: 0.4,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.88
     });
 
     // Upper wing shape — Morpho-like
@@ -1993,15 +2009,29 @@ function onLetterNext() {
   // Fly butterfly to "add to your core memory" button
 setTimeout(() => {
     showEndOverlay();
-    setTimeout(() => {
+setTimeout(() => {
       // Always fly to tree petals after next is clicked
       const W = window.innerWidth;
       const H = window.innerHeight;
-      const tx = W * 0.68;
-      const ty = H * 0.38;
+      const pos = _getRandomPetalPos();
+      const tx = pos ? pos.x : W * 0.68;
+      const ty = pos ? pos.y : H * 0.38;
       BF.flyTo(tx, ty, 1800, null);
     }, 1400);
   }, 680);
+}
+
+function _getRandomPetalPos() {
+  const hearts = window._bloomHearts;
+  if (!hearts || hearts.length === 0) return null;
+  const topHearts = hearts.filter(h => h.y < window.innerHeight * 0.45);
+  const pool = topHearts.length > 0 ? topHearts : hearts;
+  const h = pool[Math.floor(Math.random() * pool.length)];
+  const slideOffsetX = window.innerWidth * 0.22;
+  return {
+    x: h.x + slideOffsetX - 22,
+    y: h.y - 18
+  };
 }
 
 function closeEndOverlay() {
@@ -2011,11 +2041,10 @@ function closeEndOverlay() {
   const W = window.innerWidth;
   const H = window.innerHeight;
 
-  // Land inside the heart canopy — top area of the heart
-  const tx = W * 0.70;
-  const ty = H * 0.36;
+  const pos = _getRandomPetalPos();
+  const tx = pos ? pos.x : W * 0.70;
+  const ty = pos ? pos.y : H * 0.36;
 
-    // Always fly to tree regardless of how many times called
   BF.show();
   BF.flyTo(tx, ty, 1800, null);
 }
