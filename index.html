@@ -1494,7 +1494,8 @@ function startPetalBloom(rootX, groundY, TREE_H, forkY, BRANCHES, p2Ctx, p2Canva
           showEnvelope(panelCX, panelCY);
     }
       }
-      setTimeout(()=>requestAnimationFrame(slideLoop), 600);
+        const totalPolaroidTime = 600 + (2 * 350) + 900; // stagger delay + fade duration
+      setTimeout(()=>requestAnimationFrame(slideLoop), totalPolaroidTime);
       showPolaroids(rootX, groundY, TREE_H, s);
     }
   }
@@ -2122,7 +2123,7 @@ function showPolaroids(rootX, groundY, TREE_H, s) {
   ];
 
   const STRING_LEN = 18;
-  const POLAROID_W = Math.min(72, window.innerWidth * 0.13);
+  const POLAROID_W = Math.min(62, window.innerWidth * 0.10);
   const POLAROID_H = POLAROID_W * 1.22;
   const IMG_PAD    = 5;
   const BOTTOM_PAD = POLAROID_W * 0.28;
