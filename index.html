@@ -1030,7 +1030,7 @@ function flashDialsRed() {
 }
 function tryUnlock(){
   const ok=vals[0]===CODE[0]&&vals[1]===CODE[1]&&vals[2]===CODE[2]&&vals[3]===CODE[3];
-  if(ok){playHeartbeat();setTimeout(()=>playHeartbeat(),600);unlockSuccess();}
+  if(ok){playHeartbeat();setTimeout(()=>playHeartbeat(),600);burstConfetti();unlockSuccess();}
   else{wrongCount++;playWrongSound();flashDialsRed();shakeHeart();showHint(HINTS[Math.min(wrongCount-1,HINTS.length-1)]);}
 }
 function shakeHeart(){const hl=document.getElementById('heart-lock');hl.classList.remove('shake');void hl.offsetWidth;hl.classList.add('shake');}
@@ -2267,6 +2267,60 @@ function openPolaroidLightbox(src) {
     overlay.style.backdropFilter = 'blur(0px)';
     setTimeout(() => overlay.remove(), 420);
   });
+}
+
+function burstConfetti() {
+  const COLORS = ['#f080c0','#c060e8','#7ec4e8','#f0bf18','#f06080','#a0e080','#ff8e53','#ff6bcb'];
+  const total  = 120;
+  const cx     = window.innerWidth  / 2;
+  const cy     = window.innerHeight / 2;
+
+  for (let i = 0; i < total; i++) {
+    const el = document.createElement('div');
+    const size = Math.random() * 8 + 5;
+    const isRect = Math.random() > 0.5;
+    el.style.cssText = `
+      position: fixed;
+      z-index: 999;
+      left: ${cx}px;
+      top: ${cy}px;
+      width: ${size}px;
+      height: ${isRect ? size * 0.45 : size}px;
+      background: ${COLORS[Math.floor(Math.random() * COLORS.length)]};
+      border-radius: ${isRect ? '1px' : '50%'};
+      pointer-events: none;
+      opacity: 1;
+    `;
+    document.body.appendChild(el);
+
+    const angle  = Math.random() * Math.PI * 2;
+    const speed  = Math.random() * 14 + 6;
+    const vx     = Math.cos(angle) * speed;
+    const vy     = Math.sin(angle) * speed - 8;
+    const rot    = Math.random() * 360;
+    const vr     = (Math.random() - 0.5) * 18;
+    const gravity = 0.45;
+
+    let x = cx, y = cy, vvy = vy, currentRot = rot, life = 0;
+    const maxLife = 80 + Math.random() * 40;
+
+    function tick() {
+      life++;
+      vvy += gravity;
+      x   += vx;
+      y   += vvy;
+      currentRot += vr;
+      const alpha = Math.max(0, 1 - life / maxLife);
+      el.style.transform = `translate(${x - cx}px, ${y - cy}px) rotate(${currentRot}deg)`;
+      el.style.opacity   = alpha;
+      if (life < maxLife) {
+        requestAnimationFrame(tick);
+      } else {
+        el.remove();
+      }
+    }
+    setTimeout(() => requestAnimationFrame(tick), Math.random() * 180);
+  }
 }
 
 </script>
