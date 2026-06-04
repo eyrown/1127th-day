@@ -1077,7 +1077,13 @@ function easeOutQuart(t){return 1-Math.pow(1-t,4);}
 function easeInQuart(t){return t*t*t*t;}
 
 function heartClicked(){
-  document.getElementById('bg-music').play();
+  const _music = document.getElementById('bg-music');
+  const _mb    = document.getElementById('music-btn');
+  _music.play();
+  _mb.style.display = 'flex';
+  _mb.classList.add('playing');
+  document.getElementById('music-label').textContent = 'Pause';
+   document.getElementById('music-note').textContent  = '♫';
   const group=document.getElementById('heart-group');
   const heartBtn=document.getElementById('heart-btn');
   const wrap=document.getElementById('heart-btn-wrap');
@@ -1175,8 +1181,6 @@ function runSeedAnimation(cx,startY){
 function initFinalPage(){
   resizeFinal();
   requestAnimationFrame(animDust);
-  const mb = document.getElementById('music-btn');
-  mb.style.display = 'flex';
 }
 
 function toggleMusic() {
