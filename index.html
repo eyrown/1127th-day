@@ -1022,6 +1022,46 @@ function playWrongSound() {
     osc.stop(ctx.currentTime + 0.35);
   } catch(e) {}
 }
+
+function playCrinkleSound() {
+  try {
+    const ctx = getAudioCtx();
+
+    function crinkle(delay, duration, freq, q, gainVal) {
+      const bufSize = Math.floor(ctx.sampleRate * duration);
+      const buffer  = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+      const data    = buffer.getChannelData(0);
+      for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type            = 'bandpass';
+      filter.frequency.value = freq;
+      filter.Q.value         = q;
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+      gain.gain.linearRampToValueAtTime(gainVal, ctx.currentTime + delay + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      source.start(ctx.currentTime + delay);
+      source.stop(ctx.currentTime + delay + duration + 0.05);
+    }
+
+    // Multiple overlapping bursts = realistic crinkle
+    crinkle(0.00, 0.18, 3200, 0.8, 0.22);
+    crinkle(0.12, 0.22, 2600, 0.7, 0.18);
+    crinkle(0.28, 0.15, 3800, 0.9, 0.14);
+    crinkle(0.38, 0.20, 2200, 0.6, 0.10);
+
+  } catch(e) {}
+}
+
 function flashDialsRed() {
   document.querySelectorAll('.dial-display').forEach(d => {
     d.classList.add('wrong-flash');
@@ -1951,7 +1991,8 @@ function openEnvelope() {
   document.getElementById('letter-body-text').innerHTML = '';
   const env = document.getElementById('envelope');
   env.classList.add('opening');
-
+  playCrinkleSound();
+  
   // Butterfly leaves envelope, flies around outside area
   BF.setResting(false);
 
