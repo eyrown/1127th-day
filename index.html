@@ -7,6 +7,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
+
+@keyframes envelopePulse {
+  0%, 100% {
+    filter: drop-shadow(0 8px 28px rgba(160,70,70,.22));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 14px 38px rgba(160,70,70,.48));
+    transform: scale(1.04);
+  }
+}
+
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans-serif; }
 
@@ -340,6 +352,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   transition:transform 0.2s ease, filter 0.2s ease;
   filter:drop-shadow(0 8px 28px rgba(160,70,70,.22));
   perspective:600px;
+  animation: envelopePulse 2.2s ease-in-out infinite;
 }
 #envelope:hover { transform:translateY(-4px) scale(1.04); filter:drop-shadow(0 14px 36px rgba(160,70,70,.32)); }
 .env-body {
@@ -347,6 +360,7 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans
   background:linear-gradient(150deg,#fbe8e0,#f5d0c8);
   box-shadow:0 8px 32px rgba(160,70,70,.18), inset 0 1px 0 rgba(255,255,255,.6);
   overflow:hidden;
+  animation: none;
 }
 /* diagonal fold lines */
 .env-body::before {
@@ -1992,7 +2006,7 @@ function openEnvelope() {
   const env = document.getElementById('envelope');
   env.classList.add('opening');
   playCrinkleSound();
-  
+
   // Butterfly leaves envelope, flies around outside area
   BF.setResting(false);
 
