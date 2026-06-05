@@ -2162,7 +2162,8 @@ function _typewriteLetter() {
         (i < text.length
           ? '<span style="display:inline-block;width:1.5px;height:1em;background:rgba(85,48,32,.65);vertical-align:text-bottom;animation:twBlink .7s step-end infinite;"></span>'
           : '');
-      scroll.scrollTop = scroll.scrollHeight;
+      const isNearBottom = scroll.scrollHeight - scroll.scrollTop - scroll.clientHeight < 40;
+    if (isNearBottom) scroll.scrollTop = scroll.scrollHeight;
       i++;
       setTimeout(tick, i < 3 ? 180 : 24 + Math.random() * 18);
     }
